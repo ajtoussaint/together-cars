@@ -2,9 +2,12 @@ const express = require('express');
 
 const app = express()
 
+//copy from DebtManager/Express Test
+//no, thats not it
+
 app.get('/', (req, res) => {
     console.log("req recieved");
-    res.send("Hello World");
+    res.send("hello world")
 })
 
 const PORT = process.env.PORT || 3000
