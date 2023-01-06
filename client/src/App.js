@@ -1,26 +1,49 @@
-import logo from './logo.svg';
 import './App.css';
+import { Routes, Route, Link, Outlet} from "react-router-dom";
 
-function App() {
+import Red from "./components/red-test.component.js";
+import Blue from './components/blue-test.component';
+
+
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-          I did it!
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>
+        Testing...
+      </h1>
+      <Routes>
+        <Route path="/" element={<Navbar />}>
+          <Route index element={<Home />} />
+          <Route path="/red" element={<Red />} />
+          <Route path="/blue" element={<Blue />} />
+        </Route>
+      </Routes>
     </div>
   );
 }
 
-export default App;
+
+function Navbar(){
+  return(
+    <div>
+      <ul>
+        <li>
+          <Link to="/">Home</Link>
+        </li>
+        <li>
+          <Link to="/red">Red</Link>
+        </li>
+        <li>
+          <Link to="/blue">Blue</Link>
+        </li>
+      </ul>
+      <Outlet />
+    </div>
+  );
+}
+
+function Home(){
+  return(
+    <h1>Home</h1>
+  )
+}
