@@ -1,8 +1,9 @@
 import './App.css';
 import { Routes, Route, Link, Outlet} from "react-router-dom";
 
-import Red from "./components/red-test.component.js";
+import Red from "./components/red-test.component";
 import Blue from './components/blue-test.component';
+import Home from "./components/home.component"
 
 
 export default function App() {
@@ -40,10 +41,4 @@ function Navbar(){
       <Outlet />
     </div>
   );
-}
-
-function Home(){
-  return(
-    <h1>Home</h1>
-  )
 }

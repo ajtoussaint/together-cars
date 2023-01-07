@@ -18,7 +18,7 @@ app.get('/red', (req,res) => {
 
 app.get('/blue', (req,res) => {
     console.log("blue requested");
-    res.json(["Tucker", "Church"]);
+    res.json(["Tucker", "Church", "Caboose"]);
 });
 
 const PORT = process.env.PORT || 5000
