@@ -22,7 +22,7 @@ export default class Red extends Component{
     render(){
         return(
             <div className='redContainer'> 
-                <h1>RED Team</h1>
+                <h1>Top Secret RED Team Roster</h1>
                 <ul>
                     {this.state.members.map( (i, index) => <li key={index}>{i}</li>)}
                 </ul>

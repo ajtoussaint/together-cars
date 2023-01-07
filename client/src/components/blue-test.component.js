@@ -22,7 +22,7 @@ export default class Blue extends Component{
     render(){
         return(
             <div className='blueContainer'> 
-                <h1>Blue Team</h1>
+                <h1>Top Secret Blue Team Roster</h1>
                 <ul>
                     {this.state.members.map( (i, index) => <li key={index}>{i}</li>)}
                 </ul>

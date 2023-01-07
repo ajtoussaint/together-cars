@@ -71,7 +71,7 @@ class Login extends Component{
                         <input 
                          type='text'
                          name='username'
-                         id='username'
+                         id='usernameLogin'
                          value={this.state.username}
                          onChange={this.handleChange}/>
                     </label>
@@ -79,9 +79,9 @@ class Login extends Component{
                     <label htmlFor='password'>
                         Password:
                         <input 
-                         type='text'
+                         type='password'
                          name='password'
-                         id='password'
+                         id='passwordLogin'
                          value={this.state.password}
                          onChange={this.handleChange}/>
                     </label>
@@ -128,7 +128,7 @@ class Register extends Component{
                         <input 
                          type='text'
                          name='username'
-                         id='username'
+                         id='usernameRegister'
                          value={this.state.username}
                          onChange={this.handleChange}/>
                     </label>
@@ -136,9 +136,9 @@ class Register extends Component{
                     <label htmlFor='password'>
                         Password:
                         <input 
-                         type='text'
+                         type='password'
                          name='password'
-                         id='password'
+                         id='passwordRegister'
                          value={this.state.password}
                          onChange={this.handleChange}/>
                     </label>
@@ -146,7 +146,7 @@ class Register extends Component{
                     <label htmlFor='confirmPassword'>
                         Confirm Password:
                         <input 
-                         type='text'
+                         type='password'
                          name='confirmPassword'
                          id='confirmPassword'
                          value={this.state.confirmPassword}
