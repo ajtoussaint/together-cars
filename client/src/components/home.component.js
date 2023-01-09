@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { Component } from 'react';
 //import axios from 'axios';
 
@@ -58,7 +59,19 @@ class Login extends Component{
 
     handleLogin(e){
         e.preventDefault();
-        console.log(this.state);
+        console.log("Handling login...");
+        axios.post("http://localhost:5000/login", {
+            username: this.state.username,
+            password: this.state.password
+        })
+        .then(res => {
+            //res .data contains the response of the "/login" post route
+            console.log("login res: " + res.data.favorite);
+            if (res.status === 200){
+                //Pass a function from App.js into here so that the higher level state can be updated
+                console.log("Yay!");
+            }
+        })
     }
 
     render(){
