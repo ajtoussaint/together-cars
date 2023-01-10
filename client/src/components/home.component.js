@@ -113,7 +113,17 @@ class Register extends Component{
 
     handleRegister(e){
         e.preventDefault();
-        console.log(this.state);
+        console.log("Hanling Register...");
+        axios.post("http://localhost:5000/register", {
+            username: this.state.username,
+            password: this.state.password,
+            confirmPassword:this.state.confirmPassword
+        })
+        .then( res => {
+            if(res.status === 200){
+                console.log(res.data);
+            }
+        })
     }
 
     render(){
