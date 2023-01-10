@@ -114,10 +114,20 @@ app.post("/register",
     }
  )
 
+ //logout path
+ app.get("/logout", (req, res) => {
+    req.logout( err => {
+        if(err){
+            console.log(err);
+        }
+        res.redirect("/");
+    })
+ })
+
 //testing paths
 app.get('/', (req, res) => {
     console.log("req recieved");
-    res.send("hello world")
+    res.send("Youve recieved data from a get request to '/'")
 });
 
 app.get('/red', (req,res) => {

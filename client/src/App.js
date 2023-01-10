@@ -18,14 +18,23 @@ export default class App extends Component {
 
     this.updateUser = this.updateUser.bind(this);
     this.getCurrentUser = this.getCurrentUser.bind(this);
+    this.logout = this.logout.bind(this);
   }
 
   updateUser( username ){
     console.log("Updating User")
     this.setState( state => ({
-      loggedIn: state.loggedIn,
+      loggedIn: true,
       username: username
     }));
+  }
+
+  logout(){
+    console.log("Loggin out app state")
+    this.setState({
+      loggedIn: false,
+      username: null
+    })
   }
 
   componentDidMount(){
@@ -60,9 +69,9 @@ export default class App extends Component {
           { this.state.username || "Testing..." }
         </h1>
         <Routes>
-          <Route path="/" element={<Navbar />}>
+          <Route path="/" element={<Navbar loggedIn={this.state.loggedIn} logout={this.logout}/>}>
             <Route index element={<Home updateUser={this.updateUser}/>} />
-            <Route path="/red" element={<Red user={this.state.username}/>} />
+            <Route path="/red" element={<Red user={this.state.username} loggedIn={this.state.loggedIn}/>} />
             <Route path="/blue" element={<Blue />} />
           </Route>
         </Routes>
@@ -71,22 +80,38 @@ export default class App extends Component {
   }
 }
 
+//logout here needs to be a button that sends a get to "/logout" 
+//01/10/23 and then updates the state to be false and null
+class Navbar extends Component{
+  constructor(props){
+    super(props);
 
-function Navbar(){
-  return(
-    <div>
-      <ul>
-        <li>
-          <Link to="/">Home</Link>
-        </li>
-        <li>
-          <Link to="/red">Red</Link>
-        </li>
-        <li>
-          <Link to="/blue">Blue</Link>
-        </li>
-      </ul>
-      <Outlet />
-    </div>
-  );
+    this.logoutUser = this.logoutUser.bind(this);
+  }
+
+  logoutUser(){
+    console.log("Logout button pressed");
+  }
+
+  render(){
+    return(
+      <div>
+        <ul>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/red">Red</Link>
+          </li>
+          <li>
+            <Link to="/blue">Blue</Link>
+          </li>
+          <li>
+            {this.props.loggedIn && <Link to="/logout">Logout</Link>}
+          </li>
+        </ul>
+        <Outlet />
+      </div>
+    );
+  }
 }
