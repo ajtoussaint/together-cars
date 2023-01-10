@@ -1,6 +1,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require("./models/User.model");
+const bcrypt = require("bcrypt");
 
 module.exports = function(){
     //passport things that will become a module
@@ -12,37 +13,33 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((id, done) => {
     console.log("Deserialize User called " + id);
-    let myUsers = {
-        "007":{
-            username:"Andrew",
-            password:"badger",
-            _id:"007"
+    User.findById(id, function(err, data){
+        if(err){
+            console.log("error in deserialization", err);
         }
-    }
-    //should return the user associated with the id given
-    done(null, myUsers[id]);
+        done(null,data);
+    })
 });
 
 passport.use(new LocalStrategy(
     function(username, password, done){
-        console.log("Using local strategy...", username, password);
-        //find the user in the database
-        let myUsers = {
-            "007":{
-                username:"Andrew",
-                password:"badger",
-                _id:"007"
+        User.findOne({username:username}, function(err, data){
+            console.log('User ' +username+' attempted to log in.');
+            if(err){
+              console.log(err);
+              return done(err);
             }
-        }
-        //check cridentials (for only user)
-        if(password != "badger" && username != "Andrew"){
-            console.log("wrong username/password");
-            return done(null,false);
-        }else{
-            console.log("Welcome " + myUsers["007"].username)
-            return done(null, myUsers["007"])
-        }
-
+            if (!data) {
+              console.log("Found no such user");
+              return done(null,false);
+            }
+            if (!bcrypt.compareSync(password, data.password)){
+              console.log('wrong password');
+              return done(null,false);
+            }
+            console.log("I'm in B)");
+            return done(null,data);
+          });
     }
 ));
 }
