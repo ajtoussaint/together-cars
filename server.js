@@ -84,6 +84,21 @@ app.post("/login",
 
 //end passport setup
 
+//route to check the user for the session
+
+app.get("/user",
+ (req,res) => {
+    console.log("In get /user route");
+    console.log(req.user);
+    if(req.user){
+        res.json({data: req.user})
+    }else{
+        console.log("no current user");
+        res.json(null)
+    }
+ }
+)
+
 
 app.get('/', (req, res) => {
     console.log("req recieved");

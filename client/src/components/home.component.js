@@ -10,28 +10,12 @@ export default class Home extends Component{
             username:"",
             password:""
         }
-
-        this.handleLogin = this.handleLogin.bind(this);
-        this.handleChange = this.handleChange.bind(this);
     }
-
-    handleChange(e){
-        this.setState({
-            [e.target.name]: e.target.value
-        })
-    }
-
-    handleLogin(e){
-        e.preventDefault();
-        console.log(this.state);
-    }
-
-
 
     render(){
         return(
             <div> 
-                <Login />
+                <Login updateUser={this.props.updateUser}/>
                 <Register />
             </div>
         )
@@ -70,6 +54,7 @@ class Login extends Component{
             if (res.status === 200){
                 //Pass a function from App.js into here so that the higher level state can be updated
                 console.log("Yay!");
+                this.props.updateUser(res.data.username);
             }
         })
     }

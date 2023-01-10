@@ -9,7 +9,7 @@ export default class Blue extends Component{
     }
 
     componentDidMount(){
-        console.log("Axios called");
+        console.log("Blue Axios called");
         axios.get('http://localhost:5000/blue')
             .then(res => {
                 this.setState({ members: res.data});

@@ -9,9 +9,12 @@ export default class Red extends Component{
     }
 
     componentDidMount(){
-        console.log("Axios called");
+        console.log("Red Axios called");
         axios.get('http://localhost:5000/red')
             .then(res => {
+                if(this.props.user){
+                    this.setState({ members: res.data.push(this.props.user)});
+                }
                 this.setState({ members: res.data});
             })
             .catch(err => {
