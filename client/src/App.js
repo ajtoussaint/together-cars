@@ -5,7 +5,13 @@ import axios from 'axios';
 
 import Red from "./components/red-test.component";
 import Blue from './components/blue-test.component';
-import Home from "./components/home.component"
+import Home from "./components/home.component";
+
+//axios setup
+const axiosInstance = axios.create({
+  withCredentials: true,
+  baseURL: "http://localhost:5000/"
+})
 
 
 export default class App extends Component {
@@ -43,12 +49,16 @@ export default class App extends Component {
 
   getCurrentUser(){
     console.log("getting current user...");
-    axios.get("http://localhost:5000/user").then( res => {
-      if(res.data){
-        console.log("Got user: " , res.data);
+    //a note. Proxy in package.js appears to be the default route for axios
+    axiosInstance.get('user')
+    .then( res => {
+      console.log("get current user response: ");
+      console.log(res.data);
+      if(res.data.user){
+        console.log("Got user: " , res.data.user);
         this.setState({
           loggedIn: true,
-          username: res.data
+          username: res.data.user
         })
       }else{
         console.log("no current user");

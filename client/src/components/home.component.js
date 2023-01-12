@@ -1,6 +1,11 @@
 import axios from 'axios';
 import React, { Component } from 'react';
-//import axios from 'axios';
+
+//axios setup
+const axiosInstance = axios.create({
+    withCredentials: true,
+    baseURL: "http://localhost:5000/"
+  })
 
 export default class Home extends Component{
     constructor(props){
@@ -44,13 +49,13 @@ class Login extends Component{
     handleLogin(e){
         e.preventDefault();
         console.log("Handling login...");
-        axios.post("http://localhost:5000/login", {
+        axiosInstance.post("login", {
             username: this.state.username,
             password: this.state.password
         })
         .then(res => {
             //res .data contains the response of the "/login" post route
-            console.log("login res: " + res.data.favorite);
+            console.log("login res: " + JSON.stringify(res.data));
             if (res.status === 200){
                 //Pass a function from App.js into here so that the higher level state can be updated
                 console.log("Yay!");
@@ -114,7 +119,7 @@ class Register extends Component{
     handleRegister(e){
         e.preventDefault();
         console.log("Hanling Register...");
-        axios.post("http://localhost:5000/register", {
+        axiosInstance.post("register", {
             username: this.state.username,
             password: this.state.password,
             confirmPassword:this.state.confirmPassword

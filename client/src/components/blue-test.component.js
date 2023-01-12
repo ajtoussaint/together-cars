@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
+//axios setup
+const axiosInstance = axios.create({
+    withCredentials: true,
+    baseURL: "http://localhost:5000/"
+  })
+
 export default class Blue extends Component{
     constructor(props){
         super(props);
@@ -10,7 +16,7 @@ export default class Blue extends Component{
 
     componentDidMount(){
         console.log("Blue Axios called");
-        axios.get('http://localhost:5000/blue')
+        axiosInstance.get('blue')
             .then(res => {
                 this.setState({ members: res.data});
             })

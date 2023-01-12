@@ -8,17 +8,21 @@ module.exports = function(){
 passport.serializeUser((user, done) => {
     console.log("Serialize User called for user " + user.username);
     console.log("id#: " + user._id);
-    done(null, user._id);
+    done(null, { _id:user._id });
 });
 
 passport.deserializeUser((id, done) => {
-    console.log("Deserialize User called " + id);
-    User.findById(id, function(err, data){
-        if(err){
-            console.log("error in deserialization", err);
-        }
-        done(null,data);
-    })
+  console.log('DeserializeUser called')
+	User.findOne(
+		{ _id: id },
+		'username',
+		(err, user) => {
+			console.log('*** Deserialize user, user:')
+			console.log(user)
+			console.log('--------------')
+			done(null, user)
+		}
+	)
 });
 
 passport.use(new LocalStrategy(
@@ -38,7 +42,7 @@ passport.use(new LocalStrategy(
               return done(null,false);
             }
             console.log("I'm in B)");
-            return done(null,data);
+            return done(null, data);
           });
     }
 ));

@@ -9,6 +9,8 @@ require('dotenv').config();
 const passport = require('passport');
 const auth = require("./auth.js");
 const bcrypt = require('bcrypt');
+//session store
+//const MongoStore = require('connect-mongo');
 
 //database
 const mongoose = require('mongoose');
@@ -31,14 +33,15 @@ const app = express()
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(cors());
+app.use(cors({origin:"http://localhost:3000"})); /// !!! may need to change to 3000
+//app.use() //01/12/22 'Access-Control-Allow-Credentials' header in the response is '' which must be 'true' when the request's credentials mode is 'include'.
 
 //set up session
 app.use(session({
     secret: process.env.SESSION_SECRET,
-    resave: true,
-    saveUninitialized: true,
-    cookie: {secure: false}
+    resave: false,
+    saveUninitialized: false
+    //store: MongoStore.create({mongoUrl: process.env.MONGO_URI})
 }));
 
 //set up passport with session
@@ -49,14 +52,14 @@ auth();
 
 //rotue accessed by passport from auth.js
 app.post("/login",
- passport.authenticate('local', {failureRedirect:'/'}),
+ passport.authenticate('local'),
  (req, res) =>{
-    console.log("login attempt: " + req.user.username);
+    console.log("logged in: " + req.user);
     //controll what gets sent to the axios "res.data" value here
-    var userInfo = {
-        username: req.user.username,
-        favorite: "blue"
+    let userInfo = {
+        username: req.user.username
     };
+    console.log("req.session after login: ", req.session);
     res.send(userInfo)
 })
 
@@ -65,13 +68,15 @@ app.post("/login",
 
 app.get("/user",
  (req,res) => {
-    console.log("In get /user route");
-    console.log(req.user);
+    console.log("In GET /user route");
+    console.log("req.user:", req.user);
+    console.log("req.session :", req.session);
     if(req.user){
-        res.json({data: req.user})
+        console.log("/user found a user!")
+        res.json({user: req.user});
     }else{
-        console.log("no current user");
-        res.json(null)
+        console.log("/user says: no current user");
+        res.json({user: null});
     }
  }
 )
