@@ -54,11 +54,14 @@ export default class App extends Component {
     .then( res => {
       console.log("get current user response: ");
       console.log(res.data);
+      //returns user object under res.data.user if a user has an open session
+      //otherwise res.data.user is returned as null
+      //user object contains everything in the model (username,id)
       if(res.data.user){
         console.log("Got user: " , res.data.user);
         this.setState({
           loggedIn: true,
-          username: res.data.user
+          username: res.data.user.username
         })
       }else{
         console.log("no current user");
@@ -72,11 +75,12 @@ export default class App extends Component {
     })
   }
 
+  //!!polish: show a loading page until it is determined if a session is open or not
   render(){
     return (
       <div>
         <h1>
-          { this.state.username || "Testing..." }
+          { this.state.username || "No User Currently Logged In" }
         </h1>
         <Routes>
           <Route path="/" element={<Navbar loggedIn={this.state.loggedIn} logout={this.logout}/>}>
