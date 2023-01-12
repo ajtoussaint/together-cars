@@ -10,7 +10,7 @@ const passport = require('passport');
 const auth = require("./auth.js");
 const bcrypt = require('bcrypt');
 //session store
-//const MongoStore = require('connect-mongo');
+const MongoStore = require('connect-mongo');
 
 //database
 const mongoose = require('mongoose');
@@ -52,8 +52,8 @@ app.use(cors({origin:"http://localhost:3000"})); /// !!! may need to change to 3
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false
-    //store: MongoStore.create({mongoUrl: process.env.MONGO_URI})
+    saveUninitialized: false,
+    store: MongoStore.create({mongoUrl: process.env.MONGO_URI})
 }));
 
 //set up passport with session
