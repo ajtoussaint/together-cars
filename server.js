@@ -29,7 +29,7 @@ mongoose
 
 const app = express()
 
-//cors setup...IT WORKS?
+//cors setup...it works. May need adjustment for live server
 app.use(function(req, res, next){
     res.header('Access-Control-Allow-Credentials', true);
     res.header('Access-Control-Allow-Origin', req.headers.origin);
@@ -40,7 +40,7 @@ app.use(function(req, res, next){
     } else {
         next();
     }
-}) //01/12/22 'Access-Control-Allow-Credentials' header in the response is '' which must be 'true' when the request's credentials mode is 'include'.
+}) 
 
 //body parser middleware setup
 app.use(bodyParser.json());
@@ -137,7 +137,7 @@ app.post("/register",
         if(err){
             console.log(err);
         }
-        res.redirect("/");
+        res.json({redirect:"/blue"})
     })
  })
 

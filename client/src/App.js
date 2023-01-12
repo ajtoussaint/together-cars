@@ -1,6 +1,6 @@
 import './App.css';
 import React, { Component } from 'react';
-import { Routes, Route, Link, Outlet} from "react-router-dom";
+import { Routes, Route, Link, Outlet, redirect} from "react-router-dom";
 import axios from 'axios';
 
 import Red from "./components/red-test.component";
@@ -24,24 +24,26 @@ export default class App extends Component {
 
     this.updateUser = this.updateUser.bind(this);
     this.getCurrentUser = this.getCurrentUser.bind(this);
-    this.logout = this.logout.bind(this);
   }
 
   updateUser( username ){
     console.log("Updating User")
-    this.setState( state => ({
-      loggedIn: true,
-      username: username
-    }));
+    if( username ){
+      console.log("state recognizes " + username);
+      this.setState( state => ({
+        loggedIn: true,
+        username: username
+      }));
+    }else{
+      console.log("setting to no user logged in")
+      this.setState({
+        loggedIn: false,
+        username: null
+      });
+    }
+    
   }
 
-  logout(){
-    console.log("Loggin out app state")
-    this.setState({
-      loggedIn: false,
-      username: null
-    })
-  }
 
   componentDidMount(){
     this.getCurrentUser();
@@ -83,7 +85,9 @@ export default class App extends Component {
           { this.state.username || "No User Currently Logged In" }
         </h1>
         <Routes>
-          <Route path="/" element={<Navbar loggedIn={this.state.loggedIn} logout={this.logout}/>}>
+          <Route path="/" element={<Navbar 
+          loggedIn={this.state.loggedIn} 
+          updateUser={this.updateUser}/>}>
             <Route index element={<Home updateUser={this.updateUser}/>} />
             <Route path="/red" element={<Red user={this.state.username} loggedIn={this.state.loggedIn}/>} />
             <Route path="/blue" element={<Blue />} />
@@ -95,7 +99,7 @@ export default class App extends Component {
 }
 
 //logout here needs to be a button that sends a get to "/logout" 
-//01/10/23 and then updates the state to be false and null
+//!!01/10/23 and then updates the state to be false and null
 class Navbar extends Component{
   constructor(props){
     super(props);
@@ -105,6 +109,12 @@ class Navbar extends Component{
 
   logoutUser(){
     console.log("Logout button pressed");
+    axiosInstance.get("logout")
+    .then( res => {
+      console.log("Logout Res: ", res);
+      this.props.updateUser(null);
+      return redirect(res.data.redirect);
+    })
   }
 
   render(){
@@ -121,7 +131,7 @@ class Navbar extends Component{
             <Link to="/blue">Blue</Link>
           </li>
           <li>
-            {this.props.loggedIn && <Link to="/logout">Logout</Link>}
+            {this.props.loggedIn && <button onClick={this.logoutUser}>Logout</button>}
           </li>
         </ul>
         <Outlet />
