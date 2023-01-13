@@ -1,12 +1,7 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { Navigate } from 'react-router-dom';
+const axiosInstance = require("../modules/axiosInstance");
 
-//axios setup
-const axiosInstance = axios.create({
-    withCredentials: true,
-    baseURL: "http://localhost:5000/"
-  })
 
 export default class Red extends Component{
     constructor(props){

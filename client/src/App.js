@@ -1,17 +1,11 @@
 import './App.css';
 import React, { Component } from 'react';
 import { Routes, Route, Link, Outlet, redirect} from "react-router-dom";
-import axios from 'axios';
-
 import Red from "./components/red-test.component";
 import Blue from './components/blue-test.component';
 import Home from "./components/home.component";
 
-//axios setup
-const axiosInstance = axios.create({
-  withCredentials: true,
-  baseURL: "http://localhost:5000/"
-})
+const axiosInstance = require("./modules/axiosInstance");
 
 
 export default class App extends Component {
@@ -98,8 +92,7 @@ export default class App extends Component {
   }
 }
 
-//logout here needs to be a button that sends a get to "/logout" 
-//!!01/10/23 and then updates the state to be false and null
+
 class Navbar extends Component{
   constructor(props){
     super(props);

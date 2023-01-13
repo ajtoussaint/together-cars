@@ -1,11 +1,6 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+const axiosInstance = require("../modules/axiosInstance");
 
-//axios setup
-const axiosInstance = axios.create({
-    withCredentials: true,
-    baseURL: "http://localhost:5000/"
-  })
 
 export default class Blue extends Component{
     constructor(props){

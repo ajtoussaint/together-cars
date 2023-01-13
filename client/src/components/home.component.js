@@ -1,11 +1,6 @@
-import axios from 'axios';
 import React, { Component } from 'react';
+const axiosInstance = require("../modules/axiosInstance");
 
-//axios setup
-const axiosInstance = axios.create({
-    withCredentials: true,
-    baseURL: "http://localhost:5000/"
-  })
 
 export default class Home extends Component{
     constructor(props){
