@@ -23,19 +23,29 @@ export default class Home extends Component{
         this.getUsersTrips();
     }
 
-    getUsersTrips(){
-        console.log("getting user's trips...");
-        axiosInstance.get('trips/' + this.props.username)
-        .then( res => {
-            console.log("got the user's trip data");
-            console.log(res.data);
+    componentDidUpdate(prevProps){
+        if(prevProps.username !== this.props.username){
+            console.log("getting trips for newly updated user");
+            this.getUsersTrips();
+        }
+    }
 
-            //let state know that it has the data
-            this.setState({
-                loading:false,
-                trips: res.data.userTrips
+    getUsersTrips(){
+        //only get the trips if there is a user
+        if(this.props.username){
+            console.log("getting user's trips...");
+            axiosInstance.get('trips/' + this.props.username)
+            .then( res => {
+                console.log("got the user's trip data");
+                console.log(res.data);
+    
+                //let state know that it has the data
+                this.setState({
+                    loading:false,
+                    trips: res.data.userTrips
+                })
             })
-        })
+        }
     }
 
     //Wait until app is done loading to render here
