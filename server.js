@@ -168,13 +168,28 @@ app.post("/register",
 
     newTrip.save((err, data) => {
         if(err){
+            //!!polish send an error if there is an error and have it display
             console.log(err)
         }else{
-            //I guess just send all the data?
+            //No real reason to send a response since the page redirects away
             res.json(data)
         }
     })
  })
+
+ //get the trips a user is a part of
+ app.get('/trips/:username', (req,res) => {
+    console.log("get trips recieved for user: " + req.params.username);
+    Trip.find({organizer:req.params.username}, (err,data) => {
+        if(err){
+            console.log(err);
+        }else if(!data){
+            res.json({userTrips:[]});
+        }else{
+            res.json({userTrips:data});
+        }
+    })
+ });
 
 //testing paths
 app.get('/', (req, res) => {

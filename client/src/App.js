@@ -6,6 +6,7 @@ import Red from "./components/red-test.component";
 import Blue from './components/blue-test.component';
 import Home from "./components/home.component";
 import CreateTrip from './components/create-trip.component';
+import Trip from './components/trip.component';
 
 
 
@@ -86,10 +87,22 @@ export default class App extends Component {
           updateUser={this.updateUser}
           username={this.state.username}
           loading={this.state.loading}/>}>
-            <Route index element={<Home updateUser={this.updateUser} loggedIn={this.state.loggedIn}/>} />
+
+            <Route index element={<Home
+            updateUser={this.updateUser}
+            loggedIn={this.state.loggedIn}
+            username={this.state.username}
+            loadingUser={this.state.loading}/>} />
+
             <Route path="/createTrip" element={<CreateTrip
             loggedIn={this.state.loggedIn} />} />
-            <Route path="/red" element={<Red user={this.state.username} loggedIn={this.state.loggedIn}/>} />
+
+            <Route path="trips/:tripId" element={<Trip/>}/>
+
+            <Route path="/red" element={<Red
+             user={this.state.username}
+              loggedIn={this.state.loggedIn}/>} />
+
             <Route path="/blue" element={<Blue />} />
           </Route>
         </Routes>
@@ -117,6 +130,7 @@ class Navbar extends Component{
   }
 
   render(){
+    //Nothing in the navbar will require loading in final product, just testing
     return(
       <div>
         <div id="navbarWrapper">

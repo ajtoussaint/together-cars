@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import axiosInstance from "../modules/axiosInstance"
+import { Link } from "react-router-dom";
+import axiosInstance from "../modules/axiosInstance";
+import Loading from "./loading.component";
 
 
 //This will be the "My Trips Component"
@@ -9,22 +11,55 @@ export default class Home extends Component{
 
         this.state={
             username:"",
-            password:""
+            password:"",
+            loading:true,
+            trips:[]
         }
+
+        this.getUsersTrips = this.getUsersTrips.bind(this);
     }
 
+    componentDidMount(){
+        this.getUsersTrips();
+    }
+
+    getUsersTrips(){
+        console.log("getting user's trips...");
+        axiosInstance.get('trips/' + this.props.username)
+        .then( res => {
+            console.log("got the user's trip data");
+            console.log(res.data);
+
+            //let state know that it has the data
+            this.setState({
+                loading:false,
+                trips: res.data.userTrips
+            })
+        })
+    }
+
+    //Wait until app is done loading to render here
     render(){
-        if(this.props.loggedIn){
-            return(
-                <h1>Welcome to Together Cars!</h1>
-            )
+        if(this.props.loadingUser){
+            return(<Loading />)
         }else{
-            return(
-                <div> 
-                    <Login updateUser={this.props.updateUser}/>
-                    <Register />
-                </div>
-            )
+            if(this.props.loggedIn){
+                return(
+                    <div id="homeComponentWrapper">
+                        <h1>Welcome to Together Cars, {this.props.username}!</h1>
+                        <MyTrips
+                        loading={this.state.loading}
+                        trips={this.state.trips}/>
+                    </div>
+                )
+            }else{
+                return(
+                    <div> 
+                        <Login updateUser={this.props.updateUser}/>
+                        <Register />
+                    </div>
+                )
+            }
         }
     }
 }
@@ -172,5 +207,33 @@ class Register extends Component{
                 </form>
             </div>
         )
+    }
+}
+
+class MyTrips extends Component{
+    render(){
+        if(this.props.loading){
+            return(
+                <div>
+                    <h2>Your Trips</h2>
+                    <Loading />
+                </div>
+            )
+        }else{
+            //!!polish: sort trips by arrival datetime
+            return(
+                <div id="myTripsWrapper">
+                    <h2>Your Trips</h2>
+                    {this.props.trips.map( (trip, i) => (
+                        <div className='tripContainer' key={i}>
+                            <h2>{trip.title}</h2>
+                            <p>{trip.description}</p>
+                            <p>{trip.arrivalTime}</p>
+                            <Link to={"/trips/" + trip._id}>View Trip</Link>
+                        </div>
+                    ))}
+                </div>
+            )
+        }
     }
 }

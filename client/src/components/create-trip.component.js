@@ -45,8 +45,7 @@ export default class CreateTrip extends Component{
                 console.log("Finished creating Trip: ")
                 console.log(res.data);
                 this.setState({
-                    /*this will permanently lock up the component 
-                    if I have it navigate away and don't change the state back*/
+                    processing:false,
                     processingCompleted:true
                 });
             }
@@ -56,64 +55,75 @@ export default class CreateTrip extends Component{
     //!!polish: I'd like to make the participant portion of the form more dynamic
     render(){
         if(this.props.loggedIn){
-            return(
-                <div id="createTripWrapper">
-                    <form>
-                        <label htmlFor='title'>
-                            Title:
-                            <input
-                            type='text'
-                            name='title'
-                            id='tripTitleInput'
-                            value={this.state.title}
-                            onChange={this.handleChange}/>
-                        </label>
-                        <br></br>
-                        <label htmlFor='destination'>
-                            Destination:
-                            <input
-                            type='text'
-                            name='destination'
-                            id='tripDestinationInput'
-                            value={this.state.destination}
-                            onChange={this.handleChange}/>
-                        </label>
-                        <br></br>
-                        <label htmlFor='description'>
-                            Description:
-                            <input
-                            type='text'
-                            name='description'
-                            id='tripDescriptionInput'
-                            value={this.state.description}
-                            onChange={this.handleChange}/>
-                        </label>
-                        <br></br>
-                        <label htmlFor='arrivalTime'>
-                            Arrival Time:
-                            <input
-                            type='datetime-local'
-                            name='arrivalTime'
-                            id='tripArrivaltimeInput'
-                            value={this.state.arrivalTime}
-                            onChange={this.handleChange}/>
-                        </label>
-                        <br></br>
-                        <label htmlFor='participants'>
-                            Input participant usernames separated by commas
-                            (You will have the opportunity to add more later):
-                            <input
-                            type='text'
-                            name='participants'
-                            id='tripParticipantsInput'
-                            value={this.state.participants}
-                            onChange={this.handleChange}/>
-                        </label>
-                        <br></br>
-                        <button type='submit' onClick={this.handleSubmit}>Create my trip!</button>
-                    </form>
-                </div>
-            )
+            if(this.state.processing){
+                return(
+                    <h1>Creating your trip...</h1>
+                )
+            }else if(this.state.processingCompleted){
+                return(
+                    //!!01/16 This will go to the trip once that is a thing
+                    <Navigate to="/" replace={false} />
+                )
+            }else{
+                return(
+                    <div id="createTripWrapper">
+                        <form>
+                            <label htmlFor='title'>
+                                Title:
+                                <input
+                                type='text'
+                                name='title'
+                                id='tripTitleInput'
+                                value={this.state.title}
+                                onChange={this.handleChange}/>
+                            </label>
+                            <br></br>
+                            <label htmlFor='destination'>
+                                Destination:
+                                <input
+                                type='text'
+                                name='destination'
+                                id='tripDestinationInput'
+                                value={this.state.destination}
+                                onChange={this.handleChange}/>
+                            </label>
+                            <br></br>
+                            <label htmlFor='description'>
+                                Description:
+                                <input
+                                type='text'
+                                name='description'
+                                id='tripDescriptionInput'
+                                value={this.state.description}
+                                onChange={this.handleChange}/>
+                            </label>
+                            <br></br>
+                            <label htmlFor='arrivalTime'>
+                                Arrival Time:
+                                <input
+                                type='datetime-local'
+                                name='arrivalTime'
+                                id='tripArrivaltimeInput'
+                                value={this.state.arrivalTime}
+                                onChange={this.handleChange}/>
+                            </label>
+                            <br></br>
+                            <label htmlFor='participants'>
+                                Input participant usernames separated by commas
+                                (You will have the opportunity to add more later):
+                                <input
+                                type='text'
+                                name='participants'
+                                id='tripParticipantsInput'
+                                value={this.state.participants}
+                                onChange={this.handleChange}/>
+                            </label>
+                            <br></br>
+                            <button type='submit' onClick={this.handleSubmit}>Create my trip!</button>
+                        </form>
+                    </div>
+                )
+            }
         }else{
             return(
                 <Navigate to="/" replace={false} />
