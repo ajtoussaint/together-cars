@@ -5,6 +5,7 @@ import axiosInstance from "./modules/axiosInstance";
 import Red from "./components/red-test.component";
 import Blue from './components/blue-test.component';
 import Home from "./components/home.component";
+import CreateTrip from './components/create-trip.component';
 
 
 
@@ -86,6 +87,8 @@ export default class App extends Component {
           username={this.state.username}
           loading={this.state.loading}/>}>
             <Route index element={<Home updateUser={this.updateUser} loggedIn={this.state.loggedIn}/>} />
+            <Route path="/createTrip" element={<CreateTrip
+            loggedIn={this.state.loggedIn} />} />
             <Route path="/red" element={<Red user={this.state.username} loggedIn={this.state.loggedIn}/>} />
             <Route path="/blue" element={<Blue />} />
           </Route>
@@ -129,6 +132,9 @@ class Navbar extends Component{
             </li>
             <li>
               <Link to="/blue">Blue</Link>
+            </li>
+            <li>
+              <Link to="/createTrip">Create a Trip</Link>
             </li>
             <li>
               {this.props.loggedIn && <button onClick={this.logoutUser}>Logout</button>}

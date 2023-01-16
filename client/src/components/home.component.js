@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axiosInstance from "../modules/axiosInstance"
 
 
-
+//This will be the "My Trips Component"
 export default class Home extends Component{
     constructor(props){
         super(props);

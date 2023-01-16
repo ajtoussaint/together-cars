@@ -5,3 +5,11 @@
 .blueContainer{
   background-color:dodgerblue;
 }
+
+html {
+  background-color: rgb(56, 56, 56);
+}
+
+#navbarWrapper{
+  background-color: lightslategray;
+}

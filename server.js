@@ -15,6 +15,7 @@ const MongoStore = require('connect-mongo');
 //database
 const mongoose = require('mongoose');
 const User = require("./models/User.model");
+const Trip = require("./models/Trip.model");
 
 //first connect to the DB
 mongoose.set('strictQuery', false);//put this to suppress an update warning
@@ -46,7 +47,7 @@ app.use(function(req, res, next){
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(cors({origin:"http://localhost:3000"})); /// !!! may need to change to 3000
+app.use(cors({origin:"http://localhost:3000"}));
 
 //set up session
 app.use(session({
@@ -141,6 +142,40 @@ app.post("/register",
     })
  })
 
+ //business logic paths
+
+ //creating a trip
+ app.post("/createTrip", ensureAuthenticated, (req, res) => {
+    console.log("Server is creating a trip");
+    //trim the text on participant array
+    participantArray = req.body.participants.split(",")
+    participantArray.forEach( (party, i) => {
+        participantArray[i] = party.trim();
+    });
+    //filters out empry entries
+    participantArray = participantArray.filter(party => {
+        party.length > 0;
+    })
+    let newTrip = new Trip({
+        title: req.body.title,
+        destination: req.body.destination,
+        description: req.body.description,
+        arrivalTime: req.body.arrivalTime,
+        organizer: req.user.username,
+        participants: participantArray,
+        drivers:[]
+    });
+
+    newTrip.save((err, data) => {
+        if(err){
+            console.log(err)
+        }else{
+            //I guess just send all the data?
+            res.json(data)
+        }
+    })
+ })
+
 //testing paths
 app.get('/', (req, res) => {
     console.log("req recieved");
@@ -156,6 +191,14 @@ app.get('/blue', (req,res) => {
     console.log("blue requested");
     res.json(["Tucker", "Church", "Caboose"]);
 });
+
+function ensureAuthenticated(req,res,next) {
+    if(req.isAuthenticated()){
+      return next();
+    }
+    //!!polish replace with a better route for unauthenticated users
+    res.redirect('/');
+  };
 
 const PORT = process.env.PORT || 5000
 
