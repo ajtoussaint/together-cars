@@ -1,8 +1,10 @@
-const axios = require("axios");
+//const axios = require("axios");
+import axios from "axios";
 
-const axiosInstance = axios.create({
+export default axios.create({
     withCredentials: true,
     baseURL: "http://localhost:5000/"
   })
 
-  module.exports = axiosInstance
+  //this is not exporting what I think it is
+//export default axiosInstance;

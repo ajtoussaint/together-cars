@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-const axiosInstance = require("../modules/axiosInstance");
-
+import axiosInstance from "../modules/axiosInstance"
 
 export default class Blue extends Component{
     constructor(props){

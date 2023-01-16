@@ -1,13 +1,18 @@
 import React, { Component } from 'react';
 import { Navigate } from 'react-router-dom';
-const axiosInstance = require("../modules/axiosInstance");
+import axiosInstance from "../modules/axiosInstance"
+import Loading from "./loading.component.js";
+
 
 
 export default class Red extends Component{
     constructor(props){
         super(props);
 
-        this.state = {members: ["Sarge"]}
+        this.state = {
+            members: ["Sarge"],
+            loading: true
+        }
     }
 
     componentDidMount(){
@@ -19,6 +24,7 @@ export default class Red extends Component{
                     this.setState({ members: res.data.push(this.props.user)});
                 }
                 this.setState({ members: res.data});
+                this.setState({loading:false});
             })
             .catch(err => {
                 console.log(err);
@@ -26,7 +32,11 @@ export default class Red extends Component{
     }
 
     render(){
-        if(this.props.loggedIn){
+        if(this.state.loading){
+            return(
+                <Loading />
+            )
+        }else if(this.props.loggedIn){
             return(
                 <div className='redContainer'> 
                     <h1>Top Secret RED Team Roster</h1>

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-const axiosInstance = require("../modules/axiosInstance");
+import axiosInstance from "../modules/axiosInstance"
+
 
 
 export default class Home extends Component{
@@ -13,12 +14,18 @@ export default class Home extends Component{
     }
 
     render(){
-        return(
-            <div> 
-                <Login updateUser={this.props.updateUser}/>
-                <Register />
-            </div>
-        )
+        if(this.props.loggedIn){
+            return(
+                <h1>Welcome to Together Cars!</h1>
+            )
+        }else{
+            return(
+                <div> 
+                    <Login updateUser={this.props.updateUser}/>
+                    <Register />
+                </div>
+            )
+        }
     }
 }
 

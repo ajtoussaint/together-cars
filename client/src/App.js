@@ -1,11 +1,11 @@
 import './App.css';
 import React, { Component } from 'react';
 import { Routes, Route, Link, Outlet, redirect} from "react-router-dom";
+import axiosInstance from "./modules/axiosInstance";
 import Red from "./components/red-test.component";
 import Blue from './components/blue-test.component';
 import Home from "./components/home.component";
 
-const axiosInstance = require("./modules/axiosInstance");
 
 
 export default class App extends Component {
@@ -13,6 +13,7 @@ export default class App extends Component {
     super(props);
     this.state={
       loggedIn: false,
+      loading: true,
       username: null
     }
 
@@ -57,12 +58,14 @@ export default class App extends Component {
         console.log("Got user: " , res.data.user);
         this.setState({
           loggedIn: true,
+          loading: false,
           username: res.data.user.username
         })
       }else{
         console.log("no current user");
         this.setState({
           loggedIn: false,
+          loading: false,
           username: null
         })
       }
@@ -75,14 +78,14 @@ export default class App extends Component {
   render(){
     return (
       <div>
-        <h1>
-          { this.state.username || "No User Currently Logged In" }
-        </h1>
+       
         <Routes>
           <Route path="/" element={<Navbar 
           loggedIn={this.state.loggedIn} 
-          updateUser={this.updateUser}/>}>
-            <Route index element={<Home updateUser={this.updateUser}/>} />
+          updateUser={this.updateUser}
+          username={this.state.username}
+          loading={this.state.loading}/>}>
+            <Route index element={<Home updateUser={this.updateUser} loggedIn={this.state.loggedIn}/>} />
             <Route path="/red" element={<Red user={this.state.username} loggedIn={this.state.loggedIn}/>} />
             <Route path="/blue" element={<Blue />} />
           </Route>
@@ -113,22 +116,29 @@ class Navbar extends Component{
   render(){
     return(
       <div>
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/red">Red</Link>
-          </li>
-          <li>
-            <Link to="/blue">Blue</Link>
-          </li>
-          <li>
-            {this.props.loggedIn && <button onClick={this.logoutUser}>Logout</button>}
-          </li>
-        </ul>
+        <div id="navbarWrapper">
+        <h1>
+          { this.props.loading ? "Loading..." : this.props.username || "No User Currently Logged In" }
+        </h1>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/red">Red</Link>
+            </li>
+            <li>
+              <Link to="/blue">Blue</Link>
+            </li>
+            <li>
+              {this.props.loggedIn && <button onClick={this.logoutUser}>Logout</button>}
+            </li>
+          </ul>
+        </div>
         <Outlet />
       </div>
     );
   }
 }
+
+
