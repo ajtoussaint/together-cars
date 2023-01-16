@@ -63,6 +63,8 @@ app.use(passport.session());
 
 auth();
 
+//!!polish remember to ensure authenticated on all private routes
+
 //rotue accessed by passport from auth.js
 app.post("/login",
  passport.authenticate('local'),
@@ -178,7 +180,7 @@ app.post("/register",
  })
 
  //get the trips a user is a part of
- app.get('/trips/:username', (req,res) => {
+ app.get('/trips/:username', ensureAuthenticated, (req,res) => {
     console.log("get trips recieved for user: " + req.params.username);
     Trip.find({organizer:req.params.username}, (err,data) => {
         if(err){
@@ -187,6 +189,19 @@ app.post("/register",
             res.json({userTrips:[]});
         }else{
             res.json({userTrips:data});
+        }
+    })
+ });
+
+ //get the data for a specific trip
+ app.get('/trip/:id', ensureAuthenticated, (req,res) => {
+    Trip.findById(req.params.id, (err,data) =>{
+        if(err){
+            console.log(err);
+        }else if(!data){
+            res.json(null)
+        }else{
+            res.json(data);
         }
     })
  });

@@ -10,6 +10,8 @@ const tripSchema = new mongoose.Schema({
     drivers: {type:Array, required: true}
 })
 
+//drivers is an array of objects which have more driver info
+
 const Trip = mongoose.model("Trip",tripSchema);
 
 module.exports = Trip;

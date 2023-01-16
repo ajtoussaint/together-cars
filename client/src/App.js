@@ -76,7 +76,7 @@ export default class App extends Component {
     })
   }
 
-  //!!polish: show a loading page until it is determined if a session is open or not
+  //!!polish: return secure pages only if the user is logged in
   render(){
     return (
       <div>
