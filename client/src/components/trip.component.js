@@ -117,10 +117,14 @@ function DriverForm(props){
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        //!! 01/18/22 Add the driver to the array, be sure they can't drive twice
         console.log("driver form submitted", values);
+
         props.closeMe();
         setValues({
             departureLocation:'',
+            numberOfPassengers:0,
             pickingUpSelection:"notPickingUp",
             notes:'',
         })
@@ -140,9 +144,20 @@ function DriverForm(props){
                     onChange={handleChange}/>
                 </label>
                 <br></br>
-                <p>Are you willing to pick others up at their desired location?</p>
+                <label htmlFor='numberOfPassengers'>
+                    How many passengers can you take? (not including yourself)
+                    <input 
+                    type='number'
+                    min='1'
+                    max='99'
+                    name='numberOfPassengers'
+                    id='numberOfPassengers'
+                    value={values.numberOfPassengers}
+                    onChange={handleChange}/>
+                </label>
+                <br></br>
+                <div>Are you willing to pick others up at their desired location?</div>
                 <label htmlFor='pickingUp'>
-                    I can pick people up
                     <input 
                     type='radio'
                     name='pickingUpSelection'
@@ -150,10 +165,10 @@ function DriverForm(props){
                     value="pickingUp"
                     checked={values.pickingUpSelection === "pickingUp"}
                     onChange={handleChange}/>
+                    I can pick people up
                 </label>
                 <br></br>
                 <label htmlFor='notPickingUp'>
-                    People should meet me at my location
                     <input 
                     type='radio'
                     name='pickingUpSelection'
@@ -161,6 +176,7 @@ function DriverForm(props){
                     value="notPickingUp"
                     checked={values.pickingUpSelection === "notPickingUp"}
                     onChange={handleChange}/>
+                    People should meet me at my location
                 </label>
                 <br></br>
                 <label htmlFor='notes'>
