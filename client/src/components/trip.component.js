@@ -1,3 +1,4 @@
+import e from 'cors';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axiosInstance from "../modules/axiosInstance"
@@ -98,11 +99,57 @@ function ParticipantView(props){
 }
 
 function DriverForm(props){
-    console.log(props.closeMe);
+
+    const [values, setValues] = useState({
+        departureLocation:'',
+        pickingUpSelection:false,
+        notes:'',
+    })
+
+    const handleChange = (e) => {
+        e.persist();
+        setValues((values) => ({
+            ...values,
+            [e.target.name]:e.target.value,
+        }));
+        console.log("Driver form values: ", values);
+    }
 
     return(
         <div>
-            <h1>Driver Form</h1>
+            <form>
+                <h1>Driver Form</h1>
+                <label htmlFor='departureLocation'>
+                    Where are you leaving from?
+                    <input 
+                    type='text'
+                    name='departureLocation'
+                    id='departureLocation'
+                    value={values.departureLocation}
+                    onChange={handleChange}/>
+                </label>
+                <br></br>
+                <p>Are you willing to pick others up at their desired location?</p>
+                <label htmlFor='pickingUp'>
+                    I can pick people up
+                    <input 
+                    type='radio'
+                    name='pickingUpSelection'
+                    id='pickingUp'
+                    value={true}
+                    onChange={handleChange}/>
+                </label>
+                <br></br>
+                <label htmlFor='notPickingUp'>
+                    People should meet me at my location
+                    <input 
+                    type='radio'
+                    name='pickingUpSelection'
+                    id='notPickingUp'
+                    value={false}
+                    onChange={handleChange}/>
+                </label>
+            </form>
             <button onClick={() => props.closeMe()}>close</button>
         </div>
     )
