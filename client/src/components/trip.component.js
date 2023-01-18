@@ -102,7 +102,7 @@ function DriverForm(props){
 
     const [values, setValues] = useState({
         departureLocation:'',
-        pickingUpSelection:false,
+        pickingUpSelection:"notPickingUp",
         notes:'',
     })
 
@@ -115,8 +115,19 @@ function DriverForm(props){
         console.log("Driver form values: ", values);
     }
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log("driver form submitted", values);
+        props.closeMe();
+        setValues({
+            departureLocation:'',
+            pickingUpSelection:"notPickingUp",
+            notes:'',
+        })
+    }
+
     return(
-        <div>
+        <div id='driverFormWrapper'>
             <form>
                 <h1>Driver Form</h1>
                 <label htmlFor='departureLocation'>
@@ -136,7 +147,8 @@ function DriverForm(props){
                     type='radio'
                     name='pickingUpSelection'
                     id='pickingUp'
-                    value={true}
+                    value="pickingUp"
+                    checked={values.pickingUpSelection === "pickingUp"}
                     onChange={handleChange}/>
                 </label>
                 <br></br>
@@ -146,9 +158,22 @@ function DriverForm(props){
                     type='radio'
                     name='pickingUpSelection'
                     id='notPickingUp'
-                    value={false}
+                    value="notPickingUp"
+                    checked={values.pickingUpSelection === "notPickingUp"}
                     onChange={handleChange}/>
                 </label>
+                <br></br>
+                <label htmlFor='notes'>
+                    Anything else your passengers should know?:
+                    <input 
+                    type='text'
+                    name='notes'
+                    id='notes'
+                    value={values.notes}
+                    onChange={handleChange}/>
+                </label>
+                <br></br>
+                <button onClick={handleSubmit}>Submit</button>
             </form>
             <button onClick={() => props.closeMe()}>close</button>
         </div>

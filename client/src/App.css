@@ -17,3 +17,7 @@ html {
 .tripContainer{
   background-color: lightslategray;
 }
+
+#driverFormWrapper{
+  background-color: forestgreen;
+}
