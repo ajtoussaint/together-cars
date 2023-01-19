@@ -121,6 +121,7 @@ app.post("/register",
                     console.log("DB error saving new user");
                 }else{
                     console.log("new user created: ", data.username);
+                    req.newUserData = data;
                     next(null, data);
                 }
             })
@@ -129,8 +130,8 @@ app.post("/register",
  }, 
     passport.authenticate('local', {failureRedirect:'/'}),
     (req, res) => {
-        console.log("edit to => redirecting to login");
-        //res.redirect("/login");
+        console.log("User registered successfully: ", req.newUserData);
+        res.json(req.newUserData)
     }
  )
 

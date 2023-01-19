@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import axiosInstance from "../modules/axiosInstance"
 
@@ -121,6 +121,7 @@ export default class CreateTrip extends Component{
                             <br></br>
                             <button type='submit' onClick={this.handleSubmit}>Create my trip!</button>
                         </form>
+                        <ParticipantForm />
                     </div>
                 )
             }
@@ -130,4 +131,25 @@ export default class CreateTrip extends Component{
             )
         }
     }
+}
+
+function ParticipantForm(props){
+    const [participantName, setParticipantName] = useState("");
+
+    function handleChange(e){
+        e.persist();
+        setParticipantName(e.target.value);
+    }
+
+    return(
+        <div id="participantFormWrapper">
+            Enter a participants together cars username:
+            <input
+            type="text"
+            name="participantName"
+            value={participantName}
+            onChange={handleChange}/>
+
+        </div>
+    )
 }

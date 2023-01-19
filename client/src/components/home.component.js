@@ -66,7 +66,7 @@ export default class Home extends Component{
                 return(
                     <div> 
                         <Login updateUser={this.props.updateUser}/>
-                        <Register />
+                        <Register updateUser={this.props.updateUser}/>
                     </div>
                 )
             }
@@ -105,7 +105,6 @@ class Login extends Component{
             console.log("login res: " + JSON.stringify(res.data));
             if (res.status === 200){
                 //Pass a function from App.js into here so that the higher level state can be updated
-                console.log("Yay!");
                 this.props.updateUser(res.data.username);
             }
         })
@@ -165,7 +164,7 @@ class Register extends Component{
 
     handleRegister(e){
         e.preventDefault();
-        console.log("Hanling Register...");
+        console.log("Handling Register...");
         axiosInstance.post("register", {
             username: this.state.username,
             password: this.state.password,
@@ -173,7 +172,9 @@ class Register extends Component{
         })
         .then( res => {
             if(res.status === 200){
-                console.log(res.data);
+                //work like login
+                console.log("Register Response:", res.data);
+                this.props.updateUser(res.data.username);
             }
         })
     }

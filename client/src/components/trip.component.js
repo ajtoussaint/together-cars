@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
 import axiosInstance from "../modules/axiosInstance"
 import Loading from "./loading.component"
 
@@ -51,25 +51,30 @@ export default function Trip(props){
         + " as passenger #" + passengerIndex)
 
     }
-
-    if(loading){
+    if(!props.loggedIn){
         return(
-            <Loading />
-        )
-    }else if(!trip){
-        return(
-            <h1>The trip does not exist</h1>
+            <Navigate to="/" replace={false} />
         )
     }else{
-        //3 render options redirect, organiser, participant
-        return(
-            <ParticipantView
-            trip={trip}
-            updateDrivers={updateDrivers}
-            updatePassengers={updatePassengers}
-            username={props.username}/>
-        )
-    }
+        if(loading){
+            return(
+                <Loading />
+            )
+        }else if(!trip){
+            return(
+                <h1>The trip does not exist</h1>
+            )
+        }else{
+            //3 render options redirect, organiser, participant
+            return(
+                <ParticipantView
+                trip={trip}
+                updateDrivers={updateDrivers}
+                updatePassengers={updatePassengers}
+                username={props.username}/>
+            )
+        }
+}
 }
 
 //make different components for organiser view and participant view
