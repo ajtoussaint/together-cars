@@ -1,12 +1,12 @@
-import e from 'cors';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axiosInstance from "../modules/axiosInstance"
 import Loading from "./loading.component"
 
+
 //!!use effect hook to axios call and get the trip data
 
-export default function Trip(){
+export default function Trip(props){
     const params = useParams();
 
     //initially loading is true
@@ -24,6 +24,34 @@ export default function Trip(){
         })
     }, [params])
 
+    const updateDrivers = (driverObject) => {
+        console.log("ADDING DRIVER TO ARRAY",driverObject);
+        //update the state to be responsive
+        setTrip((trip) => ({
+            ...trip,
+            drivers:[...trip.drivers, driverObject],
+        }));
+        //post data to the db
+        axiosInstance.post("/trip/" + params.tripId + "/drivers", {newDriver: driverObject})
+         .then( res => {
+            console.log("DB response from driver update: ", res.data);
+            //if fail return a message and reload
+
+            //if success check that state has not changed
+
+            //if it has update/reload
+            setTrip(res.data)
+         })
+    }
+
+    const updatePassengers = (driverIndex , passengerIndex) =>{
+        //passenger name is username
+        console.log("Adding passenger: " + props.username 
+        + " to driver index: " + driverIndex 
+        + " as passenger #" + passengerIndex)
+
+    }
+
     if(loading){
         return(
             <Loading />
@@ -35,7 +63,11 @@ export default function Trip(){
     }else{
         //3 render options redirect, organiser, participant
         return(
-            <ParticipantView trip={trip}/>
+            <ParticipantView
+            trip={trip}
+            updateDrivers={updateDrivers}
+            updatePassengers={updatePassengers}
+            username={props.username}/>
         )
     }
 }
@@ -63,7 +95,7 @@ function OrganizerView() {
 function ParticipantView(props){
     const trip = props.trip;
 
-    const [driverFormVisible,setDriverFormVisible] = useState(false);
+    const [driverFormVisible, setDriverFormVisible] = useState(false);
 
     return (
         <div>
@@ -84,7 +116,7 @@ function ParticipantView(props){
                     {trip.drivers.map((driver,i) => {
                         return(
                             <li key={i}>
-                                {driver.name}
+                                <SingleDriver driver={driver} index={i} updatePassengers={props.updatePassengers}/>
                             </li>
                         )
                     })}
@@ -93,7 +125,7 @@ function ParticipantView(props){
                     </li>
                 </ul>
             </div>
-            {driverFormVisible && <DriverForm closeMe={() => setDriverFormVisible(false)}/>}
+            {driverFormVisible && <DriverForm closeMe={() => setDriverFormVisible(false)} updateDrivers={props.updateDrivers} username={props.username}/>}
          </div>
     )
 }
@@ -104,6 +136,8 @@ function DriverForm(props){
         departureLocation:'',
         pickingUpSelection:"notPickingUp",
         notes:'',
+        name:props.username,
+        numberOfPassengers:"0",
     })
 
     const handleChange = (e) => {
@@ -120,11 +154,23 @@ function DriverForm(props){
 
         //!! 01/18/22 Add the driver to the array, be sure they can't drive twice
         console.log("driver form submitted", values);
+        //add the passenger array to the driver object
+        let passengers = []
+
+        for(let i=0; i<values.numberOfPassengers; i++){
+            passengers.push(null);
+        }
+
+        //pass the driver object up
+        props.updateDrivers({
+            ...values,
+            passengers:passengers,
+        });
 
         props.closeMe();
         setValues({
             departureLocation:'',
-            numberOfPassengers:0,
+            numberOfPassengers:"0",
             pickingUpSelection:"notPickingUp",
             notes:'',
         })
@@ -134,6 +180,7 @@ function DriverForm(props){
         <div id='driverFormWrapper'>
             <form>
                 <h1>Driver Form</h1>
+                <input type='hidden' name='name' value={props.username}/>
                 <label htmlFor='departureLocation'>
                     Where are you leaving from?
                     <input 
@@ -148,11 +195,9 @@ function DriverForm(props){
                     How many passengers can you take? (not including yourself)
                     <input 
                     type='number'
-                    min='1'
-                    max='99'
                     name='numberOfPassengers'
                     id='numberOfPassengers'
-                    value={values.numberOfPassengers}
+                    value={values.numberOfPassengers || ""}
                     onChange={handleChange}/>
                 </label>
                 <br></br>
@@ -192,6 +237,53 @@ function DriverForm(props){
                 <button onClick={handleSubmit}>Submit</button>
             </form>
             <button onClick={() => props.closeMe()}>close</button>
+        </div>
+    )
+}
+
+function SingleDriver(props){
+    const {
+        departureLocation,
+        pickingUpSelection,
+        notes,
+        name,
+        passengers} = props.driver
+
+    const addPassenger = (passengerIndex) => {
+        props.updatePassengers(props.index,passengerIndex)
+    }
+
+
+
+
+    return(
+        <div className="singleDriverWrapper">
+            <h2>Driver: {name}</h2>
+            <div>Leaving from: {departureLocation}</div>
+            <div>
+                {pickingUpSelection==="pickingUp" ?
+                "Will pick you up at your location" :
+                "You will need to meet them at their location"}
+            </div>
+            <div>Notes: {notes}</div>
+            <ul>
+                {passengers.map((passenger,i) => {
+                    if(passenger){
+                        return(
+                        <li key={i}>
+                            {passenger}
+                        </li>)
+                    }else{
+                        return(
+                            <li key={i}>
+                                <button onClick={() => addPassenger(i)}>
+                                    Ride with {name}
+                                </button>
+                            </li>
+                        )
+                    }
+                })}
+            </ul>
         </div>
     )
 }

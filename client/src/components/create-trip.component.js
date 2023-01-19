@@ -5,7 +5,7 @@ import axiosInstance from "../modules/axiosInstance"
 export default class CreateTrip extends Component{
     constructor(props){
         super(props);
-
+        //!! 01/18/23 Make participants an object that maps keys to status of driving/passenger/null
         this.state={
             title:"",
             destination:"",

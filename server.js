@@ -206,11 +206,37 @@ app.post("/register",
     })
  });
 
+ //update the driver list on a trip
+ app.post('/trip/:id/drivers',ensureAuthenticated, (req,res) => {
+    console.log("Updating trip drivers for",req.params.id);
+    //find trip by ID
+    Trip.findById(req.params.id, (err,data) => {
+        if(err){
+            console.log(err)
+        }else if(!data){
+            console.log("no trip found");
+        }else{
+            data.drivers.push(req.body.newDriver);
+            data.save( (err,updatedData) => {
+                if(err){
+                    console.log(err)
+                }else if(!updatedData){
+                    console.log("no updated trip found");
+                }else{
+                    console.log("Sending updated Trip", updatedData);
+                    res.json(updatedData);
+                }
+            })
+        }
+    })
+    //add driver to array
+
+    //save trip
+
+    //return updated Data
+ })
+
 //testing paths
-app.get('/', (req, res) => {
-    console.log("req recieved");
-    res.send("Youve recieved data from a get request to '/'")
-});
 
 app.get('/red', (req,res) => {
     console.log("red requested");

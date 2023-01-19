@@ -97,7 +97,8 @@ export default class App extends Component {
             <Route path="/createTrip" element={<CreateTrip
             loggedIn={this.state.loggedIn} />} />
 
-            <Route path="trips/:tripId" element={<Trip/>}/>
+            <Route path="trips/:tripId" element={<Trip
+            username={this.state.username}/>}/>
 
             <Route path="/red" element={<Red
              user={this.state.username}
