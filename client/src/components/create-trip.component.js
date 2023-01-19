@@ -135,21 +135,59 @@ export default class CreateTrip extends Component{
 
 function ParticipantForm(props){
     const [participantName, setParticipantName] = useState("");
+    const [listOfParticipants, setListOfParticipants] = useState([]);
 
     function handleChange(e){
         e.persist();
         setParticipantName(e.target.value);
     }
 
-    return(
-        <div id="participantFormWrapper">
-            Enter a participants together cars username:
-            <input
-            type="text"
-            name="participantName"
-            value={participantName}
-            onChange={handleChange}/>
+    function handleSubmit(e){
+        e.preventDefault();
+        //check if this is a valid username
 
+        //add the object to the state
+        setListOfParticipants( (list) => (
+            [...list,{
+                name:participantName,
+                status:null,
+            }]
+        ))
+        //reset the form
+        setParticipantName("");
+    }
+
+    function removeParticipant(participantIndex){
+        console.log("removing participant #" + participantIndex);
+        setListOfParticipants( (list) => (
+            [...list.slice(0,participantIndex),
+                 ...list.slice(participantIndex + 1,list.length)]
+        ))
+    }
+
+    return(
+        <div>
+            <form id="participant">
+                Enter a participants together cars username:
+                <input
+                type="text"
+                name="participantName"
+                value={participantName}
+                onChange={handleChange}/>
+                <button onClick={handleSubmit}>Add participant</button>
+            </form>
+
+            <div id="pending participantList">
+                {listOfParticipants.map( (party,i) => {
+                    return(
+                        <div key={i}>
+                            {party.name}
+                            {party.status || "Unassigned"}
+                            <button onClick={() => removeParticipant(i)}>X</button>
+                        </div>
+                    )
+                })}
+            </div>
         </div>
     )
 }
