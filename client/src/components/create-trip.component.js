@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { Component, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import axiosInstance from "../modules/axiosInstance"
@@ -11,7 +12,7 @@ export default class CreateTrip extends Component{
             destination:"",
             description:"",
             arrivalTime:"",
-            participants:"",
+            participants:[],
             processing:false,
             processingCompleted:false
         }
@@ -50,6 +51,13 @@ export default class CreateTrip extends Component{
                 });
             }
         })
+    }
+
+    setParticipants(partyArray){
+        console.log("set participants called in create-trip class", partyArray)
+        this.setState({
+            participants:partyArray
+        });
     }
 
     //!!polish: I'd like to make the participant portion of the form more dynamic
@@ -108,20 +116,13 @@ export default class CreateTrip extends Component{
                                 onChange={this.handleChange}/>
                             </label>
                             <br></br>
-                            <label htmlFor='participants'>
-                                Input participant usernames separated by commas
-                                (You will have the opportunity to add more later):
-                                <input
-                                type='text'
-                                name='participants'
-                                id='tripParticipantsInput'
-                                value={this.state.participants}
-                                onChange={this.handleChange}/>
-                            </label>
-                            <br></br>
-                            <button type='submit' onClick={this.handleSubmit}>Create my trip!</button>
                         </form>
-                        <ParticipantForm />
+                        <ParticipantForm
+                            participants={this.state.participants}
+                            setParticipants={(partyArray)=>this.setParticipants(partyArray)}/>
+                            <br></br>
+                        <button type='submit' onClick={this.handleSubmit}>Create my trip!</button>
+                        
                     </div>
                 )
             }
@@ -135,7 +136,8 @@ export default class CreateTrip extends Component{
 
 function ParticipantForm(props){
     const [participantName, setParticipantName] = useState("");
-    const [listOfParticipants, setListOfParticipants] = useState([]);
+    const [loading, setLoading] = useState(false)
+    const listOfParticipants = props.participants
 
     function handleChange(e){
         e.persist();
@@ -144,25 +146,33 @@ function ParticipantForm(props){
 
     function handleSubmit(e){
         e.preventDefault();
+        //show loading symbol
+        setLoading(true);
         //check if this is a valid username
-
-        //add the object to the state
-        setListOfParticipants( (list) => (
-            [...list,{
-                name:participantName,
-                status:null,
-            }]
-        ))
-        //reset the form
-        setParticipantName("");
+        axiosInstance.post("validateUsername",{username:participantName})
+         .then( res => {
+            if(res.data.validUser){
+                console.log("found user");
+                //add the object to the state
+                props.setParticipants([...listOfParticipants,{
+                    name:participantName,
+                    status:null,
+                }])
+            }else{
+                console.log("no such user");
+                //show error
+            }
+            //close loading symbol
+            setLoading(false);
+            //reset the form
+             setParticipantName("");
+         }) 
     }
 
     function removeParticipant(participantIndex){
         console.log("removing participant #" + participantIndex);
-        setListOfParticipants( (list) => (
-            [...list.slice(0,participantIndex),
-                 ...list.slice(participantIndex + 1,list.length)]
-        ))
+        props.setParticipants([...listOfParticipants.slice(0,participantIndex),
+        ...listOfParticipants.slice(participantIndex+1,listOfParticipants.length)])
     }
 
     return(
@@ -174,15 +184,15 @@ function ParticipantForm(props){
                 name="participantName"
                 value={participantName}
                 onChange={handleChange}/>
+                {loading && "..."}
                 <button onClick={handleSubmit}>Add participant</button>
             </form>
 
             <div id="pending participantList">
-                {listOfParticipants.map( (party,i) => {
+                {props.participants.map( (party,i) => {
                     return(
-                        <div key={i}>
+                        <div key={i} className='stagedParticipant'>
                             {party.name}
-                            {party.status || "Unassigned"}
                             <button onClick={() => removeParticipant(i)}>X</button>
                         </div>
                     )

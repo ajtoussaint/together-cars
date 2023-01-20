@@ -25,3 +25,10 @@ html {
 .singleDriverWrapper{
   background-color: teal;
 }
+
+.stagedParticipant{
+  background-color: lightslategray;
+  padding:10px;
+  margin: 10px;
+  border: solid black;
+}

@@ -113,10 +113,12 @@ function ParticipantView(props){
             {trip.participants.map((party,i) => {
             return(
                 <li key={i}>
-                    {party}
+                    {party.name}
+                    {party.status}
                 </li>
             )})}
             <div id="driverAssign">
+            <h2>Drivers:</h2>
                 <ul>
                     {trip.drivers.map((driver,i) => {
                         return(

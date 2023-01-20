@@ -150,22 +150,17 @@ app.post("/register",
  //creating a trip
  app.post("/createTrip", ensureAuthenticated, (req, res) => {
     console.log("Server is creating a trip");
-    //trim the text on participant array
-    participantArray = req.body.participants.split(",")
-    participantArray.forEach( (party, i) => {
-        participantArray[i] = party.trim();
-    });
-    //filters out empry entries
-    participantArray = participantArray.filter(party => {
-        party.length > 0;
-    })
+    //!!participants should be validated as valid usernames by the form
+    //participants come in as an array ob objects {name:username, status:(null/driver/passenger)}
+    //!!may need to add the user to this array here or in create-trip.js
+
     let newTrip = new Trip({
         title: req.body.title,
         destination: req.body.destination,
         description: req.body.description,
         arrivalTime: req.body.arrivalTime,
         organizer: req.user.username,
-        participants: participantArray,
+        participants: req.body.participants,
         drivers:[]
     });
 
@@ -217,24 +212,37 @@ app.post("/register",
         }else if(!data){
             console.log("no trip found");
         }else{
+            //add driver to array
             data.drivers.push(req.body.newDriver);
+            //save trip
             data.save( (err,updatedData) => {
                 if(err){
                     console.log(err)
                 }else if(!updatedData){
                     console.log("no updated trip found");
                 }else{
+                    //if all goes well return updated data
                     console.log("Sending updated Trip", updatedData);
                     res.json(updatedData);
                 }
             })
         }
     })
-    //add driver to array
+ })
 
-    //save trip
-
-    //return updated Data
+ app.post('/validateUsername', ensureAuthenticated, (req,res) => {
+    console.log("validating username...", req.body.username);
+    User.findOne({username:req.body.username}, (err, data) => {
+        if(err){
+            console.log(err);
+        }else if(!data){
+            console.log("user is not valid");
+            res.json({validUser:false});
+        }else{
+            res.json({validUser:true});
+            console.log("user is valid");
+        }
+    })
  })
 
 //testing paths
