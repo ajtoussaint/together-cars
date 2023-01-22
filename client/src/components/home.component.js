@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import axiosInstance from "../modules/axiosInstance";
 import Loading from "./loading.component";
@@ -60,6 +60,8 @@ export default class Home extends Component{
                         <MyTrips
                         loading={this.state.loading}
                         trips={this.state.trips}/>
+                        <ParticipatingTrips
+                        username={this.props.username}/>
                     </div>
                 )
             }else{
@@ -246,5 +248,41 @@ class MyTrips extends Component{
                 </div>
             )
         }
+    }
+}
+
+function ParticipatingTrips(props){
+    const [loading,setLoading] = useState(true);
+    const [trips,setTrips] = useState([]);
+
+    useEffect(() => {
+        //will run whenever username is changed
+        console.log("getting data for participant trips");
+        axiosInstance.get("/participantTrips")
+         .then( res => {
+            console.log("got the participant trip data");
+            setTrips(res.data);
+            setLoading(false);
+         })
+    }, [props.username])
+
+
+
+    if(loading){
+        return(<Loading />)
+    }else{
+        return(
+            <div id="participatingTripsWrapper">
+                <h2>Trips you are a participant in:</h2>
+                {trips.map( (trip, i) => (
+                        <div className='tripContainer' key={i}>
+                            <h2>{trip.title}</h2>
+                            <p>{trip.description}</p>
+                            <p>{trip.arrivalTime}</p>
+                            <Link to={"/trips/" + trip._id}>View Trip</Link>
+                        </div>
+                    ))}
+            </div>
+        )
     }
 }

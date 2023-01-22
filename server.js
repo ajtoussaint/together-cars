@@ -243,6 +243,23 @@ app.post("/register",
             console.log("user is valid");
         }
     })
+ });
+
+ //get the trips the user is a participant in
+
+ app.get('/participantTrips', ensureAuthenticated, (req,res) => {
+    console.log("recieved request for participant trips", req.user.username);
+    Trip.find({"participants.name": req.user.username}, (err,data) => {
+        if(err){
+            console.log(err)
+        }else if(!data){
+            console.log("this user is a participant in no trips");
+            res.json([]);
+        }else{
+            console.log("got participant trips:", data.length);
+            res.json(data);
+        }
+    })
  })
 
 //testing paths
