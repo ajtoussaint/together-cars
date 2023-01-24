@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, { Component, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import axiosInstance from "../modules/axiosInstance"
@@ -6,7 +5,6 @@ import axiosInstance from "../modules/axiosInstance"
 export default class CreateTrip extends Component{
     constructor(props){
         super(props);
-        //!! 01/18/23 Make participants an object that maps keys to status of driving/passenger/null
         this.state={
             title:"",
             destination:"",
@@ -14,7 +12,8 @@ export default class CreateTrip extends Component{
             arrivalTime:"",
             participants:[],
             processing:false,
-            processingCompleted:false
+            processingCompleted:false,
+            tripUrl:"/",
         }
 
         this.handleChange = this.handleChange.bind(this);
@@ -41,13 +40,13 @@ export default class CreateTrip extends Component{
             participants: this.state.participants
         })
         .then( res => {
-            //save trip ID to state for redirect
             if(res.status === 200){
                 console.log("Finished creating Trip: ")
                 console.log(res.data);
                 this.setState({
                     processing:false,
-                    processingCompleted:true
+                    processingCompleted:true,
+                    tripUrl:"/trips/" + res.data._id
                 });
             }
         })
@@ -60,7 +59,6 @@ export default class CreateTrip extends Component{
         });
     }
 
-    //!!polish: I'd like to make the participant portion of the form more dynamic
     render(){
         if(this.props.loggedIn){
             if(this.state.processing){
@@ -70,7 +68,7 @@ export default class CreateTrip extends Component{
             }else if(this.state.processingCompleted){
                 return(
                     //!!01/16 This will go to the trip once that is a thing
-                    <Navigate to="/" replace={false} />
+                    <Navigate to={this.state.tripUrl} replace={false} />
                 )
             }else{
                 return(
@@ -154,13 +152,10 @@ function ParticipantForm(props){
             if(res.data.validUser){
                 console.log("found user");
                 //add the object to the state
-                props.setParticipants([...listOfParticipants,{
-                    name:participantName,
-                    status:null,
-                }])
+                props.setParticipants([...listOfParticipants,participantName])
             }else{
                 console.log("no such user");
-                //show error
+                //!!show error to user
             }
             //close loading symbol
             setLoading(false);
@@ -192,7 +187,7 @@ function ParticipantForm(props){
                 {props.participants.map( (party,i) => {
                     return(
                         <div key={i} className='stagedParticipant'>
-                            {party.name}
+                            {party}
                             <button onClick={() => removeParticipant(i)}>X</button>
                         </div>
                     )

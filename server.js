@@ -7,15 +7,16 @@ require('dotenv').config();
 
 //auth
 const passport = require('passport');
-const auth = require("./auth.js");
-const bcrypt = require('bcrypt');
+const auth = require("./routes/auth.js");
 //session store
 const MongoStore = require('connect-mongo');
 
 //database
 const mongoose = require('mongoose');
-const User = require("./models/User.model");
 const Trip = require("./models/Trip.model");
+
+//create a trip page routing
+const createTrip = require("./routes/createTrip.js");
 
 //first connect to the DB
 mongoose.set('strictQuery', false);//put this to suppress an update warning
@@ -61,119 +62,15 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-auth();
+auth(app);
+
+createTrip(app, ensureAuthenticated)
 
 //!!polish remember to ensure authenticated on all private routes
 
-//rotue accessed by passport from auth.js
-app.post("/login",
- passport.authenticate('local'),
- (req, res) =>{
-    console.log("logged in: " + req.user);
-    //controll what gets sent to the axios "res.data" value here
-    let userInfo = {
-        username: req.user.username
-    };
-    console.log("req.session after login: ", req.session);
-    res.send(userInfo)
-})
 
 
-//route to check the user for the session
 
-app.get("/user",
- (req,res) => {
-    console.log("In GET /user route");
-    console.log("req.user:", req.user);
-    console.log("req.session :", req.session);
-    if(req.user){
-        console.log("/user found a user!")
-        res.json({user: req.user});
-    }else{
-        console.log("/user says: no current user");
-        res.json({user: null});
-    }
- }
-)
-
-app.post("/register", 
- (req,res,next) => {
-    console.log("Attempting to register new user");
-    //recieves an object with username and pasword in the body
-    const hash = bcrypt.hashSync(req.body.password, 9);
-    User.findOne({username:req.body.username}, function(err, user){
-        if(err){
-            console.log("DB error");
-            res.json({ error: "DB error try again"});
-        }else if(user){
-            console.log("registration failed, username taken")
-            res.json({ error: "Username is already taken"})
-        }else if(req.body.password != req.body.confirmPassword){
-            console.log("registration failed, passwords must match")
-            res.json({ error: "Passwords must match"})
-        } else{
-            let newUser = new User({
-                username: req.body.username,
-                password:hash
-            });
-            newUser.save((err, data) => {
-                if(err){
-                    console.log("DB error saving new user");
-                }else{
-                    console.log("new user created: ", data.username);
-                    req.newUserData = data;
-                    next(null, data);
-                }
-            })
-        }
-    })
- }, 
-    passport.authenticate('local', {failureRedirect:'/'}),
-    (req, res) => {
-        console.log("User registered successfully: ", req.newUserData);
-        res.json(req.newUserData)
-    }
- )
-
- //logout path
- app.get("/logout", (req, res) => {
-    req.logout( err => {
-        if(err){
-            console.log(err);
-        }
-        res.json({redirect:"/blue"})
-    })
- })
-
- //business logic paths
-
- //creating a trip
- app.post("/createTrip", ensureAuthenticated, (req, res) => {
-    console.log("Server is creating a trip");
-    //!!participants should be validated as valid usernames by the form
-    //participants come in as an array ob objects {name:username, status:(null/driver/passenger)}
-    //!!may need to add the user to this array here or in create-trip.js
-
-    let newTrip = new Trip({
-        title: req.body.title,
-        destination: req.body.destination,
-        description: req.body.description,
-        arrivalTime: req.body.arrivalTime,
-        organizer: req.user.username,
-        participants: req.body.participants,
-        drivers:[]
-    });
-
-    newTrip.save((err, data) => {
-        if(err){
-            //!!polish send an error if there is an error and have it display
-            console.log(err)
-        }else{
-            //No real reason to send a response since the page redirects away
-            res.json(data)
-        }
-    })
- })
 
  //get the trips a user is a part of
  app.get('/trips/:username', ensureAuthenticated, (req,res) => {
@@ -230,20 +127,7 @@ app.post("/register",
     })
  })
 
- app.post('/validateUsername', ensureAuthenticated, (req,res) => {
-    console.log("validating username...", req.body.username);
-    User.findOne({username:req.body.username}, (err, data) => {
-        if(err){
-            console.log(err);
-        }else if(!data){
-            console.log("user is not valid");
-            res.json({validUser:false});
-        }else{
-            res.json({validUser:true});
-            console.log("user is valid");
-        }
-    })
- });
+
 
  //get the trips the user is a participant in
 
@@ -261,6 +145,40 @@ app.post("/register",
         }
     })
  })
+
+ 
+
+app.post('/addPassenger', ensureAuthenticated, (req, res) =>{
+    //req body must include trip ID, driver index, passenger name, seat index
+    const { tripId, driverIndex, passengerName, seatIndex } = req.body;
+    console.log("adding passenger",
+    passengerName,
+    tripId, driverIndex, seatIndex)
+    //get the trip from DB
+    Trip.findById(tripId, (err, data) => {
+        if(err){
+            console.log(err);
+        }else if(!data){
+            res.json({error:"No trip found to add passenger"});
+        }else{
+                //find the correct driver object
+                let myDriver = data.drivers[driverId];
+                //check if the seat is still available
+                if(myDriver.passengers[seatIndex]){
+                    res.json({error:"Seat has already been taken"});
+                }else{
+                    //add passenger to the seat
+                    myDriver.passengers[seatIndex] = passengerName;
+                    //!!More work to do
+                }
+                
+        }
+    })
+
+
+})
+    
+ 
 
 //testing paths
 

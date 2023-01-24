@@ -6,9 +6,6 @@ const tripSchema = new mongoose.Schema({
     description: {type:String, required: true},
     arrivalTime: {type:String, required: true},
     organizer: {type:String, required: true},
-    //!! specify this is an array of strings for easy searching
-    participants: {type:Array, required:true},
-    drivers: {type:Array, required: true}
 })
 
 //drivers is an array of objects which have more driver info
