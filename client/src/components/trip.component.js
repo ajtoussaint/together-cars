@@ -25,6 +25,7 @@ export default function Trip(props){
     }, [params])
 
     const updateDrivers = (driverObject) => {
+        //!! totally redo this
         console.log("ADDING DRIVER TO ARRAY",driverObject);
         //update the state to be responsive
         setTrip((trip) => ({
@@ -45,7 +46,7 @@ export default function Trip(props){
     }
 
     const updatePassengers = (driverIndex , passengerIndex) =>{
-        //!! 01/23/23 make this do the thing
+        //!! 01/23/23 totally redo this
         
         //passenger name is username
         console.log("Adding passenger: " + props.username 
@@ -110,25 +111,28 @@ function ParticipantView(props){
             <p>Destination: {trip.destination}</p>
             <p>by:{trip.organizer}</p>
             <p>Target Arrival Time: {trip.arrivalTime}</p>
-            <p>{trip.description}</p>
-            <h2>Participants:</h2>
-            {trip.participants.map((party,i) => {
+            <p>Description: {trip.description}</p>
+            <Participants tripId={trip._id}/>
+            {//!!replace with a component that gets the participants and loads on its own
+            /*trip.participants.map((party,i) => {
             return(
                 <li key={i}>
                     {party.name}
                     {party.status}
                 </li>
-            )})}
+            )})*/}
             <div id="driverAssign">
+                {/* replace with a component that handles drivers internally instead of throgh the trip*/}
             <h2>Drivers:</h2>
                 <ul>
-                    {trip.drivers.map((driver,i) => {
+                    {
+                    /*trip.drivers.map((driver,i) => {
                         return(
                             <li key={i}>
                                 <SingleDriver driver={driver} index={i} updatePassengers={props.updatePassengers}/>
                             </li>
                         )
-                    })}
+                    })*/}
                     <li>
                         <button onClick={() => setDriverFormVisible(true)}>I can Drive!</button>
                     </li>
@@ -137,6 +141,48 @@ function ParticipantView(props){
             {driverFormVisible && <DriverForm closeMe={() => setDriverFormVisible(false)} updateDrivers={props.updateDrivers} username={props.username}/>}
          </div>
     )
+}
+
+function Participants(props){
+    //expect props to contain trip id
+    const [participantArray, setPartArr] = useState([]);
+    const [loading, setLoading] = useState(true);
+    //declare this so it causes an error if I don't give it 
+    const tripId = props.tripId;
+    //use effect to get all of the participants as an array by searching the tripId field
+    useEffect(() => {
+        console.log("getting participants for trip:", tripId);
+        axiosInstance.get("/participants/"+tripId)
+         .then( res => {
+            //response will be an array of all the participant objects
+            console.log("got the participants: " + res.data);
+            setPartArr(res.data);
+            setLoading(false);
+         })
+    }, [tripId]);
+    //return all of the participants and their status
+    if(loading){
+        return(
+            <Loading />
+        )
+    }else{
+        return(
+            <div id='participantsWrapper'>
+                <h2>Participants:</h2>
+                <ul>
+                    {participantArray.map( (party,i) => {
+                        return(
+                            <li key={i}>
+                                <div>{party.name}</div>
+                                <div>Status: {party.status || "Unassigned"}</div>
+                                <div>{party.organizer && "Organizer"}</div>
+                            </li>
+                        )
+                    })}
+                </ul>
+            </div>
+        )
+    }
 }
 
 function DriverForm(props){

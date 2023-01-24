@@ -17,6 +17,8 @@ const Trip = require("./models/Trip.model");
 
 //create a trip page routing
 const createTrip = require("./routes/createTrip.js");
+//trip page routing
+const tripRoutes = require("./routes/trip.js");
 
 //first connect to the DB
 mongoose.set('strictQuery', false);//put this to suppress an update warning
@@ -64,15 +66,13 @@ app.use(passport.session());
 
 auth(app);
 
-createTrip(app, ensureAuthenticated)
+createTrip(app, ensureAuthenticated);
+
+tripRoutes(app, ensureAuthenticated);
 
 //!!polish remember to ensure authenticated on all private routes
 
-
-
-
-
- //get the trips a user is a part of
+ //get the trips a user is organizing
  app.get('/trips/:username', ensureAuthenticated, (req,res) => {
     console.log("get trips recieved for user: " + req.params.username);
     Trip.find({organizer:req.params.username}, (err,data) => {
@@ -85,49 +85,6 @@ createTrip(app, ensureAuthenticated)
         }
     })
  });
-
- //get the data for a specific trip
- app.get('/trip/:id', ensureAuthenticated, (req,res) => {
-    Trip.findById(req.params.id, (err,data) =>{
-        if(err){
-            console.log(err);
-        }else if(!data){
-            res.json(null)
-        }else{
-            res.json(data);
-        }
-    })
- });
-
- //update the driver list on a trip
- app.post('/trip/:id/drivers',ensureAuthenticated, (req,res) => {
-    console.log("Updating trip drivers for",req.params.id);
-    //find trip by ID
-    Trip.findById(req.params.id, (err,data) => {
-        if(err){
-            console.log(err)
-        }else if(!data){
-            console.log("no trip found");
-        }else{
-            //add driver to array
-            data.drivers.push(req.body.newDriver);
-            //save trip
-            data.save( (err,updatedData) => {
-                if(err){
-                    console.log(err)
-                }else if(!updatedData){
-                    console.log("no updated trip found");
-                }else{
-                    //if all goes well return updated data
-                    console.log("Sending updated Trip", updatedData);
-                    res.json(updatedData);
-                }
-            })
-        }
-    })
- })
-
-
 
  //get the trips the user is a participant in
 
@@ -148,37 +105,6 @@ createTrip(app, ensureAuthenticated)
 
  
 
-app.post('/addPassenger', ensureAuthenticated, (req, res) =>{
-    //req body must include trip ID, driver index, passenger name, seat index
-    const { tripId, driverIndex, passengerName, seatIndex } = req.body;
-    console.log("adding passenger",
-    passengerName,
-    tripId, driverIndex, seatIndex)
-    //get the trip from DB
-    Trip.findById(tripId, (err, data) => {
-        if(err){
-            console.log(err);
-        }else if(!data){
-            res.json({error:"No trip found to add passenger"});
-        }else{
-                //find the correct driver object
-                let myDriver = data.drivers[driverId];
-                //check if the seat is still available
-                if(myDriver.passengers[seatIndex]){
-                    res.json({error:"Seat has already been taken"});
-                }else{
-                    //add passenger to the seat
-                    myDriver.passengers[seatIndex] = passengerName;
-                    //!!More work to do
-                }
-                
-        }
-    })
-
-
-})
-    
- 
 
 //testing paths
 
