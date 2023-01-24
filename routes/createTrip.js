@@ -33,24 +33,24 @@ module.exports = function(app, ensureAuthenticated){
             participantArray.push({
                 tripId:data._id,
                 name:req.user.username,
-                status:null,
                 organizer:true,
             })
             //add all participants in the trip to the array
-            data.participants.forEach( party => {
+            req.body.participants.forEach( party => {
                 participantArray.push({
                     tripId:data._id,
                     name:party,
-                    status:null,
                 })
             });
 
-            Participant.create(participantArray, (err, participantData) =>{
+            console.log("Participant Array: ", participantArray);
+
+            Participant.create(participantArray, (err) =>{
                 if(err){
                     console.log(err)
                 }else{
                     //!! if there is an error display that to the user and do not procede
-                    res.json({tripData:data,participantData:participantData});
+                    res.json(data);
                 }
             })
         }
