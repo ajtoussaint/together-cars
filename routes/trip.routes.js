@@ -136,4 +136,47 @@ module.exports = function(app,ensureAuthenticated){
         }
     })
  })
+
+ app.post('/removePassenger/:driverId', ensureAuthenticated, (req,res) => {
+    console.log("removing passenger...");
+    const driverId = req.params.driverId;
+    const {tripId, passengerIndex} = req.body;
+    const username = req.user.username;
+    //find Driver and update
+    Driver.findById(driverId, (err, data) => {
+        if(err){
+            console.log(err);
+        }else{
+            console.log("Found driver: ", data);
+            data.passengers[passengerIndex] = null;
+            data.markModified("passengers");
+            data.save( (err,updatedData) => {
+                if(err){
+                    console.log(err);
+                }else{
+                    console.log("updated driver: ", updatedData);
+                    console.log("updating participant status...");
+                    Participant.findOne({name:username,tripId:tripId}, (err,participantData) => {
+                        if(err){
+                            console.log(err);
+                        }else{
+                            console.log("Found participant: ", participantData);
+                            participantData.status = null;
+                            participantData.save( (err,updatedParticipantData) => {
+                                if(err){
+                                    console.log(err);
+                                }else{
+                                    console.log("Updated participant: ", updatedParticipantData);
+                                    res.json({driver:updatedData, participant:updatedParticipantData});
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+        }
+    })
+    //find participant and update
+ })
+
 }

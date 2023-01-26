@@ -173,7 +173,7 @@ function Drivers(props){
     function toggleDriverForm(){
         setDriverFormVisible( (driverFormVisible) => {
             return !driverFormVisible
-        })
+        });
     }
 
     //get all of the drivers in the DB based on the trip ID
@@ -212,6 +212,7 @@ function Drivers(props){
                                     <SingleDriver
                                     driver={driver}
                                     tripId={tripId}
+                                    username={username}
                                     />
                                 </li>
                             )
@@ -361,6 +362,8 @@ function SingleDriver(props){
 
     const tripId = props.tripId;
 
+    const username = props.username;
+
     useEffect( () => {
         setPassengers(props.driver.passengers);
     }, [props]);
@@ -376,6 +379,19 @@ function SingleDriver(props){
             }else{
                 //recieve {driver:...,passenger:...}
                 console.log("Passenger add was a success!", res.data.driver.passengers);
+                setPassengers(res.data.driver.passengers);
+            }
+         })
+    }
+
+    const removePassenger = (passengerIndex) => {
+        console.log("Removing passenger #", passengerIndex, " to driver:", name);
+        axiosInstance.post("/removePassenger/" + driverId, {tripId:tripId, passengerIndex: passengerIndex})
+         .then( res => {
+            if(res.data.error){
+                console.log(res.data.error);
+            }else{
+                console.log("Successfull passenger removal! ", res.data.driver);
                 setPassengers(res.data.driver.passengers);
             }
          })
@@ -398,10 +414,18 @@ function SingleDriver(props){
                 {//an array of numbers 0 => # of passengers
                     Object.keys(passengers).sort().map( (index) => {
                         if(passengers[index]){
-                            return(
-                            <li key={index}>
-                                {passengers[index]}
-                            </li>)
+                            if(passengers[index] === username){
+                                return(
+                                    <li key={index}>
+                                        {passengers[index]}
+                                        <button onClick={() => removePassenger(index)}>Leave Driver</button>
+                                    </li>)
+                            }else{
+                                return(
+                                    <li key={index}>
+                                        {passengers[index]}
+                                    </li>)
+                            }
                         }else{
                             return(
                                 <li key={index}>
