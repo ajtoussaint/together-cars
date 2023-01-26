@@ -1,3 +1,4 @@
+import { set } from 'mongoose';
 import { useEffect, useState } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import axiosInstance from "../modules/axiosInstance"
@@ -103,7 +104,7 @@ function OrganizerView() {
 function ParticipantView(props){
     const trip = props.trip;
 
-    const [driverFormVisible, setDriverFormVisible] = useState(false);
+    //const [driverFormVisible, setDriverFormVisible] = useState(false);
 
     return (
         <div>
@@ -113,32 +114,25 @@ function ParticipantView(props){
             <p>Target Arrival Time: {trip.arrivalTime}</p>
             <p>Description: {trip.description}</p>
             <Participants tripId={trip._id}/>
-            {//!!replace with a component that gets the participants and loads on its own
-            /*trip.participants.map((party,i) => {
-            return(
-                <li key={i}>
-                    {party.name}
-                    {party.status}
-                </li>
-            )})*/}
-            <div id="driverAssign">
-                {/* replace with a component that handles drivers internally instead of throgh the trip*/}
-            <h2>Drivers:</h2>
-                <ul>
-                    {
-                    /*trip.drivers.map((driver,i) => {
-                        return(
-                            <li key={i}>
-                                <SingleDriver driver={driver} index={i} updatePassengers={props.updatePassengers}/>
-                            </li>
-                        )
-                    })*/}
-                    <li>
-                        <button onClick={() => setDriverFormVisible(true)}>I can Drive!</button>
-                    </li>
-                </ul>
+            <Drivers tripId={trip._id}/>
+                {/* replace with a component that handles drivers internally instead of throgh the trip
+                <h2>Drivers:</h2>
+                    <ul>
+                        {
+                        /*trip.drivers.map((driver,i) => {
+                            return(
+                                <li key={i}>
+                                    <SingleDriver driver={driver} index={i} updatePassengers={props.updatePassengers}/>
+                                </li>
+                            )
+                        })
+                        <li>
+                            <button onClick={() => setDriverFormVisible(true)}>I can Drive!</button>
+                        </li>
+                    </ul>
             </div>
             {driverFormVisible && <DriverForm closeMe={() => setDriverFormVisible(false)} updateDrivers={props.updateDrivers} username={props.username}/>}
+            */}
          </div>
     )
 }
@@ -185,13 +179,74 @@ function Participants(props){
     }
 }
 
+function Drivers(props){
+    const [driverFormVisible, setDriverFormVisible] = useState(false);
+    const [drivers, setDrivers] = useState([]);
+    const [loading, setLoading] = useState(false);
+    //expect props to contain tripId
+    const tripId = props.tripId
+
+    function toggleDriverForm(){
+        setDriverFormVisible( (driverFormVisible) => {
+            return !driverFormVisible
+        })
+    }
+
+    //get all of the drivers in the DB based on the trip ID
+    const getDrivers = () => {
+        console.log("getting drivers");
+        setLoading(true);
+        axiosInstance.get("/driver/" + tripId,)
+         .then( res => {
+            console.log("got the drivers", res.data);
+            setDrivers(res.data);
+            setLoading(false);
+         })
+         .catch( err => {
+            console.log(err);
+            setLoading(false);
+            //!! display an error for the user
+         })
+    }
+
+    useEffect(getDrivers, [tripId]);
+
+    //display the drivers in the return
+    if(loading){
+        return(
+            <Loading />
+        )
+    }else{
+        //if the user is not already a driver display the driver form button
+        //update the Driver Form and routes to create driver objects rather than try to add them to the trip
+        return(
+            <div id="driversWrapper">
+                <ul>
+                    {drivers.map((driver,i) => {
+                            return(
+                                <li key={i}>
+                                    <SingleDriver driver={driver} tripId={tripId}/>
+                                </li>
+                            )
+                        })}
+                </ul>
+                
+                <button onClick={() => toggleDriverForm()}>I can Drive!</button>
+                {driverFormVisible && <DriverForm closeMe={() => toggleDriverForm()} tripId={tripId} refresh={() => getDrivers()}/>}
+
+            </div> 
+        )
+    }
+}
+
 function DriverForm(props){
+    const tripId = props.tripId;
+    const refresh = props.refresh;
 
     const [values, setValues] = useState({
         departureLocation:'',
         pickingUpSelection:"notPickingUp",
         notes:'',
-        name:props.username,
         numberOfPassengers:"0",
     })
 
@@ -207,8 +262,6 @@ function DriverForm(props){
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        //!! 01/18/22 Add the driver to the array, be sure they can't drive twice
-        console.log("driver form submitted", values);
         //add the passenger array to the driver object
         let passengers = []
 
@@ -216,11 +269,23 @@ function DriverForm(props){
             passengers.push(null);
         }
 
-        //pass the driver object up
-        props.updateDrivers({
-            ...values,
-            passengers:passengers,
-        });
+        console.log("Posting new driver");
+
+        //send axios request to create the driver object
+        axiosInstance.post("/driver", {
+            tripId: tripId,
+            departureLocation: values.departureLocation,
+            pickingUpSelection: values.pickingUpSelection,
+            notes: values.notes,
+            passengers: passengers,
+        })
+         .then( res => {
+            //response will be the driver data
+            console.log("created new driver:", res.data.name);
+            //refresh the "Drivers" component to get the new driver
+            refresh();
+         })
+
 
         props.closeMe();
         setValues({
@@ -297,15 +362,36 @@ function DriverForm(props){
 }
 
 function SingleDriver(props){
+    const [passengers, setPassengers] = useState(props.driver.passengers);
+
     const {
         departureLocation,
         pickingUpSelection,
         notes,
-        name,
-        passengers} = props.driver
+        name,} = props.driver
+    
+    const driverId = props.driver._id;
+
+    const tripId = props.tripId;
+
+    useEffect( () => {
+        setPassengers(props.driver.passengers);
+    }, [props]);
 
     const addPassenger = (passengerIndex) => {
-        props.updatePassengers(props.index,passengerIndex)
+        //!!may need to update the passengers state before hand and rollback due to slowness
+        console.log("Adding passenger #", passengerIndex, " to driver:", name);
+        //send trip Id from driver and passenger Index
+        axiosInstance.post("/passenger/" + driverId, {tripId:tripId, passengerIndex: passengerIndex})
+         .then( res =>{
+            if(res.data.error){
+                console.log(res.data.error);
+            }else{
+                //recieve {driver:...,passenger:...}
+                console.log("Passenger add was a success!", res.data.driver.passengers);
+                setPassengers(res.data.driver.passengers);
+            }
+         })
     }
 
 
@@ -322,22 +408,24 @@ function SingleDriver(props){
             </div>
             <div>Notes: {notes}</div>
             <ul>
-                {passengers.map((passenger,i) => {
-                    if(passenger){
-                        return(
-                        <li key={i}>
-                            {passenger}
-                        </li>)
-                    }else{
-                        return(
-                            <li key={i}>
-                                <button onClick={() => addPassenger(i)}>
-                                    Ride with {name}
-                                </button>
-                            </li>
-                        )
-                    }
-                })}
+                {//an array of numbers 0 => # of passengers
+                    Object.keys(passengers).sort().map( (index) => {
+                        if(passengers[index]){
+                            return(
+                            <li key={index}>
+                                {passengers[index]}
+                            </li>)
+                        }else{
+                            return(
+                                <li key={index}>
+                                    <button onClick={() => addPassenger(index)}>
+                                        Ride with {name}
+                                    </button>
+                                </li>
+                            )
+                        }
+                    })
+                }
             </ul>
         </div>
     )

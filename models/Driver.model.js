@@ -6,7 +6,7 @@ const driverSchema = new mongoose.Schema({
     departureLocation: {type:String, required: true},
     pickingUpSelection: {type:String, required: true},
     notes: {type:String, required: false},
-    participants: {type:Array, required:true},
+    passengers: {type:Object, required:true},
 })
 
 const Driver = mongoose.model("Driver", driverSchema);

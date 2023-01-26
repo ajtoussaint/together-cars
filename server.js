@@ -7,7 +7,7 @@ require('dotenv').config();
 
 //auth
 const passport = require('passport');
-const auth = require("./routes/auth.js");
+const auth = require("./routes/auth.routes.js");
 //session store
 const MongoStore = require('connect-mongo');
 
@@ -16,9 +16,9 @@ const mongoose = require('mongoose');
 const Trip = require("./models/Trip.model");
 
 //create a trip page routing
-const createTrip = require("./routes/createTrip.js");
+const createTrip = require("./routes/createTrip.routes.js");
 //trip page routing
-const tripRoutes = require("./routes/trip.js");
+const tripRoutes = require("./routes/trip.routes.js");
 
 //first connect to the DB
 mongoose.set('strictQuery', false);//put this to suppress an update warning
