@@ -103,6 +103,7 @@ function OrganizerView() {
 
 function ParticipantView(props){
     const trip = props.trip;
+    const username = props.username;
 
     //const [driverFormVisible, setDriverFormVisible] = useState(false);
 
@@ -114,25 +115,7 @@ function ParticipantView(props){
             <p>Target Arrival Time: {trip.arrivalTime}</p>
             <p>Description: {trip.description}</p>
             <Participants tripId={trip._id}/>
-            <Drivers tripId={trip._id}/>
-                {/* replace with a component that handles drivers internally instead of throgh the trip
-                <h2>Drivers:</h2>
-                    <ul>
-                        {
-                        /*trip.drivers.map((driver,i) => {
-                            return(
-                                <li key={i}>
-                                    <SingleDriver driver={driver} index={i} updatePassengers={props.updatePassengers}/>
-                                </li>
-                            )
-                        })
-                        <li>
-                            <button onClick={() => setDriverFormVisible(true)}>I can Drive!</button>
-                        </li>
-                    </ul>
-            </div>
-            {driverFormVisible && <DriverForm closeMe={() => setDriverFormVisible(false)} updateDrivers={props.updateDrivers} username={props.username}/>}
-            */}
+            <Drivers tripId={trip._id} username={username}/>
          </div>
     )
 }
@@ -185,6 +168,7 @@ function Drivers(props){
     const [loading, setLoading] = useState(false);
     //expect props to contain tripId
     const tripId = props.tripId
+    const username = props.username;
 
     function toggleDriverForm(){
         setDriverFormVisible( (driverFormVisible) => {
@@ -225,7 +209,10 @@ function Drivers(props){
                     {drivers.map((driver,i) => {
                             return(
                                 <li key={i}>
-                                    <SingleDriver driver={driver} tripId={tripId}/>
+                                    <SingleDriver
+                                    driver={driver}
+                                    tripId={tripId}
+                                    />
                                 </li>
                             )
                         })}
@@ -396,7 +383,7 @@ function SingleDriver(props){
 
 
 
-
+    //!! add buttons and functions to remove driver and passengers
     return(
         <div className="singleDriverWrapper">
             <h2>Driver: {name}</h2>

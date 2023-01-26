@@ -14,6 +14,7 @@ const MongoStore = require('connect-mongo');
 //database
 const mongoose = require('mongoose');
 const Trip = require("./models/Trip.model");
+const Participant = require("./models/Participant.model");
 
 //create a trip page routing
 const createTrip = require("./routes/createTrip.routes.js");
@@ -90,15 +91,25 @@ tripRoutes(app, ensureAuthenticated);
 
  app.get('/participantTrips', ensureAuthenticated, (req,res) => {
     console.log("recieved request for participant trips", req.user.username);
-    Trip.find({"participants.name": req.user.username}, (err,data) => {
+    Participant.find({name:req.user.username}, (err,data) => {
         if(err){
-            console.log(err)
+            console.log(err);
         }else if(!data){
-            console.log("this user is a participant in no trips");
             res.json([]);
         }else{
-            console.log("got participant trips:", data.length);
-            res.json(data);
+            console.log("Found user's participant objects", data);
+            var idArr = []
+            data.forEach( party => {
+                idArr.push(party.tripId);
+            });
+            Trip.find({'_id': {$in: idArr}}, (err,tripData) => {
+                if(err){
+                    console.log(err);
+                }else{
+                    console.log("Found data on user's participant trips: ", tripData);
+                    res.json(tripData);
+                }
+            })
         }
     })
  })
