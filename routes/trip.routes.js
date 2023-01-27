@@ -176,7 +176,42 @@ module.exports = function(app,ensureAuthenticated){
             })
         }
     })
-    //find participant and update
  })
+
+ //!!! add the /removeDriver/:driverId route
+  app.post("/removeDriver/:driverId", ensureAuthenticated, (req,res) => {
+    const driverId = req.params.driverId
+    console.log("Removing a driver: ", driverId);
+    Driver.findById(driverId, (err,driverData) => {
+        if(err){
+            console.log(err);
+        }else{
+            console.log("Found the driver data: ", driverData);
+            //update all passengers and driver to no longer be passengers
+            participantArr = driverData.passengers ?
+             [driverData.name, ...Object.values(driverData.passengers).filter(name => name)] :
+             [driverData.name];
+            console.log("updating the participant's status: ", participantArr)
+            Participant.updateMany({name:participantArr, tripId: driverData.tripId},
+            {status: null}, (err, updateData) => {
+                if(err){
+                    console.log(err);
+                }else{
+                    console.log("Updated ", updateData.modifiedCount, " participants");
+                    //delete the driver if that all goes well
+                    console.log("Deleting Driver");
+                    Driver.findByIdAndDelete(driverId, (err, deletedDriver) => {
+                        if(err){
+                            console.log(err);
+                        }else{
+                            console.log("Deleted driver: ", deletedDriver.name);
+                            res.json({error:null});
+                        }
+                    })
+                }
+            })
+        }
+    })
+  })
 
 }

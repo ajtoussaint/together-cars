@@ -1,4 +1,4 @@
-import { set } from 'mongoose';
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import axiosInstance from "../modules/axiosInstance"
@@ -104,9 +104,6 @@ function OrganizerView() {
 function ParticipantView(props){
     const trip = props.trip;
     const username = props.username;
-
-    //const [driverFormVisible, setDriverFormVisible] = useState(false);
-
     return (
         <div>
             <h1>{trip.title}</h1>
@@ -195,14 +192,22 @@ function Drivers(props){
 
     useEffect(getDrivers, [tripId]);
 
+    const removeDriver = (driverId) =>{
+        console.log("Removing Driver: ", driverId);
+        setLoading(true);
+        axios.post('/removeDriver/' + driverId)
+         .then( res => {
+            console.log("Driver removed");
+            getDrivers();
+         })
+    }
+
     //display the drivers in the return
     if(loading){
         return(
             <Loading />
         )
     }else{
-        //if the user is not already a driver display the driver form button
-        //update the Driver Form and routes to create driver objects rather than try to add them to the trip
         return(
             <div id="driversWrapper">
                 <ul>
@@ -213,6 +218,7 @@ function Drivers(props){
                                     driver={driver}
                                     tripId={tripId}
                                     username={username}
+                                    removeDriver={() => removeDriver(driver._id)}
                                     />
                                 </li>
                             )
@@ -364,6 +370,8 @@ function SingleDriver(props){
 
     const username = props.username;
 
+
+
     useEffect( () => {
         setPassengers(props.driver.passengers);
     }, [props]);
@@ -403,29 +411,27 @@ function SingleDriver(props){
     return(
         <div className="singleDriverWrapper">
             <h2>Driver: {name}</h2>
+            <p>{name === username ? (<button onClick={() => props.removeDriver()}>Remove Driver</button>) : ""}</p>
             <div>Leaving from: {departureLocation}</div>
             <div>
-                {pickingUpSelection==="pickingUp" ?
+                {!passengers ? "Not taking Passengers" :
+                pickingUpSelection==="pickingUp" ?
                 "Will pick you up at your location" :
                 "You will need to meet them at their location"}
             </div>
             <div>Notes: {notes}</div>
             <ul>
                 {//an array of numbers 0 => # of passengers
-                    Object.keys(passengers).sort().map( (index) => {
+                    (passengers ? Object.keys(passengers) : []).sort().map( (index) => {
                         if(passengers[index]){
-                            if(passengers[index] === username){
-                                return(
-                                    <li key={index}>
-                                        {passengers[index]}
-                                        <button onClick={() => removePassenger(index)}>Leave Driver</button>
-                                    </li>)
-                            }else{
-                                return(
-                                    <li key={index}>
-                                        {passengers[index]}
-                                    </li>)
-                            }
+                            return(
+                                <li key={index}>
+                                    {passengers[index]}
+                                    {passengers[index] === username ?
+                                    (<button onClick={() => removePassenger(index)}>Leave Driver</button>) :
+                                    ""}
+                                </li>
+                                )
                         }else{
                             return(
                                 <li key={index}>
