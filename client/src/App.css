@@ -1,34 +1,35 @@
-.redContainer{
+.redContainer {
   background-color: crimson;
 }
 
-.blueContainer{
-  background-color:dodgerblue;
+.blueContainer {
+  background-color: dodgerblue;
 }
 
 html {
   background-color: rgb(56, 56, 56);
 }
 
-#navbarWrapper{
+#navbarWrapper {
+  background-color: lightslategray;
+  border: solid beige 5px;
+}
+
+.tripContainer {
   background-color: lightslategray;
 }
 
-.tripContainer{
-  background-color: lightslategray;
-}
-
-#driverFormWrapper{
+#driverFormWrapper {
   background-color: forestgreen;
 }
 
-.singleDriverWrapper{
+.singleDriverWrapper {
   background-color: teal;
 }
 
-.stagedParticipant{
+.stagedParticipant {
   background-color: lightslategray;
-  padding:10px;
+  padding: 10px;
   margin: 10px;
   border: solid black;
 }

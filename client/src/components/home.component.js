@@ -220,6 +220,7 @@ class Register extends Component{
     }
 }
 
+
 function ParticipatingTrips(props){
     const [loading,setLoading] = useState(true);
     const [trips,setTrips] = useState([]);
@@ -244,7 +245,8 @@ function ParticipatingTrips(props){
         return(
             <div id="participatingTripsWrapper">
                 <h2>Your Trips:</h2>
-                {trips.map( (trip, i) => (
+                {trips.length < 1 ? (<h2>No trips to display</h2>) : 
+                trips.map( (trip, i) => (
                         <div className='tripContainer' key={i}>
                             <h2>{trip.title}</h2>
                             <p>{trip.description}</p>
