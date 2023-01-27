@@ -55,12 +55,29 @@ module.exports = function(app,ensureAuthenticated){
             console.log(err);
         }else{
             console.log("created a new driver, ", data.name);
-            //!! Update participant status
-            res.json(data);
+            // Update participant status
+            Participant.findOne( {name:req.user.username, tripId:req.body.tripId}, (err, participantData) => {
+                if(err){
+                    console.log(err);
+                }else{
+                    console.log("updating participant status");
+                    participantData.status = "driver";
+                    participantData.save( (err, updatedData) => {
+                        if(err){
+                            console.log(err);
+                        }else{
+                            console.log("participant updated successfully: ", updatedData);
+                            res.json(data);
+                        }
+                    })
+                }
+            })
+                
         }
     })
  })
 
+ //get all the drivers for a trip
  app.get('/driver/:tripId', ensureAuthenticated, (req,res) => {
     console.log("getting drivers for trip: ", req.params.tripId);
     Driver.find({tripId:req.params.tripId}, (err,data) =>{
@@ -73,6 +90,7 @@ module.exports = function(app,ensureAuthenticated){
     })
  })
 
+ //add a new passenger to a driver
  app.post('/passenger/:driverId', ensureAuthenticated, (req,res) => {
     console.log("checking passenger status");
     const { tripId, passengerIndex } = req.body;
@@ -137,6 +155,7 @@ module.exports = function(app,ensureAuthenticated){
     })
  })
 
+ //remove a passenger from a driver
  app.post('/removePassenger/:driverId', ensureAuthenticated, (req,res) => {
     console.log("removing passenger...");
     const driverId = req.params.driverId;
@@ -178,7 +197,7 @@ module.exports = function(app,ensureAuthenticated){
     })
  })
 
- //!!! add the /removeDriver/:driverId route
+ //remove a driver from a trip
   app.post("/removeDriver/:driverId", ensureAuthenticated, (req,res) => {
     const driverId = req.params.driverId
     console.log("Removing a driver: ", driverId);
