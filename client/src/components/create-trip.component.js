@@ -1,6 +1,7 @@
 import React, { Component, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import axiosInstance from "../modules/axiosInstance"
+import Loading from "./loading.component"
 
 export default class CreateTrip extends Component{
     constructor(props){
@@ -60,7 +61,11 @@ export default class CreateTrip extends Component{
     }
 
     render(){
-        if(this.props.loggedIn){
+        if(this.props.loading){
+            return(
+                <Loading />
+            )
+        }else if(this.props.loggedIn){
             if(this.state.processing){
                 return(
                     <h1>Creating your trip...</h1>
