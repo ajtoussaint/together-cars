@@ -57,9 +57,6 @@ export default class Home extends Component{
                 return(
                     <div id="homeComponentWrapper">
                         <h1>Welcome to Together Cars, {this.props.username}!</h1>
-                        <MyTrips
-                        loading={this.state.loading}
-                        trips={this.state.trips}/>
                         <ParticipatingTrips
                         username={this.props.username}/>
                     </div>
@@ -223,34 +220,6 @@ class Register extends Component{
     }
 }
 
-class MyTrips extends Component{
-    render(){
-        if(this.props.loading){
-            return(
-                <div>
-                    <h2>Your Trips</h2>
-                    <Loading />
-                </div>
-            )
-        }else{
-            //!!polish: sort trips by arrival datetime
-            return(
-                <div id="myTripsWrapper">
-                    <h2>Your Trips</h2>
-                    {this.props.trips.map( (trip, i) => (
-                        <div className='tripContainer' key={i}>
-                            <h2>{trip.title}</h2>
-                            <p>{trip.description}</p>
-                            <p>{trip.arrivalTime}</p>
-                            <Link to={"/trips/" + trip._id}>View Trip</Link>
-                        </div>
-                    ))}
-                </div>
-            )
-        }
-    }
-}
-
 function ParticipatingTrips(props){
     const [loading,setLoading] = useState(true);
     const [trips,setTrips] = useState([]);
@@ -271,9 +240,10 @@ function ParticipatingTrips(props){
     if(loading){
         return(<Loading />)
     }else{
+        //!!if user is organizer change appearance somehow
         return(
             <div id="participatingTripsWrapper">
-                <h2>Trips you are a participant in:</h2>
+                <h2>Your Trips:</h2>
                 {trips.map( (trip, i) => (
                         <div className='tripContainer' key={i}>
                             <h2>{trip.title}</h2>
