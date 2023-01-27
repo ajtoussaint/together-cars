@@ -25,37 +25,8 @@ export default function Trip(props){
         })
     }, [params])
 
-    const updateDrivers = (driverObject) => {
-        //!! totally redo this
-        console.log("ADDING DRIVER TO ARRAY",driverObject);
-        //update the state to be responsive
-        setTrip((trip) => ({
-            ...trip,
-            drivers:[...trip.drivers, driverObject],
-        }));
-        //post data to the db
-        axiosInstance.post("/trip/" + params.tripId + "/drivers", {newDriver: driverObject})
-         .then( res => {
-            console.log("DB response from driver update: ", res.data);
-            //if fail return a message and reload
-
-            //if success check that state has not changed
-
-            //if it has update/reload
-            setTrip(res.data)
-         })
-    }
-
-    const updatePassengers = (driverIndex , passengerIndex) =>{
-        //!! 01/23/23 totally redo this
-        
-        //passenger name is username
-        console.log("Adding passenger: " + props.username 
-        + " to driver index: " + driverIndex 
-        + " as passenger #" + passengerIndex)
-
-    }
     if(!props.loggedIn){
+        //I should put this inside loading so redirect does not occur before the load
         return(
             <Navigate to="/" replace={false} />
         )
@@ -73,8 +44,6 @@ export default function Trip(props){
             return(
                 <ParticipantView
                 trip={trip}
-                updateDrivers={updateDrivers}
-                updatePassengers={updatePassengers}
                 username={props.username}/>
             )
         }
@@ -163,6 +132,7 @@ function Drivers(props){
     const [driverFormVisible, setDriverFormVisible] = useState(false);
     const [drivers, setDrivers] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [showButton, setShowButton] = useState(true);
     //expect props to contain tripId
     const tripId = props.tripId
     const username = props.username;
@@ -202,6 +172,26 @@ function Drivers(props){
          })
     }
 
+    useEffect( () => {
+        var partyArr = drivers.reduce((arr, driver) => {
+            arr.push(driver.name);
+            if(driver.passengers){
+                Object.values(driver.passengers).forEach( passenger => {
+                    if(passenger){
+                        arr.push(passenger);
+                    }
+                })
+            }
+            return arr
+        },[]);
+        console.log(partyArr);
+        if(partyArr.indexOf(username) < 0){
+            setShowButton(true);
+        }else{
+            setShowButton(false);
+        }
+    }, [ drivers ])
+
     //display the drivers in the return
     if(loading){
         return(
@@ -219,15 +209,15 @@ function Drivers(props){
                                     tripId={tripId}
                                     username={username}
                                     removeDriver={() => removeDriver(driver._id)}
+                                    updateDrivers={() => getDrivers()}
                                     />
                                 </li>
                             )
                         })}
                 </ul>
-                
-                <button onClick={() => toggleDriverForm()}>I can Drive!</button>
+                {/* Only show this if user is status null */}
+                {showButton && (<button onClick={() => toggleDriverForm()}>I can Drive!</button>)}
                 {driverFormVisible && <DriverForm closeMe={() => toggleDriverForm()} tripId={tripId} refresh={() => getDrivers()}/>}
-
             </div> 
         )
     }
@@ -364,11 +354,9 @@ function SingleDriver(props){
         notes,
         name,} = props.driver
     
+    const { tripId, username, updateDrivers } = props
     const driverId = props.driver._id;
 
-    const tripId = props.tripId;
-
-    const username = props.username;
 
 
 
@@ -387,7 +375,9 @@ function SingleDriver(props){
             }else{
                 //recieve {driver:...,passenger:...}
                 console.log("Passenger add was a success!", res.data.driver.passengers);
+                //may not manage this state locally
                 setPassengers(res.data.driver.passengers);
+                updateDrivers();
             }
          })
     }
@@ -401,6 +391,7 @@ function SingleDriver(props){
             }else{
                 console.log("Successfull passenger removal! ", res.data.driver);
                 setPassengers(res.data.driver.passengers);
+                updateDrivers();
             }
          })
     }
