@@ -134,6 +134,7 @@ module.exports = function(app,ensureAuthenticated){
                                     console.log("driver data update a success: ", updatedDriverData);
                                     console.log("updating participant data");
                                     data.status = "passenger";
+                                    data.driverId = updatedDriverData._id;
                                     data.save( (err, updatedData) => {
                                         if(err){
                                             console.log(err);
@@ -181,6 +182,7 @@ module.exports = function(app,ensureAuthenticated){
                         }else{
                             console.log("Found participant: ", participantData);
                             participantData.status = null;
+                            participantData.driverId = null;
                             participantData.save( (err,updatedParticipantData) => {
                                 if(err){
                                     console.log(err);
@@ -207,7 +209,7 @@ module.exports = function(app,ensureAuthenticated){
         }else{
             console.log("Found the driver data: ", driverData);
             //update all passengers and driver to no longer be passengers
-            participantArr = driverData.passengers ?
+            var participantArr = driverData.passengers ?
              [driverData.name, ...Object.values(driverData.passengers).filter(name => name)] :
              [driverData.name];
             console.log("updating the participant's status: ", participantArr)
@@ -229,6 +231,120 @@ module.exports = function(app,ensureAuthenticated){
                     })
                 }
             })
+        }
+    })
+  })
+
+  //add a participant to the trip
+  app.post("/addParticipant/:tripId", ensureAuthenticated, (req, res) => {
+    const tripId = req.params.tripId;
+    const participantName = req.body.name;
+
+    Participant.findOne({name: participantName, tripId:tripId}, (err,data) => {
+        if(err){
+            console.log(err);
+        }else if(data){
+            console.log("Participant already exists!")
+        }else{
+            let newParticipant = new Participant({
+                tripId: tripId,
+                name: participantName,
+            });
+            newParticipant.save( (err,saveData) => {
+                if(err){
+                    console.log(err)
+                }else{
+                    console.log("created new participant: ", saveData);
+                    res.json(saveData);
+                }
+            })
+        }
+    })
+
+  })
+
+  //remove a participant from a trip
+  app.post("/removeParticipant/:tripId", ensureAuthenticated, (req, res) => {
+    const tripId = req.params.tripId;
+    const participantName = req.body.name;
+
+    Participant.findOne({name: participantName, tripId:tripId}, (err,partyData) => {
+        if(partyData.organizer){
+            res.json({error: "cannot remove organizer!"})
+        }else{
+            if(partyData.status == "driver"){
+            //delete the driver object if there is one
+            console.log("Deleting associated driver");
+            Driver.findOneAndDelete({name:participantName, tripId:tripId}, (err,deletedDriver) => {
+                if(err){
+                    console.log(err);
+                }else{
+                    console.log("Deleted driver")
+                    console.log("cleaning up passenger statuses...")
+                    var participantArr = deletedDriver.passengers ?
+                    [driverData.name, ...Object.values(driverData.passengers).filter(name => name)] :
+                    [driverData.name];
+                    Participant.updateMany({name:participantArr, tripId:tripId}, (err,updateData) => {
+                        if(err){
+                            console.log(err);
+                        }else{
+                            console.log("Updated ", updateData.modifiedCount ," participantsstatus")
+                            //finally delete the participant itself
+                            Participant.findByIdAndDelete(partyData._id, (err,deletedData) =>{
+                                if(err){
+                                    console.log(err);
+                                }else{
+                                    console.log("Deleted participant");
+                                    res.json({error:null});
+                                }
+                            })
+                        }
+                    })
+
+                }
+            })
+
+
+            }else if(partyData.status == "passenger"){
+            //!! remove the passenger if there is one
+            //Find the driver
+            Driver.findById(partyData.driverId, (err, driverData) => {
+                if(err){
+                    console.log(err);
+                }else{
+                    console.log("updating driver to remove the participant as a passenger");
+                    driverData.passengers[Object.values(driverData.passengers).indexOf(partyData.name)] = null;
+                    driverData.markModified('passengers');
+                    console.log("Saving driver data", driverData);
+                    driverData.save( (err, updatedDriverData) => {
+                        if(err){
+                            console.log(err);
+                        }else{
+                            //finally remove the participant
+                            Participant.findByIdAndDelete(partyData._id, (err,deletedData) =>{
+                                if(err){
+                                    console.log(err);
+                                }else{
+                                    console.log("Deleted participant");
+                                    res.json({error:null});
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+
+            }else{
+                console.log("participant has no relevant status");
+                Participant.findByIdAndDelete(partyData._id, (err,deletedData) =>{
+                    if(err){
+                        console.log(err);
+                    }else{
+                        console.log("Deleted participant");
+                        res.json({error:null});
+                    }
+                })
+            }
         }
     })
   })

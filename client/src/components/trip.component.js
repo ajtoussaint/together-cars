@@ -25,48 +25,149 @@ export default function Trip(props){
         })
     }, [params])
 
-    if(!props.loggedIn){
-        //I should put this inside loading so redirect does not occur before the load
+    //!! what if we use effect to get participants here and pass a reload function down!!
+
+    if(loading){
+        return(
+            <Loading />
+        )
+    }else if(!props.loggedIn){
         return(
             <Navigate to="/" replace={false} />
         )
+    }else if(!trip){
+        return(
+            <h1>The trip does not exist</h1>
+        )
     }else{
-        if(loading){
+        //valid trip and user
+        if(props.username === trip.organizer){
             return(
-                <Loading />
-            )
-        }else if(!trip){
-            return(
-                <h1>The trip does not exist</h1>
+                <OrganizerView 
+                trip={trip}
+                username={props.username}/>
             )
         }else{
-            //3 render options redirect, organiser, participant
             return(
                 <ParticipantView
                 trip={trip}
                 username={props.username}/>
             )
         }
-}
+    }
 }
 
 //make different components for organiser view and participant view
-function OrganizerView() {
-    const trip = this.props.trip;
+function OrganizerView(props) {
+    const trip = props.trip;
+    const username = props.username;
 
     return (
         <div>
             <h1>{trip.title}</h1>
+            <p>Destination: {trip.destination}</p>
             <p>by:{trip.organizer}</p>
-            <p>{trip.description}</p>
-            <h2>Participants:</h2>
-            {trip.participants.map((party,i) => {
-            return(
-                <li key={i}>
-                    {party}
-                </li>
-            )})}
+            <p>Target Arrival Time: {trip.arrivalTime}</p>
+            <p>Description: {trip.description}</p>
+            <Participants tripId={trip._id}/>
+            <OrganizerParticipants tripId={trip._id}/>
+            <Drivers tripId={trip._id} username={username}/>
          </div>
+    )
+}
+
+function OrganizerParticipants(props) {
+    const [participantName, setParticipantName] = useState("");
+    const [loading, setLoading] = useState(false)
+    const tripId = props.tripId;
+    const [participantArray, setPartArr] = useState([]);
+
+    //use effect to get all of the participants in an array
+    useEffect(() => {
+        console.log("getting participants for trip:", tripId);
+        axiosInstance.get("/participants/"+tripId)
+         .then( res => {
+            //response will be an array of all the participant objects
+            console.log("got the participants: " + res.data);
+            setPartArr(res.data);
+         })
+    }, [tripId]);
+
+    function handleChange(e){
+        e.persist();
+        setParticipantName(e.target.value);
+    }
+
+    function handleSubmit(e){
+        e.preventDefault();
+        //show loading symbol
+        setLoading(true);
+        //check if this is a valid username
+        axiosInstance.post("validateUsername",{username:participantName})
+         .then( res => {
+            if(res.data.validUser){
+                console.log("found user");
+                //check if participant is already in
+                if(participantArray.map(party => party.name).indexOf(participantName) < 0){
+                    //Create a participant in DB and reload
+                    console.log("creating participant");
+                    axiosInstance.post("/addParticipant/" + tripId, {name:participantName})
+                     .then( res => {
+                        console.log("Created new participant: ", res.data);
+                        //cause a reload with new participant
+                        setPartArr([...participantArray, res.data]);
+                     })
+                }else{
+                    console.log("user is already a participant");
+                    //!!show error to user
+                }
+            }else{
+                console.log("no such user");
+                //!!show error to user
+            }
+            //close loading symbol
+            setLoading(false);
+            //reset the form
+             setParticipantName("");
+         }) 
+    }
+
+    function removeParticipant(participantName){
+        console.log("removing participant " + participantName);
+        //!!delete participant in DB and reload
+        axiosInstance.post('/removeParticipant/' + tripId, {name:participantName})
+         .then( res => {
+            console.log("removed: ", participantName ,' from the trip');
+            setPartArr(participantArray.filter( party => party.name !== participantName));
+         })
+    }
+
+    return(
+        <div>
+            <form id="participant">
+                Enter a participants together cars username:
+                <input
+                type="text"
+                name="participantName"
+                value={participantName}
+                onChange={handleChange}/>
+                {loading && "..."}
+                <button onClick={handleSubmit}>Add participant</button>
+            </form>
+
+            <div id="participantList">
+                {participantArray.map( (party,i) => {
+                    return(
+                        <div key={i} className='stagedParticipant'>
+                            {party.name}
+                            <br></br>
+                            {party.status}
+                            {party.organizer || <button onClick={() => removeParticipant(party.name)}>X</button>}
+                        </div>
+                    )
+                })}
+            </div>
+        </div>
     )
 }
 
@@ -190,7 +291,7 @@ function Drivers(props){
         }else{
             setShowButton(false);
         }
-    }, [ drivers ])
+    }, [ drivers, username ])
 
     //display the drivers in the return
     if(loading){
