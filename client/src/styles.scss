@@ -1,35 +1,50 @@
+html {
+  background-color: rgb(56, 56, 56);
+}
+//most outer div that matters
+#navbarTotalWrapper {
+  display:grid;
+  grid-template-rows: auto 1fr;
+  width:100vw;
+  height:100vh;
+  top:0;
+  background-color: purple;
+}
+
+//navbar styling
+#navbarWrapper {
+  background-image: linear-gradient(to bottom, lightslategrey, rgb(171, 210, 250));
+}
+
+#homeComponentWrapper{
+  background-color: rgb(109, 32, 32);
+  top:0;
+  margin-top:0;
+}
+
+.tripContainer{
+  background-color: lightslategray;
+}
+
+#driverFormWrapper{
+  background-color: forestgreen;
+}
+
+.singleDriverWrapper{
+  background-color: teal;
+}
+
+.stagedParticipant{
+  background-color: lightslategray;
+  padding:10px;
+  margin: 10px;
+  border: solid black;
+}
+
 .redContainer{
-    background-color: crimson;
-  }
+  background-color: crimson;
+}
   
-  .blueContainer{
-    background-color:dodgerblue;
-  }
-  
-  html {
-    background-color: rgb(56, 56, 56);
-  }
-  
-  #navbarWrapper{
-    background-color: lightslategray;
-    border: solid beige 5px;
-  }
-  
-  .tripContainer{
-    background-color: lightslategray;
-  }
-  
-  #driverFormWrapper{
-    background-color: forestgreen;
-  }
-  
-  .singleDriverWrapper{
-    background-color: teal;
-  }
-  
-  .stagedParticipant{
-    background-color: lightslategray;
-    padding:10px;
-    margin: 10px;
-    border: solid black;
-  }
+.blueContainer{
+  background-color:dodgerblue;
+}

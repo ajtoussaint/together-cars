@@ -79,7 +79,7 @@ export default class App extends Component {
   //!!polish: return secure pages only if the user is logged in
   render(){
     return (
-      <div>
+      <div id="appWrapper">
        
         <Routes>
           <Route path="/" element={<Navbar 
@@ -135,7 +135,7 @@ class Navbar extends Component{
   render(){
     //Nothing in the navbar will require loading in final product, just testing
     return(
-      <div>
+      <div id="navbarTotalWrapper">
         <div id="navbarWrapper">
         <h1>
           { this.props.loading ? "Loading..." : this.props.username || "No User Currently Logged In" }
@@ -143,12 +143,6 @@ class Navbar extends Component{
           <ul>
             <li>
               <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/red">Red</Link>
-            </li>
-            <li>
-              <Link to="/blue">Blue</Link>
             </li>
             <li>
               <Link to="/createTrip">Create a Trip</Link>

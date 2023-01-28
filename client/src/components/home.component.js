@@ -63,7 +63,7 @@ export default class Home extends Component{
                 )
             }else{
                 return(
-                    <div> 
+                    <div id="homeComponentWrapper"> 
                         <Login updateUser={this.props.updateUser}/>
                         <Register updateUser={this.props.updateUser}/>
                     </div>
