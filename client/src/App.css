@@ -2,21 +2,79 @@ html {
   background-color: rgb(56, 56, 56);
 }
 
+body {
+  font-family: monospace;
+}
+
 #navbarTotalWrapper {
   display: grid;
   grid-template-rows: auto 1fr;
   width: 100vw;
   height: 100vh;
   top: 0;
-  background-color: purple;
 }
 
 #navbarWrapper {
   background-image: linear-gradient(to bottom, lightslategrey, rgb(171, 210, 250));
+  /*!! use auto adjusting grid instead of flex*/
+  display: flex;
+  justify-content: space-between;
+}
+#navbarWrapper #leftNavbar {
+  display: flex;
+  justify-content: space-around;
+}
+#navbarWrapper #leftNavbar a {
+  text-decoration: none;
+  color: black;
+}
+#navbarWrapper #leftNavbar .navbarLink {
+  height: 100%;
+  width: 40%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2em;
+}
+#navbarWrapper #leftNavbar .navbarLink:hover {
+  background-color: rgba(56, 56, 56, 0.3);
+}
+#navbarWrapper #centerNavbar {
+  text-align: center;
+}
+#navbarWrapper #rightNavbar {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 1em;
+}
+#navbarWrapper #rightNavbar #rightNavInnerWrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  font-size: 1.2em;
+}
+#navbarWrapper #rightNavbar #rightNavInnerWrap h2 {
+  display: inline-block;
+  margin: 0 0 10% 0;
+  font-size: 1.5em;
+}
+#navbarWrapper #rightNavbar #rightNavInnerWrap button {
+  background-color: lightslategray;
+  border: none;
+  border-radius: 1em;
+  font-size: 0.7em;
+}
+#navbarWrapper #rightNavbar #rightNavInnerWrap button:hover {
+  cursor: pointer;
+  background-color: rgba(119, 136, 153, 0.5);
+}
+#navbarWrapper .navbarSection {
+  width: 33%;
 }
 
 #homeComponentWrapper {
-  background-color: rgb(109, 32, 32);
   top: 0;
   margin-top: 0;
 }

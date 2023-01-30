@@ -1,6 +1,15 @@
+
+$babyBlue: rgb(171, 210, 250);
+
 html {
   background-color: rgb(56, 56, 56);
 }
+
+body{
+  font-family:monospace;
+}
+
+
 //most outer div that matters
 #navbarTotalWrapper {
   display:grid;
@@ -8,16 +17,76 @@ html {
   width:100vw;
   height:100vh;
   top:0;
-  background-color: purple;
 }
 
 //navbar styling
 #navbarWrapper {
-  background-image: linear-gradient(to bottom, lightslategrey, rgb(171, 210, 250));
+  background-image: linear-gradient(to bottom, lightslategrey, $babyBlue);
+  /*!! use auto adjusting grid instead of flex*/
+  display: flex;
+  justify-content: space-between;
+  
+    #leftNavbar{
+      display: flex;
+      justify-content: space-around;
+      a{
+        text-decoration: none;
+        color:black;
+      }
+      .navbarLink{
+        height:100%;
+        width:40%;
+        text-align: center;
+        display:flex;
+        align-items: center;
+        justify-content: center;
+        font-size:1.2em;
+        &:hover{
+          background-color: rgba(56, 56, 56, 0.3);
+        }
+      }
+    }
+
+    #centerNavbar{
+      text-align: center;
+    }
+
+    #rightNavbar{
+      display: flex;
+      justify-content: flex-end;
+      padding-right:1em;
+
+      #rightNavInnerWrap{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        font-size: 1.2em;
+        h2{
+          display: inline-block;
+          margin:0 0 10% 0;
+          font-size: 1.5em;
+        }
+        button{
+          background-color: lightslategray;
+          border:none;
+          border-radius: 1em;
+          font-size: 0.7em;
+          &:hover{
+            cursor: pointer;
+            background-color: rgba(119, 136, 153, 0.5);
+          }
+        }
+      }
+    }
+
+    .navbarSection{
+      width:33%
+    }
+
 }
 
 #homeComponentWrapper{
-  background-color: rgb(109, 32, 32);
   top:0;
   margin-top:0;
 }

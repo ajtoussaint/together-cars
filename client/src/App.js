@@ -137,20 +137,25 @@ class Navbar extends Component{
     return(
       <div id="navbarTotalWrapper">
         <div id="navbarWrapper">
-        <h1>
-          { this.props.loading ? "Loading..." : this.props.username || "No User Currently Logged In" }
-        </h1>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/createTrip">Create a Trip</Link>
-            </li>
-            <li>
-              {this.props.loggedIn && <button onClick={this.logoutUser}>Logout</button>}
-            </li>
-          </ul>
+          <div id="leftNavbar" className='navbarSection'>
+              <Link to="/" className='navbarLink'>
+                  Your Trips
+              </Link>
+              <Link to="/createTrip" className='navbarLink'>
+                Create a Trip
+              </Link>
+          </div>
+          <div id="centerNavbar" className='navbarSection'>
+            <h1>Together Cars</h1>
+          </div>
+          <div id="rightNavbar" className='navbarSection'>
+            {this.props.loggedIn && (
+              <div id="rightNavInnerWrap">
+                <h2>{this.props.username}</h2>
+                <button onClick={this.logoutUser}>Logout</button>
+              </div>
+            )}
+          </div>
         </div>
         <Outlet />
       </div>
