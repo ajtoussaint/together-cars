@@ -15,7 +15,7 @@ body {
 }
 
 #navbarWrapper {
-  background-image: linear-gradient(to bottom, lightslategrey, rgb(171, 210, 250));
+  background-image: linear-gradient(to bottom, rgb(171, 210, 250), #7BB8F7);
   /*!! use auto adjusting grid instead of flex*/
   display: flex;
   justify-content: space-between;
@@ -72,6 +72,45 @@ body {
 }
 #navbarWrapper .navbarSection {
   width: 33%;
+}
+
+#loginPageWrapper {
+  display: flex;
+  justify-content: center;
+}
+#loginPageWrapper .loginBlock {
+  background-color: #7BB8F7;
+  border-radius: 1em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5em;
+  margin-top: 5vh;
+  padding: 2.5vh;
+  width: 40vw;
+}
+#loginPageWrapper .loginBlock button {
+  border-radius: 1em;
+  background-color: lightslategray;
+  border: none;
+  font-size: 0.7em;
+  padding: 0 10% 0 10%;
+  width: 70%;
+  align-self: center;
+}
+#loginPageWrapper .loginBlock button:hover {
+  background-color: rgba(119, 136, 153, 0.5);
+  cursor: pointer;
+}
+#loginPageWrapper .loginBlock form {
+  display: flex;
+  flex-direction: column;
+}
+#loginPageWrapper .loginBlock input {
+  background-color: rgb(171, 210, 250);
+  border: none;
+  font-size: 0.7em;
 }
 
 #homeComponentWrapper {

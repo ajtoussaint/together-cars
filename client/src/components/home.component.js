@@ -63,9 +63,11 @@ export default class Home extends Component{
                 )
             }else{
                 return(
-                    <div id="homeComponentWrapper"> 
+                    <div id="loginPageWrapper"> 
+                        <div id="loginWrapper">
                         <Login updateUser={this.props.updateUser}/>
                         <Register updateUser={this.props.updateUser}/>
+                        </div>
                     </div>
                 )
             }
@@ -111,11 +113,12 @@ class Login extends Component{
 
     render(){
         return(
-            <div>
+            <div className='loginBlock'>
                 <h1>Login</h1>
                 <form>
                     <label htmlFor='username'>
                         Username:
+                        <br></br>
                         <input 
                          type='text'
                          name='username'
@@ -126,6 +129,7 @@ class Login extends Component{
                     <br></br>
                     <label htmlFor='password'>
                         Password:
+                        <br></br>
                         <input 
                          type='password'
                          name='password'
@@ -180,11 +184,12 @@ class Register extends Component{
 
     render(){
         return(
-            <div>
+            <div className='loginBlock'>
                 <h1>Register</h1>
                 <form>
                     <label htmlFor='username'>
                         Username:
+                        <br></br>
                         <input 
                          type='text'
                          name='username'
@@ -195,6 +200,7 @@ class Register extends Component{
                     <br></br>
                     <label htmlFor='password'>
                         Password:
+                        <br></br>
                         <input 
                          type='password'
                          name='password'
@@ -205,6 +211,7 @@ class Register extends Component{
                     <br></br>
                     <label htmlFor='confirmPassword'>
                         Confirm Password:
+                        <br></br>
                         <input 
                          type='password'
                          name='confirmPassword'
