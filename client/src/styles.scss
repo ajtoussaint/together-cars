@@ -1,6 +1,12 @@
 
 $babyBlue: rgb(171, 210, 250);
 $midBlue: #7BB8F7;
+$off_white:rgb(235,235,235);
+$babyGreen: #d2faab;
+$midGreen: #b8f77b;
+$danger_color:#7c5050;
+$danger_hover:#543636;
+
 @mixin basic-block{
   background-color: $midBlue;
   border-radius: 1em;
@@ -131,14 +137,101 @@ body{
 }
 
 #homeComponentWrapper{
+  #tripsWrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    a{
+      text-decoration: none;
+      color:black;
+    }
+  }
+
+  h1{
+    color: $off_white;
+  }
+
+  h2{
+    color: $off_white;
+  }
+
+  .tripContainer{
+    @include basic-block;
+    margin-bottom: 2em;
+    h2{
+      color:black;  
+    }
+    font-size: 1em;
+    width: 70vh;
+    &:hover{
+      background-color: $babyBlue;
+    }
+  }
   top:0;
   margin-top:0;
 }
 
+#createTripOuterWrapper{
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 5vh;
+  #createTripWrapper{
+    @include basic-block;
+    background-color: $babyGreen;
+    height: fit-content;
+    width:70vh;
+    input{
+      background-color: rgb(200, 200, 200);
+      font-size:0.7em;
+    }
+    form{
+      padding: 0 10% 0 10%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #tripDescriptionInput{
+      width:30vh;
+      height:10ch;
+      background-color: rgb(200, 200, 200);
+    }
 
-.tripContainer{
-  background-color: lightslategray;
+    button{
+      background-color: $midGreen;
+      border-radius: 2em;
+      border:none;
+      margin: 1em 0 1em 0;
+      font-size: 1em;
+      &:hover{
+        cursor: pointer;
+        color: lime;
+        background-color: rgba(0,0,0,0);
+      }
+    }
+    #pendingParticipantList{
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .stagedParticipant{
+      background-color: $midBlue;
+      border-radius: 1em;
+      padding: 0 0.5em 0 0.5em;
+      margin: 0 0.5em 0 0.5em;
+      button{
+        background-color: rgba(0,0,0,0);
+        &:hover{
+          color:rgb(177, 54, 54);
+        }
+      }
+    }
+
+  }
 }
+
 
 #driverFormWrapper{
   background-color: forestgreen;
@@ -148,12 +241,6 @@ body{
   background-color: teal;
 }
 
-.stagedParticipant{
-  background-color: lightslategray;
-  padding:10px;
-  margin: 10px;
-  border: solid black;
-}
 
 .redContainer{
   background-color: crimson;

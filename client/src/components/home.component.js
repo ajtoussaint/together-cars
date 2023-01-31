@@ -56,7 +56,6 @@ export default class Home extends Component{
             if(this.props.loggedIn){
                 return(
                     <div id="homeComponentWrapper">
-                        <h1>Welcome to Together Cars, {this.props.username}!</h1>
                         <ParticipatingTrips
                         username={this.props.username}/>
                     </div>
@@ -250,16 +249,18 @@ function ParticipatingTrips(props){
     }else{
         //!!if user is organizer change appearance somehow
         return(
-            <div id="participatingTripsWrapper">
-                <h2>Your Trips:</h2>
+            <div id="tripsWrapper">
+                <h1>Your Trips:</h1>
                 {trips.length < 1 ? (<h2>No trips to display</h2>) : 
                 trips.map( (trip, i) => (
+                    <Link to={"/trips/" + trip._id}>
                         <div className='tripContainer' key={i}>
                             <h2>{trip.title}</h2>
-                            <p>{trip.description}</p>
-                            <p>{trip.arrivalTime}</p>
-                            <Link to={"/trips/" + trip._id}>View Trip</Link>
+                            <p>Trip Description: {trip.description}</p>
+                            <p>Planned Arrival Time: {trip.arrivalTime.slice(11,16) + " on "}
+                                {trip.arrivalTime.slice(0,10)}</p>
                         </div>
+                    </Link>
                     ))}
             </div>
         )

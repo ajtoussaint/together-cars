@@ -117,9 +117,101 @@ body {
   top: 0;
   margin-top: 0;
 }
+#homeComponentWrapper #tripsWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+#homeComponentWrapper #tripsWrapper a {
+  text-decoration: none;
+  color: black;
+}
+#homeComponentWrapper h1 {
+  color: rgb(235, 235, 235);
+}
+#homeComponentWrapper h2 {
+  color: rgb(235, 235, 235);
+}
+#homeComponentWrapper .tripContainer {
+  background-color: #7BB8F7;
+  border-radius: 1em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5em;
+  margin-bottom: 2em;
+  font-size: 1em;
+  width: 70vh;
+}
+#homeComponentWrapper .tripContainer h2 {
+  color: black;
+}
+#homeComponentWrapper .tripContainer:hover {
+  background-color: rgb(171, 210, 250);
+}
 
-.tripContainer {
-  background-color: lightslategray;
+#createTripOuterWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 5vh;
+}
+#createTripOuterWrapper #createTripWrapper {
+  background-color: #7BB8F7;
+  border-radius: 1em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5em;
+  background-color: #d2faab;
+  height: fit-content;
+  width: 70vh;
+}
+#createTripOuterWrapper #createTripWrapper input {
+  background-color: rgb(200, 200, 200);
+  font-size: 0.7em;
+}
+#createTripOuterWrapper #createTripWrapper form {
+  padding: 0 10% 0 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#createTripOuterWrapper #createTripWrapper #tripDescriptionInput {
+  width: 30vh;
+  height: 10ch;
+  background-color: rgb(200, 200, 200);
+}
+#createTripOuterWrapper #createTripWrapper button {
+  background-color: #b8f77b;
+  border-radius: 2em;
+  border: none;
+  margin: 1em 0 1em 0;
+  font-size: 1em;
+}
+#createTripOuterWrapper #createTripWrapper button:hover {
+  cursor: pointer;
+  color: lime;
+  background-color: rgba(0, 0, 0, 0);
+}
+#createTripOuterWrapper #createTripWrapper #pendingParticipantList {
+  display: flex;
+  flex-wrap: wrap;
+}
+#createTripOuterWrapper #createTripWrapper .stagedParticipant {
+  background-color: #7BB8F7;
+  border-radius: 1em;
+  padding: 0 0.5em 0 0.5em;
+  margin: 0 0.5em 0 0.5em;
+}
+#createTripOuterWrapper #createTripWrapper .stagedParticipant button {
+  background-color: rgba(0, 0, 0, 0);
+}
+#createTripOuterWrapper #createTripWrapper .stagedParticipant button:hover {
+  color: rgb(177, 54, 54);
 }
 
 #driverFormWrapper {
@@ -128,13 +220,6 @@ body {
 
 .singleDriverWrapper {
   background-color: teal;
-}
-
-.stagedParticipant {
-  background-color: lightslategray;
-  padding: 10px;
-  margin: 10px;
-  border: solid black;
 }
 
 .redContainer {

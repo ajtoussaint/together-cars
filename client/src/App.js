@@ -138,12 +138,14 @@ class Navbar extends Component{
       <div id="navbarTotalWrapper">
         <div id="navbarWrapper">
           <div id="leftNavbar" className='navbarSection'>
+            {this.props.loggedIn &&(
               <Link to="/" className='navbarLink'>
                   Your Trips
-              </Link>
+              </Link>)}
+              {this.props.loggedIn &&(
               <Link to="/createTrip" className='navbarLink'>
                 Create a Trip
-              </Link>
+              </Link>)}
           </div>
           <div id="centerNavbar" className='navbarSection'>
             <h1>Together Cars</h1>

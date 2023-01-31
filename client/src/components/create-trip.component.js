@@ -77,55 +77,60 @@ export default class CreateTrip extends Component{
                 )
             }else{
                 return(
-                    <div id="createTripWrapper">
-                        <form>
-                            <label htmlFor='title'>
-                                Title:
-                                <input
-                                type='text'
-                                name='title'
-                                id='tripTitleInput'
-                                value={this.state.title}
-                                onChange={this.handleChange}/>
-                            </label>
-                            <br></br>
-                            <label htmlFor='destination'>
-                                Destination:
-                                <input
-                                type='text'
-                                name='destination'
-                                id='tripDestinationInput'
-                                value={this.state.destination}
-                                onChange={this.handleChange}/>
-                            </label>
-                            <br></br>
-                            <label htmlFor='description'>
-                                Description:
-                                <input
-                                type='text'
-                                name='description'
-                                id='tripDescriptionInput'
-                                value={this.state.description}
-                                onChange={this.handleChange}/>
-                            </label>
-                            <br></br>
-                            <label htmlFor='arrivalTime'>
-                                Arrival Time:
-                                <input
-                                type='datetime-local'
-                                name='arrivalTime'
-                                id='tripArrivaltimeInput'
-                                value={this.state.arrivalTime}
-                                onChange={this.handleChange}/>
-                            </label>
-                            <br></br>
-                        </form>
-                        <ParticipantForm
-                            participants={this.state.participants}
-                            setParticipants={(partyArray)=>this.setParticipants(partyArray)}/>
-                            <br></br>
-                        <button type='submit' onClick={this.handleSubmit}>Create my trip!</button>
-                        
+                    <div id="createTripOuterWrapper">
+                        <div id="createTripWrapper">
+                            <h1>Create A Trip:</h1>
+                            <form>
+                                <label htmlFor='title'>
+                                    Trip Title:
+                                    <br></br>
+                                    <input
+                                    type='text'
+                                    name='title'
+                                    id='tripTitleInput'
+                                    value={this.state.title}
+                                    onChange={this.handleChange}/>
+                                </label>
+                                <br></br>
+                                <label htmlFor='destination'>
+                                    Destination:
+                                    <br></br>
+                                    <input
+                                    type='text'
+                                    name='destination'
+                                    id='tripDestinationInput'
+                                    value={this.state.destination}
+                                    onChange={this.handleChange}/>
+                                </label>
+                                <br></br>
+                                <label htmlFor='description'>
+                                    Description:
+                                    <br></br>
+                                    <textarea
+                                    name='description'
+                                    id='tripDescriptionInput'
+                                    value={this.state.description}
+                                    onChange={this.handleChange}></textarea>
+                                </label>
+                                <br></br>
+                                <label htmlFor='arrivalTime'>
+                                    Arrival Time:
+                                    <br></br>
+                                    <input
+                                    type='datetime-local'
+                                    name='arrivalTime'
+                                    id='tripArrivaltimeInput'
+                                    value={this.state.arrivalTime}
+                                    onChange={this.handleChange}/>
+                                </label>
+                                <br></br>
+                            </form>
+                            <ParticipantForm
+                                participants={this.state.participants}
+                                setParticipants={(partyArray)=>this.setParticipants(partyArray)}/>
+                                <br></br>
+                            <button type='submit' onClick={this.handleSubmit}>Create my trip!</button>
+                        </div>
                     </div>
                 )
             }
@@ -178,7 +183,7 @@ function ParticipantForm(props){
     return(
         <div>
             <form id="participant">
-                Enter a participants together cars username:
+                Enter a participant's Together Cars username:
                 <input
                 type="text"
                 name="participantName"
@@ -188,7 +193,7 @@ function ParticipantForm(props){
                 <button onClick={handleSubmit}>Add participant</button>
             </form>
 
-            <div id="pending participantList">
+            <div id="pendingParticipantList">
                 {props.participants.map( (party,i) => {
                     return(
                         <div key={i} className='stagedParticipant'>
