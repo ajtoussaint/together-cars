@@ -214,6 +214,67 @@ body {
   color: rgb(177, 54, 54);
 }
 
+.tripViewWrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 20% 1fr 1fr;
+  grid-template-areas: "info info info" "driver driver party" "driver driver party";
+}
+.tripViewWrapper #tripInformation {
+  grid-area: info;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: #7BB8F7;
+  border-top: solid #305c88 0.5em;
+  border-radius: 0 0 5em 5em;
+}
+.tripViewWrapper #tripInformation #tripDetails {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  font-size: 1.3em;
+}
+.tripViewWrapper #tripInformation #tripDetails .detailWrapper {
+  width: 33%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.tripViewWrapper #tripInformation #tripDescription {
+  width: calc(100% - 6em);
+  margin-top: 1em;
+}
+.tripViewWrapper #participantsWrapper {
+  background-color: #7BB8F7;
+  grid-area: party;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 2em 2em 0 0;
+  margin: 1em 0.5em 0 0.5em;
+}
+.tripViewWrapper #participantsWrapper #participantKey {
+  text-align: center;
+  width: 80%;
+  margin-bottom: 1em;
+}
+.tripViewWrapper #participantsWrapper .singleParticipant {
+  background-color: rgb(171, 210, 250);
+  width: 80%;
+  margin-bottom: 0.3em;
+  font-size: 1.2em;
+}
+.tripViewWrapper #participantsWrapper #organizerParticipant {
+  background-color: #d2faab;
+}
+.tripViewWrapper #driversWrapper {
+  background-color: rgb(136, 40, 40);
+  grid-area: driver;
+}
+
 #driverFormWrapper {
   background-color: forestgreen;
 }

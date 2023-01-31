@@ -232,6 +232,69 @@ body{
   }
 }
 
+.tripViewWrapper{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 20% 1fr 1fr;
+  grid-template-areas: "info info info" "driver driver party" "driver driver party";
+  #tripInformation{
+    grid-area: info;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: $midBlue;
+    border-top: solid #305c88 0.5em;
+    border-radius: 0 0 5em 5em;
+    #tripDetails{
+      display: flex;
+      width:100%;
+      justify-content: space-around;
+      font-size: 1.3em;
+      .detailWrapper{
+        width: 33%;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+    #tripDescription{
+      width:calc(100% - 6em);
+      margin-top: 1em;
+    }
+  }
+
+  #participantsWrapper{
+    background-color: $midBlue;
+    grid-area: party;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 2em 2em 0 0;
+    margin:1em 0.5em 0 0.5em;
+    #participantKey{
+      text-align: center;
+      width:80%;
+      margin-bottom: 1em;
+    }
+    .singleParticipant{
+      background-color: $babyBlue;
+      width:80%;
+      margin-bottom: 0.3em;
+      font-size: 1.2em;
+    }
+    #organizerParticipant{
+      background-color: $babyGreen;
+    }
+  }
+
+  #driversWrapper{
+    background-color: rgb(136, 40, 40);
+    grid-area: driver;
+  }
+}
+
 
 #driverFormWrapper{
   background-color: forestgreen;

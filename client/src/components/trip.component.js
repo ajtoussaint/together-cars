@@ -63,7 +63,7 @@ function OrganizerView(props) {
     const username = props.username;
 
     return (
-        <div>
+        <div id="organizerViewWrapper" className='tripViewWrapper'>
             <h1>{trip.title}</h1>
             <p>Destination: {trip.destination}</p>
             <p>by:{trip.organizer}</p>
@@ -175,12 +175,17 @@ function ParticipantView(props){
     const trip = props.trip;
     const username = props.username;
     return (
-        <div>
-            <h1>{trip.title}</h1>
-            <p>Destination: {trip.destination}</p>
-            <p>by:{trip.organizer}</p>
-            <p>Target Arrival Time: {trip.arrivalTime}</p>
-            <p>Description: {trip.description}</p>
+        <div id='participantViewWrapper' className='tripViewWrapper'>
+            <div id='tripInformation'>
+                <h1>{trip.title}</h1>
+                <div id='tripDetails'>
+                    <div className='detailWrapper'>Destination:{" " + trip.destination}</div>
+                    <div className='detailWrapper'>Organizer:{" " + trip.organizer}</div>
+                    <div className='detailWrapper'>Target Arrival Time: <br></br>{trip.arrivalTime.slice(11,16) + " on "}
+                                {trip.arrivalTime.slice(0,10)}</div>
+                </div>
+                <div id='tripDescription'>Description: {trip.description}</div>
+            </div>
             <Participants tripId={trip._id}/>
             <Drivers tripId={trip._id} username={username}/>
          </div>
@@ -212,18 +217,17 @@ function Participants(props){
     }else{
         return(
             <div id='participantsWrapper'>
-                <h2>Participants:</h2>
-                <ul>
+                <h2 id='participantsHeader'>Participants</h2>
+                <div id='participantKey'> (D):driver, (P):passenger, (U):unassigned, *:organizer</div>
                     {participantArray.map( (party,i) => {
                         return(
-                            <li key={i}>
-                                <div>{party.name}</div>
-                                <div>Status: {party.status || "Unassigned"}</div>
-                                <div>{party.organizer && "Organizer"}</div>
-                            </li>
+                            <div className='singleParticipant' id={party.organizer && "organizerParticipant"} key={i}>
+                                {party.name}
+                                ({party.status == "driver" ? "D" : party.status == "passenger" ? "P" : "U"})
+                                {party.organizer && "*"}
+                            </div>
                         )
                     })}
-                </ul>
             </div>
         )
     }
@@ -301,6 +305,7 @@ function Drivers(props){
     }else{
         return(
             <div id="driversWrapper">
+                <h2>Drivers:</h2>
                 <ul>
                     {drivers.map((driver,i) => {
                             return(
