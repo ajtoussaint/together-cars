@@ -5,7 +5,7 @@ import axiosInstance from "../modules/axiosInstance"
 import Loading from "./loading.component"
 
 
-//!!use effect hook to axios call and get the trip data
+//use effect hook to axios call and get the trip data
 
 export default function Trip(props){
     const params = useParams();
@@ -21,9 +21,13 @@ export default function Trip(props){
             console.log("got data on trip ID:" + params.tripId);
             console.log(res.data);
             setTrip(res.data);
+            /*!! 02/02 Another axios call for participants here*/
+            console.log("Second axios call to get the trips");
             setLoading(false);
         })
     }, [params])
+
+
 
     //!! what if we use effect to get participants here and pass a reload function down!!
 
@@ -51,7 +55,8 @@ export default function Trip(props){
             return(
                 <ParticipantView
                 trip={trip}
-                username={props.username}/>
+                username={props.username}
+                organizer={props.username === trip.organizer}/>
             )
         }
     }
