@@ -223,7 +223,7 @@ function Participants(props){
                         return(
                             <div className='singleParticipant' id={party.organizer && "organizerParticipant"} key={i}>
                                 {party.name}
-                                ({party.status == "driver" ? "D" : party.status == "passenger" ? "P" : "U"})
+                                ({party.status === "driver" ? "D" : party.status === "passenger" ? "P" : "U"})
                                 {party.organizer && "*"}
                             </div>
                         )
@@ -305,24 +305,24 @@ function Drivers(props){
     }else{
         return(
             <div id="driversWrapper">
-                <h2>Drivers:</h2>
-                <ul>
+                <h2>Drivers</h2>
+                <div id="driversBlock">
                     {drivers.map((driver,i) => {
                             return(
-                                <li key={i}>
-                                    <SingleDriver
-                                    driver={driver}
-                                    tripId={tripId}
-                                    username={username}
-                                    removeDriver={() => removeDriver(driver._id)}
-                                    updateDrivers={() => getDrivers()}
-                                    />
-                                </li>
+                                <SingleDriver
+                                key={i}
+                                driver={driver}
+                                tripId={tripId}
+                                username={username}
+                                removeDriver={() => removeDriver(driver._id)}
+                                updateDrivers={() => getDrivers()}
+                                />
                             )
                         })}
-                </ul>
                 {/* Only show this if user is status null */}
-                {showButton && (<button onClick={() => toggleDriverForm()}>I can Drive!</button>)}
+                {showButton && (<button id='driverFormButton' onClick={() => toggleDriverForm()}>I can Drive!</button>)}
+                </div>
+
                 {driverFormVisible && <DriverForm closeMe={() => toggleDriverForm()} tripId={tripId} refresh={() => getDrivers()}/>}
             </div> 
         )
@@ -387,66 +387,72 @@ function DriverForm(props){
     }
 
     return(
-        <div id='driverFormWrapper'>
-            <form>
+        <div id='driverFormBack'>
+            <div id='driverFormWrapper'>
+                <button id='closeDriverForm' onClick={() => props.closeMe()}>X</button>
                 <h1>Driver Form</h1>
-                <input type='hidden' name='name' value={props.username}/>
-                <label htmlFor='departureLocation'>
-                    Where are you leaving from?
-                    <input 
-                    type='text'
-                    name='departureLocation'
-                    id='departureLocation'
-                    value={values.departureLocation}
-                    onChange={handleChange}/>
-                </label>
-                <br></br>
-                <label htmlFor='numberOfPassengers'>
-                    How many passengers can you take? (not including yourself)
-                    <input 
-                    type='number'
-                    name='numberOfPassengers'
-                    id='numberOfPassengers'
-                    value={values.numberOfPassengers || ""}
-                    onChange={handleChange}/>
-                </label>
-                <br></br>
-                <div>Are you willing to pick others up at their desired location?</div>
-                <label htmlFor='pickingUp'>
-                    <input 
-                    type='radio'
-                    name='pickingUpSelection'
-                    id='pickingUp'
-                    value="pickingUp"
-                    checked={values.pickingUpSelection === "pickingUp"}
-                    onChange={handleChange}/>
-                    I can pick people up
-                </label>
-                <br></br>
-                <label htmlFor='notPickingUp'>
-                    <input 
-                    type='radio'
-                    name='pickingUpSelection'
-                    id='notPickingUp'
-                    value="notPickingUp"
-                    checked={values.pickingUpSelection === "notPickingUp"}
-                    onChange={handleChange}/>
-                    People should meet me at my location
-                </label>
-                <br></br>
-                <label htmlFor='notes'>
-                    Anything else your passengers should know?:
-                    <input 
-                    type='text'
-                    name='notes'
-                    id='notes'
-                    value={values.notes}
-                    onChange={handleChange}/>
-                </label>
-                <br></br>
-                <button onClick={handleSubmit}>Submit</button>
-            </form>
-            <button onClick={() => props.closeMe()}>close</button>
+                <form>
+                    <input type='hidden' name='name' value={props.username}/>
+                    <label htmlFor='departureLocation'>
+                        Where are you leaving from?
+                        <br></br>
+                        <input 
+                        type='text'
+                        name='departureLocation'
+                        id='departureLocation'
+                        value={values.departureLocation}
+                        onChange={handleChange}/>
+                    </label>
+                    <br></br>
+                    <label htmlFor='numberOfPassengers'>
+                        How many passengers can you take? (not including yourself)
+                        <br></br>
+                        <input 
+                        type='number'
+                        name='numberOfPassengers'
+                        id='numberOfPassengers'
+                        value={values.numberOfPassengers || ""}
+                        onChange={handleChange}/>
+                    </label>
+                    <br></br>
+                    <div>Are you willing to pick others up at their desired location?</div>
+                    <label htmlFor='pickingUp'>
+                        <input 
+                        type='radio'
+                        name='pickingUpSelection'
+                        id='pickingUp'
+                        value="pickingUp"
+                        checked={values.pickingUpSelection === "pickingUp"}
+                        onChange={handleChange}/>
+                        I can pick people up
+                    </label>
+                    <br></br>
+                    <label htmlFor='notPickingUp'>
+                        <input 
+                        type='radio'
+                        name='pickingUpSelection'
+                        id='notPickingUp'
+                        value="notPickingUp"
+                        checked={values.pickingUpSelection === "notPickingUp"}
+                        onChange={handleChange}/>
+                        People should meet me at my location
+                    </label>
+                    <br></br>
+                    <label htmlFor='notes'>
+                        Anything else your passengers should know?:
+                        <br></br>
+                        <input 
+                        type='text'
+                        name='notes'
+                        id='notes'
+                        value={values.notes}
+                        onChange={handleChange}/>
+                    </label>
+                    <br></br>
+                    <button onClick={handleSubmit}>Submit</button>
+                </form>
+                
+            </div>
         </div>
     )
 }
@@ -507,8 +513,14 @@ function SingleDriver(props){
     //!! add buttons and functions to remove driver and passengers
     return(
         <div className="singleDriverWrapper">
-            <h2>Driver: {name}</h2>
-            <p>{name === username ? (<button onClick={() => props.removeDriver()}>Remove Driver</button>) : ""}</p>
+            <div className='singleDriverHeader'>
+                <div className='sdhSide'></div>
+                <h2 className='sdhCenter'>{name}</h2>
+                <div className='sdhSide'>{name === username ?
+                 (<button onClick={() => props.removeDriver()}>Stop Driving</button>) :
+                  ""}</div>
+            </div>
+            <div className='singleDriverBody'>
             <div>Leaving from: {departureLocation}</div>
             <div>
                 {!passengers ? "Not taking Passengers" :
@@ -517,30 +529,34 @@ function SingleDriver(props){
                 "You will need to meet them at their location"}
             </div>
             <div>Notes: {notes}</div>
-            <ul>
+            </div>
+            <div className='singleDriverSeats'>
                 {//an array of numbers 0 => # of passengers
                     (passengers ? Object.keys(passengers) : []).sort().map( (index) => {
                         if(passengers[index]){
                             return(
-                                <li key={index}>
+                                <div className='singleSeatTaken' key={index}>
+                                    <div className='seatName'>
                                     {passengers[index]}
+                                    </div>
                                     {passengers[index] === username ?
-                                    (<button onClick={() => removePassenger(index)}>Leave Driver</button>) :
+                                    (<button onClick={() => removePassenger(index)}>X</button>) :
                                     ""}
-                                </li>
+                                </div>
                                 )
                         }else{
                             return(
-                                <li key={index}>
-                                    <button onClick={() => addPassenger(index)}>
-                                        Ride with {name}
-                                    </button>
-                                </li>
+                                <button 
+                                className='singleSeatEmpty' 
+                                key={index} 
+                                onClick={() => addPassenger(index)}>
+                                    Ride with {name}
+                                </button>
                             )
                         }
                     })
                 }
-            </ul>
+            </div>
         </div>
     )
 }

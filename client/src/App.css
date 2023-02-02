@@ -166,7 +166,7 @@ body {
   justify-content: center;
   align-items: center;
   font-size: 1.5em;
-  background-color: #d2faab;
+  background-color: rgb(210, 250, 171);
   height: fit-content;
   width: 70vh;
 }
@@ -247,7 +247,7 @@ body {
   width: calc(100% - 6em);
   margin-top: 1em;
 }
-.tripViewWrapper #participantsWrapper {
+.tripViewWrapper #participantsWrapper, .tripViewWrapper #driversWrapper {
   background-color: #7BB8F7;
   grid-area: party;
   display: flex;
@@ -256,27 +256,173 @@ body {
   border-radius: 2em 2em 0 0;
   margin: 1em 0.5em 0 0.5em;
 }
-.tripViewWrapper #participantsWrapper #participantKey {
+.tripViewWrapper #participantsWrapper #participantKey, .tripViewWrapper #driversWrapper #participantKey {
   text-align: center;
   width: 80%;
   margin-bottom: 1em;
 }
-.tripViewWrapper #participantsWrapper .singleParticipant {
+.tripViewWrapper #participantsWrapper .singleParticipant, .tripViewWrapper #driversWrapper .singleParticipant {
   background-color: rgb(171, 210, 250);
   width: 80%;
   margin-bottom: 0.3em;
   font-size: 1.2em;
 }
-.tripViewWrapper #participantsWrapper #organizerParticipant {
-  background-color: #d2faab;
+.tripViewWrapper #participantsWrapper #organizerParticipant, .tripViewWrapper #driversWrapper #organizerParticipant {
+  background-color: rgb(210, 250, 171);
 }
 .tripViewWrapper #driversWrapper {
-  background-color: rgb(136, 40, 40);
   grid-area: driver;
 }
-
-#driverFormWrapper {
-  background-color: forestgreen;
+.tripViewWrapper #driversWrapper #driversBlock {
+  width: 90%;
+  display: flex;
+  flex-wrap: wrap;
+}
+.tripViewWrapper #driversWrapper #driversBlock .singleDriverWrapper {
+  background-color: #4B9EF4;
+  border-radius: 1em;
+  margin: 0.5em;
+  padding: 0.25em;
+}
+.tripViewWrapper #driversWrapper #driversBlock .singleDriverWrapper .singleDriverHeader {
+  display: flex;
+  justify-content: space-between;
+}
+.tripViewWrapper #driversWrapper #driversBlock .singleDriverWrapper .singleDriverHeader .sdhSide {
+  width: 20%;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-start;
+}
+.tripViewWrapper #driversWrapper #driversBlock .singleDriverWrapper .singleDriverHeader button {
+  background-color: rgba(0, 0, 0, 0);
+  padding: 0 0.4em;
+  border-radius: 0;
+  border: solid black 1px;
+  background-color: #543636;
+  margin: 1em 1em 0 0;
+}
+.tripViewWrapper #driversWrapper #driversBlock .singleDriverWrapper .singleDriverHeader button:hover {
+  background-color: #7c5050;
+  cursor: pointer;
+}
+.tripViewWrapper #driversWrapper #driversBlock .singleDriverWrapper .singleDriverBody {
+  margin-bottom: 1em;
+}
+.tripViewWrapper #driversWrapper #driversBlock .singleDriverWrapper .singleDriverSeats {
+  display: flex;
+  flex-wrap: wrap;
+}
+.tripViewWrapper #driversWrapper #driversBlock .singleDriverWrapper .singleDriverSeats .singleSeatEmpty, .tripViewWrapper #driversWrapper #driversBlock .singleDriverWrapper .singleDriverSeats .singleSeatTaken {
+  background-color: rgb(56, 56, 56);
+  border: none;
+  border-radius: 1em;
+  width: 75px;
+  height: 75px;
+  margin: 0 1em 1em 1em;
+  background-color: rgb(171, 210, 250);
+}
+.tripViewWrapper #driversWrapper #driversBlock .singleDriverWrapper .singleDriverSeats .singleSeatEmpty:hover, .tripViewWrapper #driversWrapper #driversBlock .singleDriverWrapper .singleDriverSeats .singleSeatTaken:hover {
+  cursor: pointer;
+  background-color: rgb(56, 56, 56);
+  color: rgb(235, 235, 235);
+}
+.tripViewWrapper #driversWrapper #driversBlock .singleDriverWrapper .singleDriverSeats .singleSeatTaken {
+  background-color: rgb(56, 56, 56);
+  color: rgb(235, 235, 235);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.tripViewWrapper #driversWrapper #driversBlock .singleDriverWrapper .singleDriverSeats .singleSeatTaken:hover {
+  cursor: default;
+}
+.tripViewWrapper #driversWrapper #driversBlock .singleDriverWrapper .singleDriverSeats .singleSeatTaken button {
+  grid-area: exit;
+  background-color: rgba(0, 0, 0, 0);
+  border: 0.1em solid;
+}
+.tripViewWrapper #driversWrapper #driversBlock .singleDriverWrapper .singleDriverSeats .singleSeatTaken button:hover {
+  background-color: #7c5050;
+  cursor: pointer;
+}
+.tripViewWrapper #driversWrapper #driversBlock .singleDriverWrapper .singleDriverSeats .singleSeatTaken .seatName {
+  margin-bottom: 10%;
+  text-overflow: ellipsis;
+}
+.tripViewWrapper #driversWrapper #driversBlock #driverFormButton {
+  background-color: #b8f77b;
+  height: 50%;
+  border: none;
+  border-radius: 1em;
+  align-self: center;
+  margin-left: 3em;
+  font-size: 1em;
+}
+.tripViewWrapper #driversWrapper #driversBlock #driverFormButton:hover {
+  background-color: rgb(56, 56, 56);
+  cursor: pointer;
+  color: rgb(235, 235, 235);
+}
+.tripViewWrapper #driverFormBack {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(128, 128, 128, 0.5);
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.tripViewWrapper #driverFormBack #driverFormWrapper {
+  background-color: rgb(210, 250, 171);
+  width: 70%;
+  padding: 2em;
+  border-radius: 2em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.tripViewWrapper #driverFormBack #driverFormWrapper button {
+  border-radius: 1em;
+  background-color: lightslategray;
+  border: none;
+  font-size: 1.2em;
+  padding: 0 10% 0 10%;
+  align-self: center;
+}
+.tripViewWrapper #driverFormBack #driverFormWrapper button:hover {
+  background-color: rgba(119, 136, 153, 0.5);
+  cursor: pointer;
+}
+.tripViewWrapper #driverFormBack #driverFormWrapper form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 1em;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+.tripViewWrapper #driverFormBack #driverFormWrapper form input {
+  background-color: #b8f77b;
+  border: none;
+  font-size: 0.7em;
+  font-weight: bold;
+}
+.tripViewWrapper #driverFormBack #driverFormWrapper #closeDriverForm {
+  align-self: flex-end;
+  background-color: rgba(0, 0, 0, 0);
+  padding: 0 0.4em;
+  border-radius: 0;
+  border: solid black 1px;
+  padding: 0 0.4em;
+}
+.tripViewWrapper #driverFormBack #driverFormWrapper #closeDriverForm:hover {
+  background-color: #7c5050;
+  cursor: pointer;
 }
 
 .singleDriverWrapper {

@@ -1,11 +1,13 @@
 
 $babyBlue: rgb(171, 210, 250);
 $midBlue: #7BB8F7;
+$darkBlue: #4B9EF4;
 $off_white:rgb(235,235,235);
-$babyGreen: #d2faab;
+$babyGreen: rgb(210, 250, 171);
 $midGreen: #b8f77b;
 $danger_color:#7c5050;
 $danger_hover:#543636;
+$back_gray: rgb(56, 56, 56);
 
 @mixin basic-block{
   background-color: $midBlue;
@@ -17,8 +19,19 @@ $danger_hover:#543636;
   font-size:1.5em;
 }
 
+@mixin close_button{
+  background-color: rgba(0,0,0,0);
+  padding: 0 0.4em;
+  &:hover{
+    background-color: $danger_color;
+    cursor: pointer;
+  }
+  border-radius: 0;
+  border: solid black 1px;
+}
+
 html {
-  background-color: rgb(56, 56, 56);
+  background-color: $back_gray;
 }
 
 body{
@@ -290,14 +303,156 @@ body{
   }
 
   #driversWrapper{
-    background-color: rgb(136, 40, 40);
+    @extend #participantsWrapper;
     grid-area: driver;
+
+    #driversBlock{
+      width:90%;
+      display: flex;
+      flex-wrap: wrap;
+      .singleDriverWrapper{
+        background-color: $darkBlue;
+        border-radius: 1em;
+        margin: 0.5em;
+        padding:0.25em;
+        .singleDriverHeader{
+          display: flex;
+          justify-content: space-between;
+          .sdhSide{
+            width:20%;
+            display: flex;
+            flex-direction: row-reverse;
+            align-items: flex-start;
+          }
+          button{
+            @include close_button;
+            background-color: $danger_hover;
+            margin: 1em 1em 0 0;
+          }
+        }
+        .singleDriverBody{
+          margin-bottom: 1em;
+        }
+
+        .singleDriverSeats{
+          display: flex;
+          flex-wrap: wrap;
+          .singleSeatEmpty{
+            background-color: $back_gray;
+            border: none;
+            border-radius: 1em;
+            width:75px;
+            height:75px;
+            margin: 0 1em 1em 1em;
+            background-color: $babyBlue;
+            &:hover{
+              cursor: pointer;
+              background-color: $back_gray;
+              color: $off_white;
+            }
+          }
+          .singleSeatTaken{
+            @extend .singleSeatEmpty;
+            background-color: $back_gray;
+            color: $off_white;
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center;
+            &:hover{
+              cursor:default;
+            }
+            button{
+              grid-area: exit;
+              background-color: rgba(0,0,0,0);
+              border: 0.1em solid;
+              &:hover{
+                background-color:$danger_color;
+                cursor: pointer;
+              }
+            }
+            .seatName{
+              margin-bottom: 10%;
+              text-overflow: ellipsis;
+            }
+          }
+        }
+      }
+
+      #driverFormButton{
+        background-color: $midGreen;
+        height: 50%;
+        border: none;
+        border-radius: 1em;
+        align-self: center;
+        margin-left: 3em;
+        font-size: 1em;
+        &:hover{
+          background-color: $back_gray;
+          cursor: pointer;
+          color:$off_white;
+        }
+      }
+
+      
+    }
   }
-}
 
+  #driverFormBack{
+    position: absolute;
+    width:100vw;
+    height:100vh;
+    background-color: rgba(128,128,128,0.5);
+    top:0;
+    right:0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    #driverFormWrapper{
+      background-color: rgba(210,250,171,1);
+      width:70%;
+      padding:2em;
+      border-radius: 2em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 
-#driverFormWrapper{
-  background-color: forestgreen;
+      button{
+        border-radius: 1em;
+      background-color: lightslategray;
+      border:none;
+      font-size: 1.2em;
+      padding: 0 10% 0 10%;
+      align-self: center;
+      &:hover{
+        background-color: rgba(119, 136, 153, 0.5);
+        cursor: pointer;
+        }
+      }
+
+      form{
+        display:flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 1em;
+        font-size: 1.2em;
+        font-weight: bold;
+        input{
+          background-color: $midGreen;
+          border: none;
+          font-size: 0.7em;
+          font-weight: bold;
+        }
+      }
+      #closeDriverForm{
+        align-self: flex-end;
+        @include close_button;
+        padding: 0 0.4em;
+
+      }
+    }
+  }
 }
 
 .singleDriverWrapper{
