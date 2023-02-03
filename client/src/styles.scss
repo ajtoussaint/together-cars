@@ -292,10 +292,15 @@ body{
       margin-bottom: 1em;
     }
     .singleParticipant{
+      display: flex;
+      justify-content: space-between;
       background-color: $babyBlue;
       width:80%;
       margin-bottom: 0.3em;
       font-size: 1.2em;
+      button{
+        @include close_button;
+      }
     }
     #organizerParticipant{
       background-color: $babyGreen;
@@ -455,6 +460,29 @@ body{
         @include close_button;
         padding: 0 0.4em;
 
+      }
+    }
+  }
+
+  #addParticipant{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1em;
+    padding: 0 1em;
+    input{
+      background-color: $babyBlue;
+      border:none;
+      margin: 1em 0;
+    }
+    button{
+      background-color: gray;
+      border:none;
+      border-radius: 2em;
+      &:hover{
+        cursor: pointer;
+        background-color: lightgray;
       }
     }
   }

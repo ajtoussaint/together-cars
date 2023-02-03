@@ -262,10 +262,22 @@ body {
   margin-bottom: 1em;
 }
 .tripViewWrapper #participantsWrapper .singleParticipant, .tripViewWrapper #driversWrapper .singleParticipant {
+  display: flex;
+  justify-content: space-between;
   background-color: rgb(171, 210, 250);
   width: 80%;
   margin-bottom: 0.3em;
   font-size: 1.2em;
+}
+.tripViewWrapper #participantsWrapper .singleParticipant button, .tripViewWrapper #driversWrapper .singleParticipant button {
+  background-color: rgba(0, 0, 0, 0);
+  padding: 0 0.4em;
+  border-radius: 0;
+  border: solid black 1px;
+}
+.tripViewWrapper #participantsWrapper .singleParticipant button:hover, .tripViewWrapper #driversWrapper .singleParticipant button:hover {
+  background-color: #7c5050;
+  cursor: pointer;
 }
 .tripViewWrapper #participantsWrapper #organizerParticipant, .tripViewWrapper #driversWrapper #organizerParticipant {
   background-color: rgb(210, 250, 171);
@@ -428,6 +440,28 @@ body {
 .tripViewWrapper #driverFormBack #driverFormWrapper #closeDriverForm:hover {
   background-color: #7c5050;
   cursor: pointer;
+}
+.tripViewWrapper #addParticipant {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1em;
+  padding: 0 1em;
+}
+.tripViewWrapper #addParticipant input {
+  background-color: rgb(171, 210, 250);
+  border: none;
+  margin: 1em 0;
+}
+.tripViewWrapper #addParticipant button {
+  background-color: gray;
+  border: none;
+  border-radius: 2em;
+}
+.tripViewWrapper #addParticipant button:hover {
+  cursor: pointer;
+  background-color: lightgray;
 }
 
 .singleDriverWrapper {

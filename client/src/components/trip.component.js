@@ -36,6 +36,8 @@ export default function Trip(props){
     }, [params])
 
     function participantsAreSame(party1, party2){
+        console.log('#1', party1.name);
+        console.log('#2', party2);
         if(party1.name !== party2.name){
             console.log('name error', party1, party2)
             return false;
@@ -50,7 +52,8 @@ export default function Trip(props){
         }
     }
 
-    function updatePartipants(newPartyArray){
+    function updateParticipants(newPartyArray){
+        console.log("Updating participant state to: ", newPartyArray);
         //update the state
         setParticipants(newPartyArray);
         //ensure state is consistent with DB
@@ -59,12 +62,11 @@ export default function Trip(props){
                 console.log("got participants for comparison");
                 let updateRequired = false;
                 res.data.forEach( (party, i) => {
-                    if(!participantsAreSame(party,participants[i])){
+                    if(!participantsAreSame(party,newPartyArray[i])){
                         updateRequired = true;
                     }
                 })
                 if(updateRequired){
-                    console.error("!!Do an error or something");
                     //update the participants to be correct
                     setParticipants(res.data);
                 }
@@ -88,61 +90,23 @@ export default function Trip(props){
             <h1>The trip does not exist</h1>
         )
     }else{
-        //valid trip and user
-        if(props.username === trip.organizer){
-            return(
-                <OrganizerView 
-                trip={trip}
-                username={props.username}/>
-            )
-        }else{
-            return(
-                <ParticipantView
-                trip={trip}
-                username={props.username}
-                isOrganizer={props.username === trip.organizer}
-                participants={participants}
-                updatePartipants={(newParticipants)=>updatePartipants(newParticipants)}/>
-            )
-        }
+        return(
+            <ParticipantView
+            trip={trip}
+            username={props.username}
+            isOrganizer={props.username === trip.organizer}
+            participants={participants}
+            updateParticipants={(newParticipants)=>updateParticipants(newParticipants)}/>
+        )
     }
-}
-
-//make different components for organiser view and participant view
-function OrganizerView(props) {
-    const trip = props.trip;
-    const username = props.username;
-
-    return (
-        <div id="organizerViewWrapper" className='tripViewWrapper'>
-            <h1>{trip.title}</h1>
-            <p>Destination: {trip.destination}</p>
-            <p>by:{trip.organizer}</p>
-            <p>Target Arrival Time: {trip.arrivalTime}</p>
-            <p>Description: {trip.description}</p>
-            <Participants tripId={trip._id}/>
-            <OrganizerParticipants tripId={trip._id}/>
-            <Drivers tripId={trip._id} username={username}/>
-         </div>
-    )
 }
 
 function OrganizerParticipants(props) {
     const [participantName, setParticipantName] = useState("");
     const [loading, setLoading] = useState(false)
-    const tripId = props.tripId;
+    const {tripId, participants, updateParticipants} = props;
     const [participantArray, setPartArr] = useState([]);
 
-    //use effect to get all of the participants in an array
-    useEffect(() => {
-        console.log("getting participants for trip:", tripId);
-        axiosInstance.get("/participants/"+tripId)
-         .then( res => {
-            //response will be an array of all the participant objects
-            console.log("got the participants: " + res.data);
-            setPartArr(res.data);
-         })
-    }, [tripId]);
 
     function handleChange(e){
         e.persist();
@@ -159,14 +123,15 @@ function OrganizerParticipants(props) {
             if(res.data.validUser){
                 console.log("found user");
                 //check if participant is already in
-                if(participantArray.map(party => party.name).indexOf(participantName) < 0){
+                if(participants.map(party => party.name).indexOf(participantName) < 0){
                     //Create a participant in DB and reload
                     console.log("creating participant");
                     axiosInstance.post("/addParticipant/" + tripId, {name:participantName})
                      .then( res => {
                         console.log("Created new participant: ", res.data);
-                        //cause a reload with new participant
-                        setPartArr([...participantArray, res.data]);
+                        //update participants
+                        let newParticipants = [...participants, res.data];
+                        updateParticipants(newParticipants);
                      })
                 }else{
                     console.log("user is already a participant");
@@ -183,47 +148,22 @@ function OrganizerParticipants(props) {
          }) 
     }
 
-    function removeParticipant(participantName){
-        console.log("removing participant " + participantName);
-        //!!delete participant in DB and reload
-        axiosInstance.post('/removeParticipant/' + tripId, {name:participantName})
-         .then( res => {
-            console.log("removed: ", participantName ,' from the trip');
-            setPartArr(participantArray.filter( party => party.name !== participantName));
-         })
-    }
-
     return(
-        <div>
-            <form id="participant">
-                Enter a participants together cars username:
-                <input
-                type="text"
-                name="participantName"
-                value={participantName}
-                onChange={handleChange}/>
-                {loading && "..."}
-                <button onClick={handleSubmit}>Add participant</button>
-            </form>
-
-            <div id="participantList">
-                {participantArray.map( (party,i) => {
-                    return(
-                        <div key={i} className='stagedParticipant'>
-                            {party.name}
-                            <br></br>
-                            {party.status}
-                            {party.organizer || <button onClick={() => removeParticipant(party.name)}>X</button>}
-                        </div>
-                    )
-                })}
-            </div>
-        </div>
+        <form id="addParticipant">
+            Enter a participant's Together Cars username:
+            <input
+            type="text"
+            name="participantName"
+            value={participantName}
+            onChange={handleChange}/>
+            {loading && "..."}
+            <button onClick={handleSubmit}>Add participant</button>
+        </form>
     )
 }
 
 function ParticipantView(props){
-    const { trip, username, isOrganizer, participants, updatePartipants } = props;
+    const { trip, username, isOrganizer, participants, updateParticipants } = props;
 
     return (
         <div id='participantViewWrapper' className='tripViewWrapper'>
@@ -240,12 +180,15 @@ function ParticipantView(props){
             <Participants 
             tripId={trip._id}
             isOrganizer={isOrganizer}
-            participants={participants}/>
+            participants={participants}
+            updateParticipants={(newParticipants) => updateParticipants(newParticipants)}
+            />
             <Drivers
             tripId={trip._id}
             username={username}
             participants={participants}
-            updatePartipants={(newParticipants) => updatePartipants(newParticipants)}/>
+            updateParticipants={(newParticipants) => updateParticipants(newParticipants)}
+            />
          </div>
     )
 }
@@ -255,7 +198,7 @@ function Participants(props){
     //const [participantArray, setPartArr] = useState([]);
     const [loading, setLoading] = useState(true);
     //declare this so it causes an error if I don't give it 
-    const {tripId , participants, isOrganizer} = props;
+    const {tripId, participants, isOrganizer, updateParticipants} = props;
 
     //update loading based on participants
     useEffect(() => {
@@ -263,6 +206,19 @@ function Participants(props){
             setLoading(false);
         }
     }, [ participants ]);
+
+    function removeParticipant(participantName){
+        console.log("removing participant " + participantName);
+        //delete participant in DB and reload
+        axiosInstance.post('/removeParticipant/' + tripId, {name:participantName})
+         .then( res => {
+            console.log("removed: ", participantName ,' from the trip');
+            //update the main participants state
+            updateParticipants(participants.filter( party => {
+                return party.name !== participantName;
+            }))
+         })
+    }
 
     //return all of the participants and their status
     if(loading){
@@ -272,14 +228,24 @@ function Participants(props){
     }else{
         return(
             <div id='participantsWrapper'>
+                {//!! 02/03Just needs some styling adjustments and update the add participant function in organizer participants
+                isOrganizer && (
+                    <OrganizerParticipants 
+                    participants={participants}
+                    updateParticipants={(newParticipants) => updateParticipants(newParticipants)}
+                    tripId={tripId}/>
+                )}
                 <h2 id='participantsHeader'>Participants</h2>
                 <div id='participantKey'> (D):driver, (P):passenger, (U):unassigned, *:organizer</div>
                     {participants.map( (party,i) => {
                         return(
                             <div className='singleParticipant' id={party.organizer && "organizerParticipant"} key={i}>
+                                <div>
                                 {party.name}
                                 ({party.status === "driver" ? "D" : party.status === "passenger" ? "P" : "U"})
                                 {party.organizer && "*"}
+                                </div>
+                                {(isOrganizer && !party.organizer) && <button onClick={ () => removeParticipant(party.name)}>x</button>}
                             </div>
                         )
                     })}
@@ -294,7 +260,7 @@ function Drivers(props){
     const [loading, setLoading] = useState(false);
     const [showButton, setShowButton] = useState(true);
     //expect props to contain tripId
-    const {tripId, username, participants, updatePartipants} = props;
+    const {tripId, username, participants, updateParticipants} = props;
 
 
     function toggleDriverForm(){
@@ -335,7 +301,7 @@ function Drivers(props){
                     party.status = null;
                 }
             });
-            updatePartipants(newParticipants);
+            updateParticipants(newParticipants);
             getDrivers();
          })
     }
@@ -381,7 +347,7 @@ function Drivers(props){
                                 removeDriver={() => removeDriver(driver._id)}
                                 updateDrivers={() => getDrivers()}
                                 participants={participants}
-                                updatePartipants={(newParticipants) => updatePartipants(newParticipants)}
+                                updateParticipants={(newParticipants) => updateParticipants(newParticipants)}
                                 />
                             )
                         })}
@@ -395,14 +361,14 @@ function Drivers(props){
                  tripId={tripId} 
                  refresh={() => getDrivers()}
                  participants={participants}
-                 updatePartipants={(newParticipants) => updatePartipants(newParticipants)}/>}
+                 updateParticipants={(newParticipants) => updateParticipants(newParticipants)}/>}
             </div> 
         )
     }
 }
 
 function DriverForm(props){
-    const {tripId, refresh, participants, updatePartipants} = props;
+    const {tripId, refresh, participants, updateParticipants} = props;
 
     const [values, setValues] = useState({
         departureLocation:'',
@@ -450,7 +416,7 @@ function DriverForm(props){
                     party.status = "driver";
                 }
             });
-            updatePartipants(newParticipants);
+            updateParticipants(newParticipants);
             //refresh the "Drivers" component to get the new driver
             refresh();
          })
@@ -549,7 +515,7 @@ function SingleDriver(props){
         username,
         updateDrivers,
         participants,
-        updatePartipants } = props
+        updateParticipants } = props
 
     const driverId = props.driver._id;
 
@@ -579,7 +545,7 @@ function SingleDriver(props){
                         party.driverId = res.data.driver._id;
                     }
                 });
-                updatePartipants(newParticipants);
+                updateParticipants(newParticipants);
                 updateDrivers();
             }
          })
@@ -601,7 +567,7 @@ function SingleDriver(props){
                         party.driverId = null;
                     }
                 });
-                updatePartipants(newParticipants);
+                updateParticipants(newParticipants);
                 updateDrivers();
             }
          })
