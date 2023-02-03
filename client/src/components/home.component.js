@@ -255,9 +255,9 @@ function ParticipatingTrips(props){
                 trips.map( (trip, i) => (
                     <Link to={"/trips/" + trip._id}>
                         <div className='tripContainer' key={i}>
-                            <h2>{trip.title}</h2>
-                            <p>Trip Description: {trip.description}</p>
-                            <p>Planned Arrival Time: {trip.arrivalTime.slice(11,16) + " on "}
+                            <h2 key={i + "h"}>{trip.title}</h2>
+                            <p key={i + "p1"}>Trip Description: {trip.description}</p>
+                            <p key={i + "p2"}>Planned Arrival Time: {trip.arrivalTime.slice(11,16) + " on "}
                                 {trip.arrivalTime.slice(0,10)}</p>
                         </div>
                     </Link>

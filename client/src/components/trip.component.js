@@ -393,15 +393,16 @@ function Drivers(props){
                  <DriverForm 
                  closeMe={() => toggleDriverForm()} 
                  tripId={tripId} 
-                 refresh={() => getDrivers()}/>}
+                 refresh={() => getDrivers()}
+                 participants={participants}
+                 updatePartipants={(newParticipants) => updatePartipants(newParticipants)}/>}
             </div> 
         )
     }
 }
 
 function DriverForm(props){
-    const tripId = props.tripId;
-    const refresh = props.refresh;
+    const {tripId, refresh, participants, updatePartipants} = props;
 
     const [values, setValues] = useState({
         departureLocation:'',
@@ -442,6 +443,14 @@ function DriverForm(props){
          .then( res => {
             //response will be the driver data
             console.log("created new driver:", res.data.name);
+            //update the participants list:
+            let newParticipants = [...participants];
+            newParticipants.forEach(party => {
+                if(party.name === res.data.name){
+                    party.status = "driver";
+                }
+            });
+            updatePartipants(newParticipants);
             //refresh the "Drivers" component to get the new driver
             refresh();
          })
@@ -561,7 +570,7 @@ function SingleDriver(props){
             }else{
                 //recieve {driver:...,participant:...}
                 console.log("Passenger add was a success!", res.data.driver.passengers);
-                setPassengers(res.data.driver.passengers);
+                //setPassengers(res.data.driver.passengers);
                 //update the participants list:
                 let newParticipants = [...participants];
                 newParticipants.forEach(party => {
@@ -584,7 +593,15 @@ function SingleDriver(props){
                 console.log(res.data.error);
             }else{
                 console.log("Successfull passenger removal! ", res.data.driver);
-                setPassengers(res.data.driver.passengers);
+                //update the participants list:
+                let newParticipants = [...participants];
+                newParticipants.forEach(party => {
+                    if(party.name === res.data.participant.name){
+                        party.status = null;
+                        party.driverId = null;
+                    }
+                });
+                updatePartipants(newParticipants);
                 updateDrivers();
             }
          })
