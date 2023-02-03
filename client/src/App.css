@@ -358,6 +358,7 @@ body {
 .tripViewWrapper #driversWrapper #driversBlock #driverFormButton {
   background-color: #b8f77b;
   height: 50%;
+  min-height: 75px;
   border: none;
   border-radius: 1em;
   align-self: center;

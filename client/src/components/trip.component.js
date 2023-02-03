@@ -13,6 +13,7 @@ export default function Trip(props){
     //initially loading is true
     const [loading, setLoading] = useState(true);
     const [trip, setTrip] = useState(null);
+    const [participants, setParticipants] = useState([])
 
     useEffect(() =>{
         console.log("getting data on trip ID:" + params.tripId);
@@ -21,11 +22,54 @@ export default function Trip(props){
             console.log("got data on trip ID:" + params.tripId);
             console.log(res.data);
             setTrip(res.data);
-            /*!! 02/02 Another axios call for participants here*/
+            /*!! 02/03 Another axios call for participants here*/
             console.log("Second axios call to get the trips");
-            setLoading(false);
+            axiosInstance.get('/participants/' + params.tripId)
+             .then( partyRes => {
+                //array of all participant objects
+                console.log("got participants in the main: " + res.data)
+                setParticipants(partyRes.data);
+                setLoading(false);
+             })
+            
         })
     }, [params])
+
+    function participantsAreSame(party1, party2){
+        if(party1.name !== party2.name){
+            console.log('name error', party1, party2)
+            return false;
+        }else if(party1.status !== party2.status){
+            console.log('status error', party1, party2)
+            return false;
+        }else if(party1.driverId !== party2.driverId){
+            console.log('driver error', party1, party2)
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    function updatePartipants(newPartyArray){
+        //update the state
+        setParticipants(newPartyArray);
+        //ensure state is consistent with DB
+        axiosInstance.get('/participants/' + params.tripId)
+            .then( res => {
+                console.log("got participants for comparison");
+                let updateRequired = false;
+                res.data.forEach( (party, i) => {
+                    if(!participantsAreSame(party,participants[i])){
+                        updateRequired = true;
+                    }
+                })
+                if(updateRequired){
+                    console.error("!!Do an error or something");
+                    //update the participants to be correct
+                    setParticipants(res.data);
+                }
+            })
+    }
 
 
 
@@ -56,7 +100,9 @@ export default function Trip(props){
                 <ParticipantView
                 trip={trip}
                 username={props.username}
-                organizer={props.username === trip.organizer}/>
+                isOrganizer={props.username === trip.organizer}
+                participants={participants}
+                updatePartipants={(newParticipants)=>updatePartipants(newParticipants)}/>
             )
         }
     }
@@ -177,8 +223,8 @@ function OrganizerParticipants(props) {
 }
 
 function ParticipantView(props){
-    const trip = props.trip;
-    const username = props.username;
+    const { trip, username, isOrganizer, participants, updatePartipants } = props;
+
     return (
         <div id='participantViewWrapper' className='tripViewWrapper'>
             <div id='tripInformation'>
@@ -191,29 +237,33 @@ function ParticipantView(props){
                 </div>
                 <div id='tripDescription'>Description: {trip.description}</div>
             </div>
-            <Participants tripId={trip._id}/>
-            <Drivers tripId={trip._id} username={username}/>
+            <Participants 
+            tripId={trip._id}
+            isOrganizer={isOrganizer}
+            participants={participants}/>
+            <Drivers
+            tripId={trip._id}
+            username={username}
+            participants={participants}
+            updatePartipants={(newParticipants) => updatePartipants(newParticipants)}/>
          </div>
     )
 }
 
 function Participants(props){
-    //expect props to contain trip id
-    const [participantArray, setPartArr] = useState([]);
+
+    //const [participantArray, setPartArr] = useState([]);
     const [loading, setLoading] = useState(true);
     //declare this so it causes an error if I don't give it 
-    const tripId = props.tripId;
-    //use effect to get all of the participants as an array by searching the tripId field
+    const {tripId , participants, isOrganizer} = props;
+
+    //update loading based on participants
     useEffect(() => {
-        console.log("getting participants for trip:", tripId);
-        axiosInstance.get("/participants/"+tripId)
-         .then( res => {
-            //response will be an array of all the participant objects
-            console.log("got the participants: " + res.data);
-            setPartArr(res.data);
+        if(participants.length > 0){
             setLoading(false);
-         })
-    }, [tripId]);
+        }
+    }, [ participants ]);
+
     //return all of the participants and their status
     if(loading){
         return(
@@ -224,7 +274,7 @@ function Participants(props){
             <div id='participantsWrapper'>
                 <h2 id='participantsHeader'>Participants</h2>
                 <div id='participantKey'> (D):driver, (P):passenger, (U):unassigned, *:organizer</div>
-                    {participantArray.map( (party,i) => {
+                    {participants.map( (party,i) => {
                         return(
                             <div className='singleParticipant' id={party.organizer && "organizerParticipant"} key={i}>
                                 {party.name}
@@ -244,8 +294,8 @@ function Drivers(props){
     const [loading, setLoading] = useState(false);
     const [showButton, setShowButton] = useState(true);
     //expect props to contain tripId
-    const tripId = props.tripId
-    const username = props.username;
+    const {tripId, username, participants, updatePartipants} = props;
+
 
     function toggleDriverForm(){
         setDriverFormVisible( (driverFormVisible) => {
@@ -278,10 +328,19 @@ function Drivers(props){
         axios.post('/removeDriver/' + driverId)
          .then( res => {
             console.log("Driver removed");
+            //update participants
+            let newParticipants = [...participants];
+            newParticipants.forEach(party => {
+                if(party.name === res.data.name){
+                    party.status = null;
+                }
+            });
+            updatePartipants(newParticipants);
             getDrivers();
          })
     }
 
+    //checks if the user is unassigned => able to start a car
     useEffect( () => {
         var partyArr = drivers.reduce((arr, driver) => {
             arr.push(driver.name);
@@ -321,6 +380,8 @@ function Drivers(props){
                                 username={username}
                                 removeDriver={() => removeDriver(driver._id)}
                                 updateDrivers={() => getDrivers()}
+                                participants={participants}
+                                updatePartipants={(newParticipants) => updatePartipants(newParticipants)}
                                 />
                             )
                         })}
@@ -328,7 +389,11 @@ function Drivers(props){
                 {showButton && (<button id='driverFormButton' onClick={() => toggleDriverForm()}>I can Drive!</button>)}
                 </div>
 
-                {driverFormVisible && <DriverForm closeMe={() => toggleDriverForm()} tripId={tripId} refresh={() => getDrivers()}/>}
+                {driverFormVisible &&
+                 <DriverForm 
+                 closeMe={() => toggleDriverForm()} 
+                 tripId={tripId} 
+                 refresh={() => getDrivers()}/>}
             </div> 
         )
     }
@@ -471,7 +536,12 @@ function SingleDriver(props){
         notes,
         name,} = props.driver
     
-    const { tripId, username, updateDrivers } = props
+    const {tripId,
+        username,
+        updateDrivers,
+        participants,
+        updatePartipants } = props
+
     const driverId = props.driver._id;
 
 
@@ -482,7 +552,6 @@ function SingleDriver(props){
     }, [props]);
 
     const addPassenger = (passengerIndex) => {
-        //!!may need to update the passengers state before hand and rollback due to slowness
         console.log("Adding passenger #", passengerIndex, " to driver:", name);
         //send trip Id from driver and passenger Index
         axiosInstance.post("/passenger/" + driverId, {tripId:tripId, passengerIndex: passengerIndex})
@@ -490,10 +559,18 @@ function SingleDriver(props){
             if(res.data.error){
                 console.log(res.data.error);
             }else{
-                //recieve {driver:...,passenger:...}
+                //recieve {driver:...,participant:...}
                 console.log("Passenger add was a success!", res.data.driver.passengers);
-                //may not manage this state locally
                 setPassengers(res.data.driver.passengers);
+                //update the participants list:
+                let newParticipants = [...participants];
+                newParticipants.forEach(party => {
+                    if(party.name === res.data.participant.name){
+                        party.status = "passenger";
+                        party.driverId = res.data.driver._id;
+                    }
+                });
+                updatePartipants(newParticipants);
                 updateDrivers();
             }
          })

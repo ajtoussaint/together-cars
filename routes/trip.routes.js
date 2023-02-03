@@ -226,7 +226,8 @@ module.exports = function(app,ensureAuthenticated){
                             console.log(err);
                         }else{
                             console.log("Deleted driver: ", deletedDriver.name);
-                            res.json({error:null});
+                            //respond so front end can update the participants
+                            res.json(deletedDriver);
                         }
                     })
                 }
