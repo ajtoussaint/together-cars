@@ -3,6 +3,8 @@ const LocalStrategy = require('passport-local');
 const User = require("../models/User.model");
 const bcrypt = require("bcrypt");
 
+//slyguy St3ward
+
 module.exports = function(app){
     //passport things that will become a module
     
@@ -54,11 +56,7 @@ module.exports = function(app){
   (req, res) =>{
       console.log("logged in: " + req.user);
       //controll what gets sent to the axios "res.data" value here
-      let userInfo = {
-          username: req.user.username
-      };
-      console.log("req.session after login: ", req.session);
-      res.send(userInfo)
+      res.json({username: req.user.username})
   })
 
 
@@ -82,34 +80,42 @@ module.exports = function(app){
   app.post("/register", 
   (req,res,next) => {
       console.log("Attempting to register new user");
-      //recieves an object with username and pasword in the body
-      const hash = bcrypt.hashSync(req.body.password, 9);
-      User.findOne({username:req.body.username}, function(err, user){
-          if(err){
-              console.log("DB error");
-              res.json({ error: "DB error try again"});
-          }else if(user){
-              console.log("registration failed, username taken")
-              res.json({ error: "Username is already taken"})
-          }else if(req.body.password != req.body.confirmPassword){
-              console.log("registration failed, passwords must match")
-              res.json({ error: "Passwords must match"})
-          } else{
-              let newUser = new User({
-                  username: req.body.username,
-                  password:hash
-              });
-              newUser.save((err, data) => {
-                  if(err){
-                      console.log("DB error saving new user");
-                  }else{
-                      console.log("new user created: ", data.username);
-                      req.newUserData = data;
-                      next(null, data);
-                  }
-              })
-          }
-      })
+      if(!req.body.username || req.body.username.length <3){
+        res.json({error:'Username must be at least 3 characters'})
+        }else{
+        //recieves an object with username and pasword in the body
+        const hash = bcrypt.hashSync(req.body.password, 9);
+        User.findOne({username:req.body.username}, function(err, user){
+            if(err){
+                console.log("DB error");
+                res.json({ error: "DB error. Try again"});
+            }else if(user){
+                console.log("registration failed, username taken")
+                res.json({ error: "Username is already taken"})
+            }else if(req.body.password !== req.body.confirmPassword){
+                console.log("registration failed, passwords must match")
+                res.json({ error: "Passwords must match"})
+            }else if(!passwordIsStrong(req.body.password)){
+                res.json({error: "Passwords must be at least 8 characters, contain upper and lowercase letters and a special character: !@#$5^&*()"});
+            } else{
+                console.log("passed all naming convention checks");
+                let newUser = new User({
+                    username: req.body.username,
+                    password:hash
+                });
+                newUser.save((err, data) => {
+                    if(err){
+                        console.log("DB error saving new user");
+                        res.json({ error: "DB error. Try again"})
+                    }else{
+                        console.log("new user created: ", data.username);
+                        req.newUserData = data;
+                        next(null, data);
+                    }
+                })
+            }
+        })
+     }
   }, 
       passport.authenticate('local', {failureRedirect:'/'}),
       (req, res) => {
@@ -128,4 +134,24 @@ module.exports = function(app){
       })
   })
 
+    function passwordIsStrong(password){
+        if(password.length < 8){
+            console.log('short');
+            return false;
+        }else if(!(/[A-Z]/.test(password))){
+            console.log('no uppers');
+            return false
+        }else if( !(/[a-z]/.test(password))){
+            console.log('no lowers');
+            return false;
+        }else if(!(/[!@#$%^&*()]/.test(password))){
+            console.log('not special')
+            return false;
+        }else if(!(/[1234567890]/.test(password))){
+            console.log('no number');
+            return false
+        }else{
+            return true;
+        }
+    }
 }

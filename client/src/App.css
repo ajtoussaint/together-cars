@@ -112,6 +112,11 @@ body {
   border: none;
   font-size: 0.7em;
 }
+#loginPageWrapper #loginError {
+  color: rgb(153, 13, 13);
+  font-size: 0.7em;
+  text-align: center;
+}
 
 #homeComponentWrapper {
   top: 0;

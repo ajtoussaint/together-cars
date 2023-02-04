@@ -80,7 +80,8 @@ class Login extends Component{
 
         this.state={
             username:"",
-            password:""
+            password:"",
+            error:""
         }
 
         this.handleLogin = this.handleLogin.bind(this);
@@ -104,9 +105,16 @@ class Login extends Component{
             //res .data contains the response of the "/login" post route
             console.log("login res: " + JSON.stringify(res.data));
             if (res.status === 200){
-                //Pass a function from App.js into here so that the higher level state can be updated
-                this.props.updateUser(res.data.username);
+                    //Pass a function from App.js into here so that the higher level state can be updated
+                    this.props.updateUser(res.data.username);
             }
+        }).catch( err => {
+            //send general error
+            this.setState({
+                username:"",
+                password:"",
+                error:"Username or password is incorrect"
+            })
         })
     }
 
@@ -136,6 +144,7 @@ class Login extends Component{
                          value={this.state.password}
                          onChange={this.handleChange}/>
                     </label>
+                    <p id='loginError'>{this.state.error}</p>
                     <br></br>
                     <button type='submit' onClick={this.handleLogin}>Login</button>
                 </form>
@@ -151,7 +160,8 @@ class Register extends Component{
         this.state={
             username:"",
             password:"",
-            confirmPassword:""
+            confirmPassword:"",
+            error:""
         }
 
         this.handleRegister = this.handleRegister.bind(this);
@@ -174,9 +184,18 @@ class Register extends Component{
         })
         .then( res => {
             if(res.status === 200){
-                //work like login
-                console.log("Register Response:", res.data);
-                this.props.updateUser(res.data.username);
+                if(res.data.error){
+                    this.setState({
+                        username:"",
+                        password:"",
+                        confirmPassword:"",
+                        error:res.data.error
+                    })
+                }else{
+                    //work like login
+                    console.log("Register Response:", res.data);
+                    this.props.updateUser(res.data.username);
+                }
             }
         })
     }
@@ -218,6 +237,7 @@ class Register extends Component{
                          value={this.state.confirmPassword}
                          onChange={this.handleChange}/>
                     </label>
+                    <p id='loginError'>{this.state.error}</p>
                     <br></br>
                     <button type='submit' onClick={this.handleRegister}>Register</button>
                 </form>
