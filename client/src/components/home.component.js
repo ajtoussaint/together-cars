@@ -273,7 +273,7 @@ function ParticipatingTrips(props){
                 <h1>Your Trips:</h1>
                 {trips.length < 1 ? (<h2>No trips to display</h2>) : 
                 trips.map( (trip, i) => (
-                    <Link to={"/trips/" + trip._id}>
+                    <Link to={"/trips/" + trip._id} key={i}>
                         <div className='tripContainer' key={i}>
                             <h2 key={i + "h"}>{trip.title}</h2>
                             <p key={i + "p1"}>Trip Description: {trip.description}</p>

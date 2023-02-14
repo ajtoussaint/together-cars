@@ -72,7 +72,6 @@ export default class CreateTrip extends Component{
                 )
             }else if(this.state.processingCompleted){
                 return(
-                    //!!01/16 This will go to the trip once that is a thing
                     <Navigate to={this.state.tripUrl} replace={false} />
                 )
             }else{

@@ -22,7 +22,7 @@ export default function Trip(props){
             console.log("got data on trip ID:" + params.tripId);
             console.log(res.data);
             setTrip(res.data);
-            /*!! 02/03 Another axios call for participants here*/
+            // Another axios call for participants here
             console.log("Second axios call to get the trips");
             axiosInstance.get('/participants/' + params.tripId)
              .then( partyRes => {
@@ -74,9 +74,6 @@ export default function Trip(props){
     }
 
 
-
-    //!! what if we use effect to get participants here and pass a reload function down!!
-
     if(loading){
         return(
             <Loading />
@@ -105,7 +102,7 @@ function OrganizerParticipants(props) {
     const [participantName, setParticipantName] = useState("");
     const [loading, setLoading] = useState(false)
     const {tripId, participants, updateParticipants} = props;
-    const [participantArray, setPartArr] = useState([]);
+
 
 
     function handleChange(e){
@@ -228,7 +225,7 @@ function Participants(props){
     }else{
         return(
             <div id='participantsWrapper'>
-                {//!! 02/03Just needs some styling adjustments and update the add participant function in organizer participants
+                {
                 isOrganizer && (
                     <OrganizerParticipants 
                     participants={participants}
