@@ -1,5 +1,5 @@
 import React, { Component, useEffect, useState } from 'react';
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import axiosInstance from "../modules/axiosInstance";
 import Loading from "./loading.component";
 
@@ -13,10 +13,12 @@ export default class Home extends Component{
             username:"",
             password:"",
             loading:true,
-            trips:[]
+            trips:[],
+            error:false
         }
 
         this.getUsersTrips = this.getUsersTrips.bind(this);
+        this.handleError = this.handleError.bind(this);
     }
 
     componentDidMount(){
@@ -44,31 +46,50 @@ export default class Home extends Component{
                     loading:false,
                     trips: res.data.userTrips
                 })
+            }).catch( err => {
+                this.props.handleError({text:null, link:'/'});
             })
         }
     }
 
+    handleError(error){
+        console.log("Home component handled an error!")
+        this.setState({error:true});
+        this.props.setError(error);
+    }
+
     //Wait until app is done loading to render here
     render(){
-        if(this.props.loadingUser){
-            return(<Loading />)
+        if(this.state.error){
+            return(
+                <Navigate to='/error' replace={false} />
+            )
         }else{
-            if(this.props.loggedIn){
-                return(
-                    <div id="homeComponentWrapper">
-                        <ParticipatingTrips
-                        username={this.props.username}/>
-                    </div>
-                )
+            if(this.props.loadingUser){
+                return(<Loading />)
             }else{
-                return(
-                    <div id="loginPageWrapper"> 
-                        <div id="loginWrapper">
-                        <Login updateUser={this.props.updateUser}/>
-                        <Register updateUser={this.props.updateUser}/>
+                if(this.props.loggedIn){
+                    return(
+                        <div id="homeComponentWrapper">
+                            <ParticipatingTrips
+                            username={this.props.username}
+                            handleError={(e)=>this.handleError(e)}/>
                         </div>
-                    </div>
-                )
+                    )
+                }else{
+                    return(
+                        <div id="loginPageWrapper"> 
+                            <div id="loginWrapper">
+                            <Login 
+                            updateUser={this.props.updateUser}
+                            handleError={(e)=>this.handleError(e)}/>
+                            <Register 
+                            updateUser={this.props.updateUser}
+                            handleError={(e)=>this.handleError(e)}/>
+                            </div>
+                        </div>
+                    )
+                }
             }
         }
     }
@@ -197,6 +218,8 @@ class Register extends Component{
                     this.props.updateUser(res.data.username);
                 }
             }
+        }).catch( err => {
+            this.props.handleError({text:null, link:'/'});
         })
     }
 
@@ -259,7 +282,9 @@ function ParticipatingTrips(props){
             console.log("got the participant trip data");
             setTrips(res.data);
             setLoading(false);
-         })
+         }).catch( err => {
+            this.props.handleError({text:null, link:'/'});
+        })
     }, [props.username])
 
 

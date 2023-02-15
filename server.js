@@ -79,6 +79,7 @@ tripRoutes(app, ensureAuthenticated);
     Trip.find({organizer:req.params.username}, (err,data) => {
         if(err){
             console.log(err);
+            res.status(500).send("Couldn't get Trip Data");
         }else if(!data){
             res.json({userTrips:[]});
         }else{

@@ -7,6 +7,7 @@ import Blue from './components/blue-test.component';
 import Home from "./components/home.component";
 import CreateTrip from './components/create-trip.component';
 import Trip from './components/trip.component';
+import Error from './components/error.component';
 
 
 
@@ -16,11 +17,13 @@ export default class App extends Component {
     this.state={
       loggedIn: false,
       loading: true,
-      username: null
+      username: null,
+      error: {text:null, link:null}
     }
 
     this.updateUser = this.updateUser.bind(this);
     this.getCurrentUser = this.getCurrentUser.bind(this);
+    this.setError = this.setError.bind(this);
   }
 
   updateUser( username ){
@@ -73,10 +76,24 @@ export default class App extends Component {
       }
         
 
+    }).catch(error => {
+      console.log("Error! ", error);
+      this.setState({
+        loggedIn: false,
+        loading: false,
+        username: null
+      });
     })
   }
 
-  //!!polish: return secure pages only if the user is logged in
+  setError(errorObj){
+    console.log("Setting error", errorObj);
+    this.setState({
+      error:errorObj
+    });
+  }
+
+
   render(){
     return (
       <div id="appWrapper">
@@ -92,15 +109,23 @@ export default class App extends Component {
             updateUser={this.updateUser}
             loggedIn={this.state.loggedIn}
             username={this.state.username}
-            loadingUser={this.state.loading}/>} />
+            loadingUser={this.state.loading}
+            setError={(errorObj)=>this.setError(errorObj)}/>} />
 
             <Route path="/createTrip" element={<CreateTrip
             loggedIn={this.state.loggedIn}
-            loading={this.state.loading} />} />
+            loading={this.state.loading} 
+            setError={(errorObj)=>this.setError(errorObj)}/>} />
 
             <Route path="trips/:tripId" element={<Trip
             loggedIn={this.state.loggedIn}
-            username={this.state.username}/>}/>
+            username={this.state.username}
+            setError={(errorObj)=>this.setError(errorObj)}/>}/>
+
+            <Route path="/error" element={<Error
+             text={this.state.error.text}
+             link={this.state.error.link}
+             setError={(errorObj)=>this.setError(errorObj)}/>}/>
 
             <Route path="/red" element={<Red
              user={this.state.username}
@@ -129,11 +154,12 @@ class Navbar extends Component{
       console.log("Logout Res: ", res);
       this.props.updateUser(null);
       return redirect(res.data.redirect);
+    }).catch(error => {
+      console.log("There was an error loggin out: ", error);
     })
   }
 
   render(){
-    //Nothing in the navbar will require loading in final product, just testing
     return(
       <div id="navbarTotalWrapper">
         <div id="navbarWrapper">
