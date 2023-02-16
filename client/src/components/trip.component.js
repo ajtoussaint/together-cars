@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import axiosInstance from "../modules/axiosInstance"
 import Loading from "./loading.component"
@@ -14,6 +14,7 @@ export default function Trip(props){
     const [loading, setLoading] = useState(true);
     const [trip, setTrip] = useState(null);
     const [participants, setParticipants] = useState([])
+    const [error, setError] = useState(false);
 
     useEffect(() =>{
         console.log("getting data on trip ID:" + params.tripId);
@@ -30,10 +31,19 @@ export default function Trip(props){
                 console.log("got participants in the main: " + res.data)
                 setParticipants(partyRes.data);
                 setLoading(false);
-             })
+             }).catch( err => {
+                //handle error is written out to avoid using callback
+                console.log("Trip component handled an error!");
+                setError(true);
+                props.setError({text:null,link:'/'});
+            })
             
+        }).catch( err => {
+            console.log("Trip component handled an error!");
+            setError(true);
+            props.setError({text:null,link:'/'});
         })
-    }, [params])
+    }, [params, props])
 
     function participantsAreSame(party1, party2){
         console.log('#1', party1.name);
@@ -70,38 +80,52 @@ export default function Trip(props){
                     //update the participants to be correct
                     setParticipants(res.data);
                 }
+            }).catch( err => {
+                handleError({text:null, link:'/'})
             })
     }
 
+    function handleError(error){
+        console.log("Trip component handled an error!");
+        setError(true);
+        props.setError(error);
+    }
 
-    if(loading){
+    if(error){
         return(
-            <Loading />
-        )
-    }else if(!props.loggedIn){
-        return(
-            <Navigate to="/" replace={false} />
-        )
-    }else if(!trip){
-        return(
-            <h1>The trip does not exist</h1>
+            <Navigate to='/error' replace={false} />
         )
     }else{
-        return(
-            <ParticipantView
-            trip={trip}
-            username={props.username}
-            isOrganizer={props.username === trip.organizer}
-            participants={participants}
-            updateParticipants={(newParticipants)=>updateParticipants(newParticipants)}/>
-        )
+        if(loading){
+            return(
+                <Loading />
+            )
+        }else if(!props.loggedIn){
+            return(
+                <Navigate to="/" replace={false} />
+            )
+        }else if(!trip){
+            return(
+                <h1>The trip does not exist</h1>
+            )
+        }else{
+            return(
+                <ParticipantView
+                trip={trip}
+                username={props.username}
+                isOrganizer={props.username === trip.organizer}
+                participants={participants}
+                updateParticipants={(newParticipants)=>updateParticipants(newParticipants)}
+                handleError={(e)=>handleError(e)}/>
+            )
+        }
     }
 }
 
 function OrganizerParticipants(props) {
     const [participantName, setParticipantName] = useState("");
     const [loading, setLoading] = useState(false)
-    const {tripId, participants, updateParticipants} = props;
+    const {tripId, participants, updateParticipants, handleError} = props;
 
 
 
@@ -129,7 +153,9 @@ function OrganizerParticipants(props) {
                         //update participants
                         let newParticipants = [...participants, res.data];
                         updateParticipants(newParticipants);
-                     })
+                     }).catch( err => {
+                        handleError({text:null, link:'/'})
+                    })
                 }else{
                     console.log("user is already a participant");
                     //!!show error to user
@@ -142,7 +168,9 @@ function OrganizerParticipants(props) {
             setLoading(false);
             //reset the form
              setParticipantName("");
-         }) 
+         }).catch( err => {
+            handleError({text:null, link:'/'})
+        }) 
     }
 
     return(
@@ -160,7 +188,7 @@ function OrganizerParticipants(props) {
 }
 
 function ParticipantView(props){
-    const { trip, username, isOrganizer, participants, updateParticipants } = props;
+    const { trip, username, isOrganizer, participants, updateParticipants, handleError } = props;
 
     return (
         <div id='participantViewWrapper' className='tripViewWrapper'>
@@ -179,12 +207,14 @@ function ParticipantView(props){
             isOrganizer={isOrganizer}
             participants={participants}
             updateParticipants={(newParticipants) => updateParticipants(newParticipants)}
+            handleError={(e)=>handleError(e)}
             />
             <Drivers
             tripId={trip._id}
             username={username}
             participants={participants}
             updateParticipants={(newParticipants) => updateParticipants(newParticipants)}
+            handleError={(e)=>handleError(e)}
             />
          </div>
     )
@@ -195,7 +225,7 @@ function Participants(props){
     //const [participantArray, setPartArr] = useState([]);
     const [loading, setLoading] = useState(true);
     //declare this so it causes an error if I don't give it 
-    const {tripId, participants, isOrganizer, updateParticipants} = props;
+    const {tripId, participants, isOrganizer, updateParticipants, handleError} = props;
 
     //update loading based on participants
     useEffect(() => {
@@ -214,7 +244,9 @@ function Participants(props){
             updateParticipants(participants.filter( party => {
                 return party.name !== participantName;
             }))
-         })
+         }).catch( err => {
+            handleError({text:null, link:'/'})
+        })
     }
 
     //return all of the participants and their status
@@ -230,7 +262,8 @@ function Participants(props){
                     <OrganizerParticipants 
                     participants={participants}
                     updateParticipants={(newParticipants) => updateParticipants(newParticipants)}
-                    tripId={tripId}/>
+                    tripId={tripId}
+                    handleError={(e)=>handleError(e)}/>
                 )}
                 <h2 id='participantsHeader'>Participants</h2>
                 <div id='participantKey'> (D):driver, (P):passenger, (U):unassigned, *:organizer</div>
@@ -257,8 +290,12 @@ function Drivers(props){
     const [loading, setLoading] = useState(false);
     const [showButton, setShowButton] = useState(true);
     //expect props to contain tripId
-    const {tripId, username, participants, updateParticipants} = props;
+    const {tripId, username, participants, updateParticipants, handleError} = props;
 
+    //necessary for use inside useEffect
+    const errorCallback = useCallback((e) => {
+        handleError(e);
+    }, [handleError])
 
     function toggleDriverForm(){
         setDriverFormVisible( (driverFormVisible) => {
@@ -275,15 +312,13 @@ function Drivers(props){
             console.log("got the drivers", res.data);
             setDrivers(res.data);
             setLoading(false);
-         })
-         .catch( err => {
-            console.log(err);
-            setLoading(false);
-            //!! display an error for the user
-         })
+         }).catch( err => {
+            errorCallback({text:null, link:'/'})
+        }) 
     }
 
-    useEffect(getDrivers, [tripId]);
+    //!!this is causing a flicker
+    useEffect(getDrivers, [tripId, errorCallback]);
 
     const removeDriver = (driverId) =>{
         console.log("Removing Driver: ", driverId);
@@ -300,7 +335,9 @@ function Drivers(props){
             });
             updateParticipants(newParticipants);
             getDrivers();
-         })
+         }).catch( err => {
+            handleError({text:null, link:'/'})
+        }) 
     }
 
     //checks if the user is unassigned => able to start a car
@@ -345,6 +382,7 @@ function Drivers(props){
                                 updateDrivers={() => getDrivers()}
                                 participants={participants}
                                 updateParticipants={(newParticipants) => updateParticipants(newParticipants)}
+                                handleError={(e)=>handleError(e)}
                                 />
                             )
                         })}
@@ -358,14 +396,17 @@ function Drivers(props){
                  tripId={tripId} 
                  refresh={() => getDrivers()}
                  participants={participants}
-                 updateParticipants={(newParticipants) => updateParticipants(newParticipants)}/>}
+                 updateParticipants={(newParticipants) => updateParticipants(newParticipants)}
+                 handleError={(e)=>handleError(e)}
+                 />}
+                 
             </div> 
         )
     }
 }
 
 function DriverForm(props){
-    const {tripId, refresh, participants, updateParticipants} = props;
+    const {tripId, refresh, participants, updateParticipants, handleError} = props;
 
     const [values, setValues] = useState({
         departureLocation:'',
@@ -416,7 +457,9 @@ function DriverForm(props){
             updateParticipants(newParticipants);
             //refresh the "Drivers" component to get the new driver
             refresh();
-         })
+         }).catch( err => {
+            handleError({text:null, link:'/'})
+        }) 
 
 
         props.closeMe();
@@ -512,11 +555,10 @@ function SingleDriver(props){
         username,
         updateDrivers,
         participants,
-        updateParticipants } = props
+        updateParticipants,
+        handleError } = props
 
     const driverId = props.driver._id;
-
-
 
 
     useEffect( () => {
@@ -545,7 +587,9 @@ function SingleDriver(props){
                 updateParticipants(newParticipants);
                 updateDrivers();
             }
-         })
+         }).catch( err => {
+            handleError({text:null, link:'/'})
+        }) 
     }
 
     const removePassenger = (passengerIndex) => {
@@ -567,12 +611,12 @@ function SingleDriver(props){
                 updateParticipants(newParticipants);
                 updateDrivers();
             }
-         })
+         }).catch( err => {
+            handleError({text:null, link:'/'})
+        }) 
     }
 
 
-
-    //!! add buttons and functions to remove driver and passengers
     return(
         <div className="singleDriverWrapper">
             <div className='singleDriverHeader'>
