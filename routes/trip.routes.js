@@ -8,6 +8,7 @@ module.exports = function(app,ensureAuthenticated){
     Trip.findById(req.params.id, (err,data) =>{
         if(err){
             console.log(err);
+            res.status(500).send("Error");
         }else if(!data){
             res.json(null)
         }else{
@@ -23,6 +24,7 @@ module.exports = function(app,ensureAuthenticated){
     Participant.find({tripId:req.params.tripId}, (err,data) =>{
         if(err){
             console.log(err);
+            res.status(500).send("Error");
         }else{
             console.log("Found participants: ", data);
             res.json(data);
@@ -53,18 +55,21 @@ module.exports = function(app,ensureAuthenticated){
     newDriver.save( (err,data) => {
         if(err){
             console.log(err);
+            res.status(500).send("Error");
         }else{
             console.log("created a new driver, ", data.name);
             // Update participant status
             Participant.findOne( {name:req.user.username, tripId:req.body.tripId}, (err, participantData) => {
                 if(err){
                     console.log(err);
+                    res.status(500).send("Error");
                 }else{
                     console.log("updating participant status");
                     participantData.status = "driver";
                     participantData.save( (err, updatedData) => {
                         if(err){
                             console.log(err);
+                            res.status(500).send("Error");
                         }else{
                             console.log("participant updated successfully: ", updatedData);
                             res.json(data);
@@ -83,6 +88,7 @@ module.exports = function(app,ensureAuthenticated){
     Driver.find({tripId:req.params.tripId}, (err,data) =>{
         if(err){
             console.log(err);
+            res.status(500).send("Error");
         }else{
             console.log("found drivers", data);
             res.json(data);
@@ -100,8 +106,10 @@ module.exports = function(app,ensureAuthenticated){
     Participant.findOne({name:passenger, tripId:tripId}, (err,data) => {
         if(err){
             console.log(err);
+            res.status(500).send("Error");
         }else if(!data){
             console.log("No such participant");
+            res.status(500).send("Error");
             //!! res and error
         }else{
             console.log("Found participant: ", data);
@@ -114,12 +122,14 @@ module.exports = function(app,ensureAuthenticated){
                 Driver.findById(driverId, (err, driverData) => {
                     if(err){
                         console.log(err);
+                        res.status(500).send("Error");
                     }else{
                         console.log("Found driver data: ", driverData);
                         //if the driver has no space in the passenger spot return error
                         if( driverData.passengers[passengerIndex]){
                             console.log("Spot has been filled by another user");
-                            res.json({error:"This spot is already full"});
+                            res.status(500).send("Error");
+                            //res.json({error:"This spot is already full"});
                         }else{
                             //update the driver
                             driverData.passengers[passengerIndex] = passenger;
@@ -130,6 +140,7 @@ module.exports = function(app,ensureAuthenticated){
                             driverData.save( (err,updatedDriverData) => {
                                 if(err){
                                     console.log(err);
+                                    res.status(500).send("Error");
                                 }else{
                                     console.log("driver data update a success: ", updatedDriverData);
                                     console.log("updating participant data");
@@ -138,6 +149,7 @@ module.exports = function(app,ensureAuthenticated){
                                     data.save( (err, updatedData) => {
                                         if(err){
                                             console.log(err);
+                                            res.status(500).send("Error");
                                         }else{
                                             console.log("Participant add complete", updatedDriverData, updatedData)
                                             res.json({
@@ -166,6 +178,7 @@ module.exports = function(app,ensureAuthenticated){
     Driver.findById(driverId, (err, data) => {
         if(err){
             console.log(err);
+            res.status(500).send("Error");
         }else{
             console.log("Found driver: ", data);
             data.passengers[passengerIndex] = null;
@@ -173,12 +186,14 @@ module.exports = function(app,ensureAuthenticated){
             data.save( (err,updatedData) => {
                 if(err){
                     console.log(err);
+                    res.status(500).send("Error");
                 }else{
                     console.log("updated driver: ", updatedData);
                     console.log("updating participant status...");
                     Participant.findOne({name:username,tripId:tripId}, (err,participantData) => {
                         if(err){
                             console.log(err);
+                            res.status(500).send("Error");
                         }else{
                             console.log("Found participant: ", participantData);
                             participantData.status = null;
@@ -186,6 +201,7 @@ module.exports = function(app,ensureAuthenticated){
                             participantData.save( (err,updatedParticipantData) => {
                                 if(err){
                                     console.log(err);
+                                    res.status(500).send("Error");
                                 }else{
                                     console.log("Updated participant: ", updatedParticipantData);
                                     res.json({driver:updatedData, participant:updatedParticipantData});
@@ -206,6 +222,7 @@ module.exports = function(app,ensureAuthenticated){
     Driver.findById(driverId, (err,driverData) => {
         if(err){
             console.log(err);
+            res.status(500).send("Error");
         }else{
             console.log("Found the driver data: ", driverData);
             //update all passengers and driver to no longer be passengers
@@ -217,6 +234,7 @@ module.exports = function(app,ensureAuthenticated){
             {status: null}, (err, updateData) => {
                 if(err){
                     console.log(err);
+                    res.status(500).send("Error");
                 }else{
                     console.log("Updated ", updateData.modifiedCount, " participants");
                     //delete the driver if that all goes well
@@ -224,6 +242,7 @@ module.exports = function(app,ensureAuthenticated){
                     Driver.findByIdAndDelete(driverId, (err, deletedDriver) => {
                         if(err){
                             console.log(err);
+                            res.status(500).send("Error");
                         }else{
                             console.log("Deleted driver: ", deletedDriver.name);
                             //respond so front end can update the participants
@@ -244,8 +263,10 @@ module.exports = function(app,ensureAuthenticated){
     Participant.findOne({name: participantName, tripId:tripId}, (err,data) => {
         if(err){
             console.log(err);
+            res.status(500).send("Error");
         }else if(data){
             console.log("Participant already exists!")
+            res.status(500).send("Error");
         }else{
             let newParticipant = new Participant({
                 tripId: tripId,
@@ -253,6 +274,7 @@ module.exports = function(app,ensureAuthenticated){
             });
             newParticipant.save( (err,saveData) => {
                 if(err){
+                    res.status(500).send("Error");
                     console.log(err)
                 }else{
                     console.log("created new participant: ", saveData);
@@ -279,6 +301,7 @@ module.exports = function(app,ensureAuthenticated){
             Driver.findOneAndDelete({name:participantName, tripId:tripId}, (err,deletedDriver) => {
                 if(err){
                     console.log(err);
+                    res.status(500).send("Error");
                 }else{
                     console.log("Deleted driver")
                     console.log("cleaning up passenger statuses...")
@@ -288,12 +311,14 @@ module.exports = function(app,ensureAuthenticated){
                     Participant.updateMany({name:participantArr, tripId:tripId}, (err,updateData) => {
                         if(err){
                             console.log(err);
+                            res.status(500).send("Error");
                         }else{
                             console.log("Updated ", updateData.modifiedCount ," participantsstatus")
                             //finally delete the participant itself
                             Participant.findByIdAndDelete(partyData._id, (err,deletedData) =>{
                                 if(err){
                                     console.log(err);
+                                    res.status(500).send("Error");
                                 }else{
                                     console.log("Deleted participant");
                                     res.json({error:null});
@@ -312,6 +337,7 @@ module.exports = function(app,ensureAuthenticated){
             Driver.findById(partyData.driverId, (err, driverData) => {
                 if(err){
                     console.log(err);
+                    res.status(500).send("Error");
                 }else{
                     console.log("updating driver to remove the participant as a passenger");
                     driverData.passengers[Object.values(driverData.passengers).indexOf(partyData.name)] = null;
@@ -320,11 +346,13 @@ module.exports = function(app,ensureAuthenticated){
                     driverData.save( (err, updatedDriverData) => {
                         if(err){
                             console.log(err);
+                            res.status(500).send("Error");
                         }else{
                             //finally remove the participant
                             Participant.findByIdAndDelete(partyData._id, (err,deletedData) =>{
                                 if(err){
                                     console.log(err);
+                                    res.status(500).send("Error");
                                 }else{
                                     console.log("Deleted participant");
                                     res.json({error:null});
@@ -340,6 +368,7 @@ module.exports = function(app,ensureAuthenticated){
                 Participant.findByIdAndDelete(partyData._id, (err,deletedData) =>{
                     if(err){
                         console.log(err);
+                        res.status(500).send("Error");
                     }else{
                         console.log("Deleted participant");
                         res.json({error:null});
