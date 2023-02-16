@@ -95,6 +95,7 @@ tripRoutes(app, ensureAuthenticated);
     Participant.find({name:req.user.username}, (err,data) => {
         if(err){
             console.log(err);
+            res.status(500).send("Error");
         }else if(!data){
             res.json([]);
         }else{
