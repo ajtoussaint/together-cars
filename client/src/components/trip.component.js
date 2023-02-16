@@ -316,7 +316,7 @@ function Participants(props){
 function Drivers(props){
     const [driverFormVisible, setDriverFormVisible] = useState(false);
     const [drivers, setDrivers] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [showButton, setShowButton] = useState(true);
     //expect props to contain tripId
     const {tripId, username, participants, updateParticipants, handleError} = props;
@@ -335,13 +335,12 @@ function Drivers(props){
     //get all of the drivers in the DB based on the trip ID
     const getDrivers = () => {
         console.log("getting drivers");
-        setLoading(true);
         axiosInstance.get("/driver/" + tripId,)
-         .then( res => {
+        .then( res => {
             console.log("got the drivers", res.data);
             setDrivers(res.data);
             setLoading(false);
-         }).catch( err => {
+        }).catch( err => {
             errorCallback({text:null, link:'/'})
         }) 
     }
@@ -393,7 +392,9 @@ function Drivers(props){
     //display the drivers in the return
     if(loading){
         return(
-            <Loading />
+            <div id="driversWrapper">
+                <Loading />
+            </div>
         )
     }else{
         return(

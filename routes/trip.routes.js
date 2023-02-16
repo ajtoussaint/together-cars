@@ -272,6 +272,7 @@ module.exports = function(app,ensureAuthenticated){
                 tripId: tripId,
                 name: participantName,
             });
+            console.log('Creating Participant: ', participantName)
             newParticipant.save( (err,saveData) => {
                 if(err){
                     res.status(500).send("Error");

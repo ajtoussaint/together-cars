@@ -336,6 +336,10 @@ body{
     @extend #participantsWrapper;
     grid-area: driver;
 
+    #loadingText{
+      color:black;
+    }
+
     #driversBlock{
       width:90%;
       display: flex;

@@ -311,6 +311,9 @@ body {
 .tripViewWrapper #driversWrapper {
   grid-area: driver;
 }
+.tripViewWrapper #driversWrapper #loadingText {
+  color: black;
+}
 .tripViewWrapper #driversWrapper #driversBlock {
   width: 90%;
   display: flex;
