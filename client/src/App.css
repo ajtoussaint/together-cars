@@ -6,11 +6,18 @@ body {
   font-family: monospace;
 }
 
+#footer {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 #navbarTotalWrapper {
   display: grid;
   grid-template-rows: auto 1fr;
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - 2em);
   top: 0;
 }
 
