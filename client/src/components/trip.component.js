@@ -226,6 +226,8 @@ function Participants(props){
     const [loading, setLoading] = useState(true);
     //declare this so it causes an error if I don't give it 
     const {tripId, participants, isOrganizer, updateParticipants, handleError} = props;
+    //Give user second chance before removing someone
+    const [showBigDecision, setShowBigDecision] = useState(false);
 
     //update loading based on participants
     useEffect(() => {
@@ -275,10 +277,15 @@ function Participants(props){
                                 ({party.status === "driver" ? "D" : party.status === "passenger" ? "P" : "U"})
                                 {party.organizer && "*"}
                                 </div>
-                                {(isOrganizer && !party.organizer) && <button onClick={ () => removeParticipant(party.name)}>x</button>}
+                                {(isOrganizer && !party.organizer) && <button onClick={ () => setShowBigDecision(party.name)}>x</button>}
                             </div>
                         )
                     })}
+                    {showBigDecision &&
+                     <BigDecision
+                     text={'test text for removing: ' + showBigDecision}
+                     onAccept={() => removeParticipant(showBigDecision)}
+                     closeMe={() => setShowBigDecision(null)} />}
             </div>
         )
     }
@@ -662,6 +669,35 @@ function SingleDriver(props){
                         }
                     })
                 }
+            </div>
+        </div>
+    )
+}
+
+function BigDecision(props){
+    const {text, onAccept, closeMe} = props;
+
+    function acceptDecision(){
+        //perform the dangerous action
+        onAccept();
+        //close the big decision form
+        closeMe();
+    }
+
+    return(
+        <div id='bigDecisionWrapper'>
+            <div id='bigDecisionBox'>
+                <p>{text}</p>
+                <div id='bigDecisionButtons'>
+                    <button id='bigDecisionClose'
+                     className='bigDecisionButton'
+                      onClick={() => closeMe()}
+                      >No! Go Back</button>
+                    <button id='bigDecisionAccept' 
+                    className='bigDecisionButton'
+                    onClick={() => acceptDecision()}
+                    >Yes, I'm Sure</button>
+                </div>
             </div>
         </div>
     )

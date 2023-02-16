@@ -230,7 +230,7 @@ body {
 .tripViewWrapper {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 20% 1fr 1fr;
+  grid-template-rows: auto 1fr 1fr;
   grid-template-areas: "info info info" "driver driver party" "driver driver party";
 }
 .tripViewWrapper #tripInformation {
@@ -242,6 +242,7 @@ body {
   background-color: #7BB8F7;
   border-top: solid #305c88 0.5em;
   border-radius: 0 0 5em 5em;
+  padding-bottom: 1em;
 }
 .tripViewWrapper #tripInformation #tripDetails {
   display: flex;
@@ -477,8 +478,51 @@ body {
   background-color: lightgray;
 }
 
-.singleDriverWrapper {
-  background-color: teal;
+#bigDecisionWrapper {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(128, 128, 128, 0.5);
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+#bigDecisionWrapper #bigDecisionBox {
+  background-color: #7c5050;
+  padding: 2em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5em;
+}
+#bigDecisionWrapper #bigDecisionBox #bigDecisionButtons {
+  display: flex;
+  flex-direction: row;
+}
+#bigDecisionWrapper #bigDecisionBox #bigDecisionButtons .bigDecisionButton {
+  border: solid black 0.2em;
+  color: black;
+  font-size: 1.5em;
+}
+#bigDecisionWrapper #bigDecisionBox #bigDecisionButtons #bigDecisionAccept {
+  background-color: #543636;
+}
+#bigDecisionWrapper #bigDecisionBox #bigDecisionButtons #bigDecisionAccept:hover {
+  cursor: pointer;
+  background-color: #7c5050;
+  color: red;
+}
+#bigDecisionWrapper #bigDecisionBox #bigDecisionButtons #bigDecisionClose {
+  background-color: lightslategray;
+  margin-right: 2em;
+}
+#bigDecisionWrapper #bigDecisionBox #bigDecisionButtons #bigDecisionClose:hover {
+  cursor: pointer;
+  background-color: rgba(119, 136, 153, 0.5);
 }
 
 .redContainer {

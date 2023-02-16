@@ -260,7 +260,7 @@ body{
 .tripViewWrapper{
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 20% 1fr 1fr;
+  grid-template-rows: auto 1fr 1fr;
   grid-template-areas: "info info info" "driver driver party" "driver driver party";
   #tripInformation{
     grid-area: info;
@@ -271,6 +271,7 @@ body{
     background-color: $midBlue;
     border-top: solid #305c88 0.5em;
     border-radius: 0 0 5em 5em;
+    padding-bottom: 1em;
     #tripDetails{
       display: flex;
       width:100%;
@@ -500,8 +501,53 @@ body{
   }
 }
 
-.singleDriverWrapper{
-  background-color: teal;
+#bigDecisionWrapper{
+  position: absolute;
+  width:100vw;
+  height:100vh;
+  background-color: rgba(128,128,128,0.5);
+  top:0;
+  right:0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  #bigDecisionBox{
+    background-color: $danger_color;
+    padding:2em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    #bigDecisionButtons{
+      display: flex;
+      flex-direction: row;
+      .bigDecisionButton{
+        border: solid black 0.2em;
+        color: black;
+        font-size: 1.5em;
+      }
+
+      #bigDecisionAccept{
+        background-color: #543636;
+        &:hover{
+          cursor: pointer;
+          background-color: #7c5050;
+          color:red;
+        }
+      }
+
+      #bigDecisionClose{
+        background-color: lightslategray;
+        margin-right:2em;
+          &:hover{
+            cursor: pointer;
+            background-color: rgba(119, 136, 153, 0.5);
+          }
+      }
+    }
+  }
 }
 
 
