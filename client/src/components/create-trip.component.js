@@ -16,6 +16,7 @@ export default class CreateTrip extends Component{
             processingCompleted:false,
             tripUrl:"/",
             error:false,
+            formError:null
         }
 
         this.handleChange = this.handleChange.bind(this);
@@ -30,31 +31,50 @@ export default class CreateTrip extends Component{
     }
 
     handleSubmit(e){
-        e.preventDefault();
-        console.log("Create Trip form submitted");
-        this.setState({
-            processing:true
-        });
-        axiosInstance.post("createTrip",{
-            title: this.state.title,
-            destination: this.state.destination,
-            description: this.state.description,
-            arrivalTime: this.state.arrivalTime,
-            participants: this.state.participants
-        })
-        .then( res => {
-            if(res.status === 200){
-                console.log("Finished creating Trip: ")
-                console.log(res.data);
-                this.setState({
-                    processing:false,
-                    processingCompleted:true,
-                    tripUrl:"/trips/" + res.data._id
-                });
-            }
-        }).catch( err => {
-            this.handleError({text:null, link:'/createTrip'});
-        })
+        if(!this.state.title){
+            this.setState({
+                formError:'Title is required'
+            })
+        }else if(!this.state.destination){
+            this.setState({
+                formError:'Destination is required'
+            })
+        }
+        else if(!this.state.arrivalTime){
+            this.setState({
+                formError:'Arrival Time is required'
+            })
+        }else if(!this.state.description){
+            this.setState({
+                formError:'Description is required'
+            })
+        }else{
+            e.preventDefault();
+            console.log("Create Trip form submitted");
+            this.setState({
+                processing:true
+            });
+            axiosInstance.post("createTrip",{
+                title: this.state.title,
+                destination: this.state.destination,
+                description: this.state.description,
+                arrivalTime: this.state.arrivalTime,
+                participants: this.state.participants
+            })
+            .then( res => {
+                if(res.status === 200){
+                    console.log("Finished creating Trip: ")
+                    console.log(res.data);
+                    this.setState({
+                        processing:false,
+                        processingCompleted:true,
+                        tripUrl:"/trips/" + res.data._id
+                    });
+                }
+            }).catch( err => {
+                this.handleError({text:null, link:'/createTrip'});
+            })
+        }  
     }
 
     setParticipants(partyArray){
@@ -145,6 +165,7 @@ export default class CreateTrip extends Component{
                                     handleError={(e)=>this.handleError(e)}/>
                                     <br></br>
                                 <button type='submit' onClick={this.handleSubmit}>Create my trip!</button>
+                                <p>{this.state.formError}</p>
                             </div>
                         </div>
                     )
