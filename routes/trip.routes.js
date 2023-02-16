@@ -336,7 +336,6 @@ module.exports = function(app,ensureAuthenticated){
     
     
                 }else if(partyData.status == "passenger"){
-                //!! remove the passenger if there is one
                 //Find the driver
                 Driver.findById(partyData.driverId, (err, driverData) => {
                     if(err){
@@ -380,6 +379,36 @@ module.exports = function(app,ensureAuthenticated){
                     })
                 }
             }
+        }
+    })
+  })
+
+  //remove a trip
+  app.post("/deleteTrip/:tripId", ensureAuthenticated, (req, res) =>{
+    const tripId = req.params.tripId
+    console.log("deleting trip: " + tripId);
+    //delete the trip
+    Trip.findByIdAndDelete(tripId, (err,data) =>{
+        if(err){
+            res.status(500).send('Error!');
+        }else{
+            Participant.deleteMany({tripId: tripId}, (err,data) => {
+                if(err){
+                    console.log(err)
+                    res.status(500).send('Error!');
+                }else{
+                    console.log('Participants Deleted');
+                    Driver.deleteMany({tripId: tripId}, (err,data) => {
+                        if(err){
+                            console.log(err)
+                             res.status(500).send('Error!')
+                        }else{
+                            console.log("Drivers deleted")
+                            res.json({error:null});
+                        }
+                    })
+                }
+            })
         }
     })
   })

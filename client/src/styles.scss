@@ -185,6 +185,7 @@ body{
   .tripContainer{
     @include basic-block;
     margin-bottom: 2em;
+    padding: 0 1em;
     h2{
       color:black;  
     }
@@ -546,6 +547,18 @@ body{
             background-color: rgba(119, 136, 153, 0.5);
           }
       }
+    }
+  }
+}
+
+#errorPage{
+  color:$off_white;
+  a{
+    color:$off_white;
+    text-decoration: underline;
+    &:hover{
+      cursor: pointer;
+      color:goldenrod;
     }
   }
 }

@@ -155,6 +155,7 @@ body {
   align-items: center;
   font-size: 1.5em;
   margin-bottom: 2em;
+  padding: 0 1em;
   font-size: 1em;
   width: 70vh;
 }
@@ -523,6 +524,18 @@ body {
 #bigDecisionWrapper #bigDecisionBox #bigDecisionButtons #bigDecisionClose:hover {
   cursor: pointer;
   background-color: rgba(119, 136, 153, 0.5);
+}
+
+#errorPage {
+  color: rgb(235, 235, 235);
+}
+#errorPage a {
+  color: rgb(235, 235, 235);
+  text-decoration: underline;
+}
+#errorPage a:hover {
+  cursor: pointer;
+  color: goldenrod;
 }
 
 .redContainer {

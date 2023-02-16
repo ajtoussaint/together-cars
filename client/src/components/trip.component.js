@@ -190,6 +190,17 @@ function OrganizerParticipants(props) {
 function ParticipantView(props){
     const { trip, username, isOrganizer, participants, updateParticipants, handleError } = props;
 
+    function deleteTrip(){
+        axiosInstance.post('/deleteTrip/' + trip._id)
+         .then(res => {
+            console.log('trip has been deleted');
+            //this is handy
+            handleError({text:'Your Trip was successfully deleted!', link:'/'})
+         }).catch( err => {
+            handleError({text:'There was a problem deleteing the trip', link:'/trips/'+trip._id})
+        })
+    }
+
     return (
         <div id='participantViewWrapper' className='tripViewWrapper'>
             <div id='tripInformation'>
@@ -201,6 +212,11 @@ function ParticipantView(props){
                                 {trip.arrivalTime.slice(0,10)}</div>
                 </div>
                 <div id='tripDescription'>Description: {trip.description}</div>
+                {isOrganizer && <button 
+                id='deleteTrip' 
+                onClick={() => deleteTrip()}>
+                    Delete Trip
+                </button>}
             </div>
             <Participants 
             tripId={trip._id}
@@ -283,7 +299,7 @@ function Participants(props){
                     })}
                     {showBigDecision &&
                      <BigDecision
-                     text={'test text for removing: ' + showBigDecision}
+                     text={'Are you sure you want to remove ' + showBigDecision + ' from the trip? Their status as a driver or a passenger will be earased.'}
                      onAccept={() => removeParticipant(showBigDecision)}
                      closeMe={() => setShowBigDecision(null)} />}
             </div>
@@ -567,6 +583,8 @@ function SingleDriver(props){
 
     const driverId = props.driver._id;
 
+    const [showBigDecision, setShowBigDecision] = useState(false);
+
 
     useEffect( () => {
         setPassengers(props.driver.passengers);
@@ -630,7 +648,7 @@ function SingleDriver(props){
                 <div className='sdhSide'></div>
                 <h2 className='sdhCenter'>{name}</h2>
                 <div className='sdhSide'>{name === username ?
-                 (<button onClick={() => props.removeDriver()}>Stop Driving</button>) :
+                 (<button onClick={() => setShowBigDecision(true)}>Stop Driving</button>) :
                   ""}</div>
             </div>
             <div className='singleDriverBody'>
@@ -670,6 +688,11 @@ function SingleDriver(props){
                     })
                 }
             </div>
+            {showBigDecision &&
+            <BigDecision
+            text='All of your passengers will be removed. Are you sure you want to stop driving?'
+            onAccept={() => props.removeDriver()}
+            closeMe={ () => setShowBigDecision(false)}/>}
         </div>
     )
 }
