@@ -23,8 +23,10 @@ module.exports = function(app, ensureAuthenticated){
         if(err){
             //!!polish send an error if there is an error and have it display
             console.log(err)
+            res.status(500).send("Error");
         }else if(!data){
             console.log("Error creating a new trip");
+            res.status(500).send("Error");
         }else{
             console.log("created trip: ", data);
             //!! create participants for everyone in the participants array
@@ -48,8 +50,8 @@ module.exports = function(app, ensureAuthenticated){
             Participant.create(participantArray, (err) =>{
                 if(err){
                     console.log(err)
+                    res.status(500).send("Error");
                 }else{
-                    //!! if there is an error display that to the user and do not procede
                     res.json(data);
                 }
             })
@@ -62,6 +64,7 @@ module.exports = function(app, ensureAuthenticated){
     User.findOne({username:req.body.username}, (err, data) => {
         if(err){
             console.log(err);
+            res.status(500).send("Error");
         }else if(!data){
             console.log("user is not valid");
             res.json({validUser:false});
