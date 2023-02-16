@@ -262,15 +262,17 @@ function ParticipatingTrips(props){
     if(loading){
         return(<Loading />)
     }else{
-        //!!if user is organizer change appearance somehow
         return(
             <div id="tripsWrapper">
                 <h1>Your Trips:</h1>
+                <p id='tripsKey'>* = you are the organizer</p>
                 {trips.length < 1 ? (<h2>No trips to display</h2>) : 
                 trips.map( (trip, i) => (
                     <Link to={"/trips/" + trip._id} key={i}>
                         <div className='tripContainer' key={i}>
-                            <h2 key={i + "h"}>{trip.title}</h2>
+                            {trip.organizer === props.username ?
+                             (<h2 key={i + "h"}>*{trip.title}*</h2>):
+                             (<h2 key={i + "h"}>{trip.title}</h2>)}
                             <p key={i + "p1"}>Trip Description: {trip.description}</p>
                             <p key={i + "p2"}>Planned Arrival Time: {trip.arrivalTime.slice(11,16) + " on "}
                                 {trip.arrivalTime.slice(0,10)}</p>
