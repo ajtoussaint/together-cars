@@ -387,8 +387,8 @@ module.exports = function(app,ensureAuthenticated){
   app.post("/deleteTrip/:tripId", ensureAuthenticated, (req, res) =>{
     const tripId = req.params.tripId
     console.log("deleting trip: " + tripId);
-    //delete the trip
-    Trip.findByIdAndDelete(tripId, (err,data) =>{
+    //delete the trip (ensures only organizer can delete)
+    Trip.findOneAndDelete({_id:tripId, organizer:req.user.username}, (err,data) =>{
         if(err){
             res.status(500).send('Error!');
         }else{

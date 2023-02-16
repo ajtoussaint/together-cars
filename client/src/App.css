@@ -6,6 +6,10 @@ body {
   font-family: monospace;
 }
 
+#loadingText {
+  color: rgb(235, 235, 235);
+}
+
 #footer {
   position: absolute;
   bottom: 0;
@@ -262,6 +266,13 @@ body {
   width: calc(100% - 6em);
   margin-top: 1em;
 }
+.tripViewWrapper #tripInformation #deleteTrip {
+  background-color: #7c5050;
+}
+.tripViewWrapper #tripInformation #deleteTrip:hover {
+  cursor: pointer;
+  background-color: red;
+}
 .tripViewWrapper #participantsWrapper, .tripViewWrapper #driversWrapper {
   background-color: #7BB8F7;
   grid-area: party;
@@ -455,6 +466,9 @@ body {
 .tripViewWrapper #driverFormBack #driverFormWrapper #closeDriverForm:hover {
   background-color: #7c5050;
   cursor: pointer;
+}
+.tripViewWrapper #driverFormBack #driverFormWrapper #driverFormError {
+  color: red;
 }
 .tripViewWrapper #addParticipant {
   display: flex;

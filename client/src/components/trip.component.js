@@ -24,11 +24,11 @@ export default function Trip(props){
             console.log(res.data);
             setTrip(res.data);
             // Another axios call for participants here
-            console.log("Second axios call to get the trips");
+            console.log("Second axios call to get the trips participants");
             axiosInstance.get('/participants/' + params.tripId)
              .then( partyRes => {
                 //array of all participant objects
-                console.log("got participants in the main: " + res.data)
+                console.log("got participants in the main: " + partyRes.data)
                 setParticipants(partyRes.data);
                 setLoading(false);
              }).catch( err => {
@@ -189,6 +189,7 @@ function OrganizerParticipants(props) {
 
 function ParticipantView(props){
     const { trip, username, isOrganizer, participants, updateParticipants, handleError } = props;
+    const [showBigDecision, setShowBigDecision] =useState(false);
 
     function deleteTrip(){
         axiosInstance.post('/deleteTrip/' + trip._id)
@@ -214,9 +215,14 @@ function ParticipantView(props){
                 <div id='tripDescription'>Description: {trip.description}</div>
                 {isOrganizer && <button 
                 id='deleteTrip' 
-                onClick={() => deleteTrip()}>
+                onClick={() => setShowBigDecision(true)}>
                     Delete Trip
                 </button>}
+                {showBigDecision &&
+                <BigDecision
+                text='Are you sure you want to permanently delete this trip removing all participants and their related data?' 
+                onAccept={() => deleteTrip()}
+                closeMe={() => setShowBigDecision(false)}/>}
             </div>
             <Participants 
             tripId={trip._id}
@@ -438,6 +444,8 @@ function DriverForm(props){
         numberOfPassengers:"0",
     })
 
+    const [formError, setFormError] = useState("")
+
     const handleChange = (e) => {
         e.persist();
         setValues((values) => ({
@@ -450,48 +458,52 @@ function DriverForm(props){
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        //add the passenger array to the driver object
-        let passengers = []
+        if(!values.departureLocation.length){
+            setFormError("Must include where you are leaving from");
+        }else{
+             //add the passenger array to the driver object
+            let passengers = []
 
-        for(let i=0; i<values.numberOfPassengers; i++){
-            passengers.push(null);
+            for(let i=0; i<values.numberOfPassengers; i++){
+                passengers.push(null);
+            }
+            console.log("DEPARTURE LOCATION: ", values.departureLocation)
+            console.log("Posting new driver");
+
+            //send axios request to create the driver object
+            axiosInstance.post("/driver", {
+                tripId: tripId,
+                departureLocation: values.departureLocation,
+                pickingUpSelection: values.pickingUpSelection,
+                notes: values.notes,
+                passengers: passengers,
+            })
+            .then( res => {
+                //response will be the driver data
+                console.log("created new driver:", res.data.name);
+                //update the participants list:
+                let newParticipants = [...participants];
+                newParticipants.forEach(party => {
+                    if(party.name === res.data.name){
+                        party.status = "driver";
+                    }
+                });
+                updateParticipants(newParticipants);
+                //refresh the "Drivers" component to get the new driver
+                refresh();
+            }).catch( err => {
+                handleError({text:null, link:'/'})
+            }) 
+
+
+            props.closeMe();
+            setValues({
+                departureLocation:'',
+                numberOfPassengers:"0",
+                pickingUpSelection:"notPickingUp",
+                notes:'',
+            })
         }
-
-        console.log("Posting new driver");
-
-        //send axios request to create the driver object
-        axiosInstance.post("/driver", {
-            tripId: tripId,
-            departureLocation: values.departureLocation,
-            pickingUpSelection: values.pickingUpSelection,
-            notes: values.notes,
-            passengers: passengers,
-        })
-         .then( res => {
-            //response will be the driver data
-            console.log("created new driver:", res.data.name);
-            //update the participants list:
-            let newParticipants = [...participants];
-            newParticipants.forEach(party => {
-                if(party.name === res.data.name){
-                    party.status = "driver";
-                }
-            });
-            updateParticipants(newParticipants);
-            //refresh the "Drivers" component to get the new driver
-            refresh();
-         }).catch( err => {
-            handleError({text:null, link:'/'})
-        }) 
-
-
-        props.closeMe();
-        setValues({
-            departureLocation:'',
-            numberOfPassengers:"0",
-            pickingUpSelection:"notPickingUp",
-            notes:'',
-        })
     }
 
     return(
@@ -558,6 +570,7 @@ function DriverForm(props){
                     </label>
                     <br></br>
                     <button onClick={handleSubmit}>Submit</button>
+                    <p id='driverFormError'>{formError}</p>
                 </form>
                 
             </div>
