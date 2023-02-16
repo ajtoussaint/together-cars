@@ -12,43 +12,17 @@ export default class Home extends Component{
         this.state={
             username:"",
             password:"",
-            loading:true,
             trips:[],
             error:false
         }
 
-        this.getUsersTrips = this.getUsersTrips.bind(this);
         this.handleError = this.handleError.bind(this);
-    }
-
-    componentDidMount(){
-        this.getUsersTrips();
     }
 
     componentDidUpdate(prevProps){
         if(prevProps.username !== this.props.username){
             console.log("getting trips for newly updated user");
-            this.getUsersTrips();
-        }
-    }
-
-    getUsersTrips(){
-        //only get the trips if there is a user
-        if(this.props.username){
-            console.log("getting user's trips...");
-            axiosInstance.get('trips/' + this.props.username)
-            .then( res => {
-                console.log("got the user's trip data");
-                console.log(res.data);
-    
-                //let state know that it has the data
-                this.setState({
-                    loading:false,
-                    trips: res.data.userTrips
-                })
-            }).catch( err => {
-                this.props.handleError({text:null, link:'/'});
-            })
+            //this.getUsersTrips();
         }
     }
 
@@ -65,31 +39,27 @@ export default class Home extends Component{
                 <Navigate to='/error' replace={false} />
             )
         }else{
-            if(this.props.loadingUser){
-                return(<Loading />)
+            if(this.props.loggedIn){
+                return(
+                    <div id="homeComponentWrapper">
+                        <ParticipatingTrips
+                        username={this.props.username}
+                        handleError={(e)=>this.handleError(e)}/>
+                    </div>
+                )
             }else{
-                if(this.props.loggedIn){
-                    return(
-                        <div id="homeComponentWrapper">
-                            <ParticipatingTrips
-                            username={this.props.username}
-                            handleError={(e)=>this.handleError(e)}/>
+                return(
+                    <div id="loginPageWrapper"> 
+                        <div id="loginWrapper">
+                        <Login 
+                        updateUser={this.props.updateUser}
+                        handleError={(e)=>this.handleError(e)}/>
+                        <Register 
+                        updateUser={this.props.updateUser}
+                        handleError={(e)=>this.handleError(e)}/>
                         </div>
-                    )
-                }else{
-                    return(
-                        <div id="loginPageWrapper"> 
-                            <div id="loginWrapper">
-                            <Login 
-                            updateUser={this.props.updateUser}
-                            handleError={(e)=>this.handleError(e)}/>
-                            <Register 
-                            updateUser={this.props.updateUser}
-                            handleError={(e)=>this.handleError(e)}/>
-                            </div>
-                        </div>
-                    )
-                }
+                    </div>
+                )
             }
         }
     }
