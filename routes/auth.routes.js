@@ -9,20 +9,20 @@ module.exports = function(app){
     //passport things that will become a module
     
   passport.serializeUser((user, done) => {
-      console.log("Serialize User called for user " + user.username);
-      console.log("id#: " + user._id);
+      //console.log("Serialize User called for user " + user.username);
+      //console.log("id#: " + user._id);
       done(null, { _id:user._id });
   });
 
   passport.deserializeUser((id, done) => {
-    console.log('DeserializeUser called')
+    //console.log('DeserializeUser called')
     User.findOne(
       { _id: id },
       'username',
       (err, user) => {
-        console.log('*** Deserialize user, user:')
-        console.log(user)
-        console.log('--------------')
+        //console.log('*** Deserialize user, user:')
+        //console.log(user)
+        //console.log('--------------')
         done(null, user)
       }
     )

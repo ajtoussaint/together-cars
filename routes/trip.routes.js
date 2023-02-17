@@ -266,7 +266,6 @@ module.exports = function(app,ensureAuthenticated){
             res.status(500).send("Error");
         }else if(data){
             console.log("Participant already exists!")
-            res.status(500).send("Error");
         }else{
             let newParticipant = new Participant({
                 tripId: tripId,
@@ -292,6 +291,7 @@ module.exports = function(app,ensureAuthenticated){
     const tripId = req.params.tripId;
     const participantName = req.body.name;
 
+    console.log("Removing ", participantName, " from ", tripId);
     Participant.findOne({name: participantName, tripId:tripId}, (err,partyData) => {
         if(err){
             console.log(err);

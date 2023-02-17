@@ -8,6 +8,7 @@ import Home from "./components/home.component";
 import CreateTrip from './components/create-trip.component';
 import Trip from './components/trip.component';
 import Error from './components/error.component';
+import WaitingRoom from './components/waitingRoom.component';
 
 
 
@@ -122,10 +123,16 @@ export default class App extends Component {
             username={this.state.username}
             setError={(errorObj)=>this.setError(errorObj)}/>}/>
 
+            <Route path="/join/:tripId" element={<WaitingRoom
+            username={this.state.username}
+            handleError={(errorObj)=>this.setError(errorObj)}
+            loadingUser={this.state.loading}/>}/>
+
             <Route path="/error" element={<Error
              text={this.state.error.text}
              link={this.state.error.link}
              setError={(errorObj)=>this.setError(errorObj)}/>}/>
+
 
             <Route path="/red" element={<Red
              user={this.state.username}

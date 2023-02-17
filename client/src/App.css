@@ -164,6 +164,7 @@ body {
   font-size: 1.5em;
   margin-bottom: 2em;
   padding: 0 1em;
+  color: black;
   font-size: 1em;
   width: 70vh;
 }
@@ -545,6 +546,40 @@ body {
 #bigDecisionWrapper #bigDecisionBox #bigDecisionButtons #bigDecisionClose:hover {
   cursor: pointer;
   background-color: rgba(119, 136, 153, 0.5);
+}
+
+#waitingRoomWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 80vw;
+  align-items: center;
+  padding: 0 10vw;
+}
+#waitingRoomWrapper h1 {
+  color: rgb(235, 235, 235);
+}
+#waitingRoomWrapper a {
+  text-decoration: none;
+}
+#waitingRoomWrapper .tripContainer {
+  background-color: #7BB8F7;
+  border-radius: 1em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5em;
+  margin-bottom: 2em;
+  padding: 0 1em;
+  color: black;
+  font-size: 1em;
+  width: 70vh;
+}
+#waitingRoomWrapper .tripContainer h2 {
+  color: black;
+}
+#waitingRoomWrapper .tripContainer:hover {
+  background-color: rgb(171, 210, 250);
 }
 
 #errorPage {

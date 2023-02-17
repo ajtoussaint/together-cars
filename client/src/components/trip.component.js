@@ -4,28 +4,27 @@ import { useParams, Navigate } from 'react-router-dom';
 import axiosInstance from "../modules/axiosInstance"
 import Loading from "./loading.component"
 
-
-//use effect hook to axios call and get the trip data
-
 export default function Trip(props){
     const params = useParams();
 
-    //initially loading is true
     const [loading, setLoading] = useState(true);
     const [trip, setTrip] = useState(null);
     const [participants, setParticipants] = useState([])
     const [error, setError] = useState(false);
 
+    const tripId = params.tripId;
+    const username = props.username;
+
     useEffect(() =>{
-        console.log("getting data on trip ID:" + params.tripId);
-        axiosInstance.get("/trip/" + params.tripId)
+        console.log("getting data on trip ID:" + tripId);
+        axiosInstance.get("/trip/" + tripId)
         .then( res => {
-            console.log("got data on trip ID:" + params.tripId);
+            console.log("got data on trip ID:" + tripId);
             console.log(res.data);
             setTrip(res.data);
             // Another axios call for participants here
             console.log("Second axios call to get the trips participants");
-            axiosInstance.get('/participants/' + params.tripId)
+            axiosInstance.get('/participants/' + tripId)
              .then( partyRes => {
                 //array of all participant objects
                 console.log("got participants in the main: " + partyRes.data)
@@ -43,7 +42,7 @@ export default function Trip(props){
             setError(true);
             props.setError({text:null,link:'/'});
         })
-    }, [params, props])
+    }, [params, username, tripId, props])
 
     function participantsAreSame(party1, party2){
         console.log('#1', party1.name);
@@ -188,8 +187,9 @@ function OrganizerParticipants(props) {
 }
 
 function ParticipantView(props){
-    const { trip, username, isOrganizer, participants, updateParticipants, handleError } = props;
+    const { trip, username, isOrganizer, participants, updateParticipants, handleError} = props;
     const [showBigDecision, setShowBigDecision] =useState(false);
+    const [showLeaveDecision, setShowLeaveDecision] =useState(false);
 
     function deleteTrip(){
         axiosInstance.post('/deleteTrip/' + trip._id)
@@ -199,6 +199,19 @@ function ParticipantView(props){
             handleError({text:'Your Trip was successfully deleted!', link:'/'})
          }).catch( err => {
             handleError({text:'There was a problem deleteing the trip', link:'/trips/'+trip._id})
+        })
+    }
+
+    //!!The participant rejoins the trip bc hes on the page before he navigates off.
+    function leaveTrip(){
+        axiosInstance.post('/removeParticipant/'+trip._id, {name:username})
+         .then(res => {
+            console.log("User removed from trip");
+            //I should have this for general use instead of specifically errors
+            //update the main participants state
+            handleError({text:'You were successfully removed from the trip', link:'/'})
+         }).catch( err => {
+            handleError({text:'There was a problem removing you from the trip', link:'/trips/'+trip._id})
         })
     }
 
@@ -213,16 +226,24 @@ function ParticipantView(props){
                                 {trip.arrivalTime.slice(0,10)}</div>
                 </div>
                 <div id='tripDescription'>Description: {trip.description}</div>
-                {isOrganizer && <button 
-                id='deleteTrip' 
+                {isOrganizer ? 
+                (<button id='deleteTrip' 
                 onClick={() => setShowBigDecision(true)}>
                     Delete Trip
-                </button>}
+                </button>):
+                (<button id='leaveTrip'
+                onClick={() => setShowLeaveDecision(true)}
+                >Leave Trip</button>)}
                 {showBigDecision &&
                 <BigDecision
                 text='Are you sure you want to permanently delete this trip removing all participants and their related data?' 
                 onAccept={() => deleteTrip()}
                 closeMe={() => setShowBigDecision(false)}/>}
+                {showLeaveDecision &&
+                <BigDecision
+                text='You will lose any status you have as a driver or passenger. Are you sure you want to leave this trip?' 
+                onAccept={() => leaveTrip()}
+                closeMe={() => setShowLeaveDecision(false)}/>}
             </div>
             <Participants 
             tripId={trip._id}

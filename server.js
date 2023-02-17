@@ -99,7 +99,7 @@ tripRoutes(app, ensureAuthenticated);
         }else if(!data){
             res.json([]);
         }else{
-            console.log("Found user's participant objects", data);
+            //console.log("Found user's participant objects", data);
             var idArr = []
             data.forEach( party => {
                 idArr.push(party.tripId);
@@ -108,7 +108,7 @@ tripRoutes(app, ensureAuthenticated);
                 if(err){
                     console.log(err);
                 }else{
-                    console.log("Found data on user's participant trips: ", tripData);
+                    //console.log("Found data on user's participant trips: ", tripData);
                     res.json(tripData);
                 }
             })
