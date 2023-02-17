@@ -310,20 +310,23 @@ function Participants(props){
                     tripId={tripId}
                     handleError={(e)=>handleError(e)}/>
                 )}
-                <h2 id='participantsHeader'>Participants</h2>
-                <div id='participantKey'> (D):driver, (P):passenger, (U):unassigned, *:organizer</div>
-                    {participants.map( (party,i) => {
-                        return(
-                            <div className='singleParticipant' id={party.organizer && "organizerParticipant"} key={i}>
-                                <div>
-                                {party.name}
-                                ({party.status === "driver" ? "D" : party.status === "passenger" ? "P" : "U"})
-                                {party.organizer && "*"}
+                
+                    <h2 id='participantsHeader'>Participants</h2>
+                    <div id='participantKey'> (D):driver, (P):passenger, (U):unassigned, *:organizer</div>
+                    <div id='participantList'>
+                        {participants.map( (party,i) => {
+                            return(
+                                <div className='singleParticipant' id={party.organizer && "organizerParticipant"} key={i}>
+                                    <div>
+                                    {party.name}
+                                    ({party.status === "driver" ? "D" : party.status === "passenger" ? "P" : "U"})
+                                    {party.organizer && "*"}
+                                    </div>
+                                    {(isOrganizer && !party.organizer) && <button onClick={ () => setShowBigDecision(party.name)}>x</button>}
                                 </div>
-                                {(isOrganizer && !party.organizer) && <button onClick={ () => setShowBigDecision(party.name)}>x</button>}
-                            </div>
-                        )
-                    })}
+                            )
+                        })}
+                    </div>
                     {showBigDecision &&
                      <BigDecision
                      text={'Are you sure you want to remove ' + showBigDecision + ' from the trip? Their status as a driver or a passenger will be earased.'}

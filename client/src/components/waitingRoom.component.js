@@ -58,7 +58,7 @@ export default function WaitingRoom(props){
             handleError({text:null,link:'/'});
             setError(true);
         })
-    }, [params, username, tripId, setError, handleError])
+    }, [params, username, tripId, setError, handleError, loadingUser])
 
     if(loading || loadingUser){
         return(

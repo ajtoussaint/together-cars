@@ -141,7 +141,6 @@ export default class App extends Component {
             <Route path="/blue" element={<Blue />} />
           </Route>
         </Routes>
-        <div id='footer'>by Andrew Toussaint</div>
       </div>
     );
   }
@@ -194,6 +193,7 @@ class Navbar extends Component{
           </div>
         </div>
         <Outlet />
+        <div id='footer'>by Andrew Toussaint</div>
       </div>
     );
   }

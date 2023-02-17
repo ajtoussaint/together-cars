@@ -11,17 +11,16 @@ body {
 }
 
 #footer {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  max-width: 100%;
+  align-self: center;
+  justify-self: center;
 }
 
 #navbarTotalWrapper {
   display: grid;
-  grid-template-rows: auto 1fr;
-  width: 100vw;
-  height: calc(100vh - 2em);
+  grid-template-rows: auto 1fr 2em;
+  width: 100%;
+  height: 100vh;
   top: 0;
 }
 
@@ -242,6 +241,7 @@ body {
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: auto 1fr 1fr;
   grid-template-areas: "info info info" "driver driver party" "driver driver party";
+  max-height: 90vh;
 }
 .tripViewWrapper #tripInformation {
   grid-area: info;
@@ -271,10 +271,10 @@ body {
   width: calc(100% - 6em);
   margin-top: 1em;
 }
-.tripViewWrapper #tripInformation #deleteTrip {
+.tripViewWrapper #tripInformation #deleteTrip, .tripViewWrapper #tripInformation #leaveTrip {
   background-color: #7c5050;
 }
-.tripViewWrapper #tripInformation #deleteTrip:hover {
+.tripViewWrapper #tripInformation #deleteTrip:hover, .tripViewWrapper #tripInformation #leaveTrip:hover {
   cursor: pointer;
   background-color: red;
 }
@@ -291,6 +291,13 @@ body {
   text-align: center;
   width: 80%;
   margin-bottom: 1em;
+}
+.tripViewWrapper #participantsWrapper #participantList, .tripViewWrapper #driversWrapper #participantList {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+  width: 100%;
 }
 .tripViewWrapper #participantsWrapper .singleParticipant, .tripViewWrapper #driversWrapper .singleParticipant {
   display: flex;
@@ -323,6 +330,7 @@ body {
   width: 90%;
   display: flex;
   flex-wrap: wrap;
+  overflow-y: auto;
 }
 .tripViewWrapper #driversWrapper #driversBlock .singleDriverWrapper {
   background-color: #4B9EF4;
