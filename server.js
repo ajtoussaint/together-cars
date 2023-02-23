@@ -36,7 +36,6 @@ const app = express()
 
 //cors setup...it works. May need adjustment for live server
 app.use(function(req, res, next){
-    console.log("origin: ", req.headers.origin);
     res.header('Access-Control-Allow-Credentials', true);
     res.header('Access-Control-Allow-Origin', req.headers.origin);
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
@@ -52,7 +51,10 @@ app.use(function(req, res, next){
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(cors({origin:"http://localhost:3000"}));
+app.use(cors({origin: process.env.NODE_ENV === 'production' ?
+"http://ec2-13-58-210-214.us-east-2.compute.amazonaws.com:5000" :
+"http://localhost:3000"
+}));
 
 //set up session
 app.use(session({
