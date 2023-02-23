@@ -52,7 +52,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(cors({origin: process.env.NODE_ENV === 'production' ?
-"http://ec2-13-58-210-214.us-east-2.compute.amazonaws.com" :
+"http://ec2-18-116-234-49.us-east-2.compute.amazonaws.com" :
 "http://localhost:3000"
 }));
 
