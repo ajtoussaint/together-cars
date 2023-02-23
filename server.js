@@ -36,6 +36,7 @@ const app = express()
 
 //cors setup...it works. May need adjustment for live server
 app.use(function(req, res, next){
+    console.log("origin: ", req.headers.origin);
     res.header('Access-Control-Allow-Credentials', true);
     res.header('Access-Control-Allow-Origin', req.headers.origin);
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
