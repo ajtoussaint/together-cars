@@ -96,7 +96,7 @@ module.exports = function(app){
                 console.log("registration failed, passwords must match")
                 res.json({ error: "Passwords must match"})
             }else if(!passwordIsStrong(req.body.password)){
-                res.json({error: "Passwords must be at least 8 characters, contain upper and lowercase letters and a special character: !@#$5^&*()"});
+                res.json({error: "Passwords must be at least 8 characters, contain upper and lowercase letters, a number, and a special character: !@#$5^&*()"});
             } else{
                 console.log("passed all naming convention checks");
                 let newUser = new User({
