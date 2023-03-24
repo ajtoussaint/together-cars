@@ -626,7 +626,19 @@ body{
 }
 
 #demoWrapper{
+  h1{
+    margin-bottom:0;
+  }
   color:$off_white;
   width:70%;
   justify-self: center;
+  display: flex;
+  flex-direction: column;
+  img{
+    height:auto;
+    max-width: 50%;
+    align-self: center;
+    border: solid $off_white 5px;
+    box-shadow: 0.4em 0.4em rgb(28,28,28);
+  }
 }
