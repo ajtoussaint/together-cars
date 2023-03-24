@@ -8,6 +8,8 @@ import img7 from "../images/Tutorial7.PNG"
 import img8 from "../images/Tutorial8.PNG"
 import img9 from "../images/Tutorial9.PNG"
 import img10 from "../images/Tutorial10.PNG"
+import img11 from "../images/Tutorial11.PNG"
+import img12 from "../images/Tutorial12.PNG"
 
 export default function Demo(){
     return(
@@ -63,6 +65,18 @@ export default function Demo(){
             <p>If you want to drive yourself there are a few extra steps.
                 To start, click on the big green button that says "I can Drive!" </p>
             <img src={img10} alt="Drive Button"></img>
+            <p>After you do this you will see a driver form:</p>
+            <img src={img11} alt="Driver form"></img>
+            <p>Fill out the information as directed and click submit. You should appear in the list of drivers.
+                If at any point you want to stop driving click the red "Stop Driving" button at the top right of your driver information. 
+                Any passengers you may have will automatically be unassigned from your car.
+            </p>
+            <img src={img12} alt="Driver form"></img>
+            <h1>Thank you for using Together Cars</h1>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
         </div>
     )
 }
