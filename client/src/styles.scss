@@ -63,11 +63,28 @@ body{
   /*!! use auto adjusting grid instead of flex*/
   display: flex;
   justify-content: space-between;
+
+    .navbarLink{
+      height:100%;
+      width:40%;
+      text-align: center;
+      display:flex;
+      align-items: center;
+      justify-content: center;
+      font-size:1.2em;
+      &:hover{
+        background-color: rgba(56, 56, 56, 0.3);
+      }
+    }
+    a{
+      text-decoration: none;
+      color:black;
+    }
   
     #leftNavbar{
       display: flex;
       justify-content: space-around;
-      a{
+      /*a{
         text-decoration: none;
         color:black;
       }
@@ -82,7 +99,7 @@ body{
         &:hover{
           background-color: rgba(56, 56, 56, 0.3);
         }
-      }
+      }*/
     }
 
     #centerNavbar{
@@ -91,7 +108,7 @@ body{
 
     #rightNavbar{
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-around;
       padding-right:1em;
 
       #rightNavInnerWrap{

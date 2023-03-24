@@ -7,6 +7,7 @@ import CreateTrip from './components/create-trip.component';
 import Trip from './components/trip.component';
 import Error from './components/error.component';
 import WaitingRoom from './components/waitingRoom.component';
+import Demo from './components/demo.component';
 
 
 
@@ -130,6 +131,8 @@ export default class App extends Component {
              text={this.state.error.text}
              link={this.state.error.link}
              setError={(errorObj)=>this.setError(errorObj)}/>}/>
+
+             <Route path="/demo" element={<Demo />} />
           </Route>
         </Routes>
       </div>
@@ -175,6 +178,9 @@ class Navbar extends Component{
             <h1>Together Cars</h1>
           </div>
           <div id="rightNavbar" className='navbarSection'>
+          <Link to="/demo" className='navbarLink'>
+                How to use
+              </Link>
             {this.props.loggedIn && (
               <div id="rightNavInnerWrap">
                 <h2>{this.props.username}</h2>
