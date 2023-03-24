@@ -30,15 +30,7 @@ body {
   display: flex;
   justify-content: space-between;
 }
-#navbarWrapper #leftNavbar {
-  display: flex;
-  justify-content: space-around;
-}
-#navbarWrapper #leftNavbar a {
-  text-decoration: none;
-  color: black;
-}
-#navbarWrapper #leftNavbar .navbarLink {
+#navbarWrapper .navbarLink {
   height: 100%;
   width: 40%;
   text-align: center;
@@ -47,15 +39,23 @@ body {
   justify-content: center;
   font-size: 1.2em;
 }
-#navbarWrapper #leftNavbar .navbarLink:hover {
+#navbarWrapper .navbarLink:hover {
   background-color: rgba(56, 56, 56, 0.3);
+}
+#navbarWrapper a {
+  text-decoration: none;
+  color: black;
+}
+#navbarWrapper #leftNavbar {
+  display: flex;
+  justify-content: space-around;
 }
 #navbarWrapper #centerNavbar {
   text-align: center;
 }
 #navbarWrapper #rightNavbar {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-around;
   padding-right: 1em;
 }
 #navbarWrapper #rightNavbar #rightNavInnerWrap {
@@ -602,10 +602,8 @@ body {
   color: goldenrod;
 }
 
-.redContainer {
-  background-color: crimson;
-}
-
-.blueContainer {
-  background-color: dodgerblue;
+#demoWrapper {
+  color: rgb(235, 235, 235);
+  width: 70%;
+  justify-self: center;
 }

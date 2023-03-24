@@ -2,13 +2,12 @@ import './App.css';
 import React, { Component } from 'react';
 import { Routes, Route, Link, Outlet, redirect} from "react-router-dom";
 import axiosInstance from "./modules/axiosInstance";
-import Red from "./components/red-test.component";
-import Blue from './components/blue-test.component';
 import Home from "./components/home.component";
 import CreateTrip from './components/create-trip.component';
 import Trip from './components/trip.component';
 import Error from './components/error.component';
 import WaitingRoom from './components/waitingRoom.component';
+import Demo from './components/demo.component';
 
 
 
@@ -133,12 +132,7 @@ export default class App extends Component {
              link={this.state.error.link}
              setError={(errorObj)=>this.setError(errorObj)}/>}/>
 
-
-            <Route path="/red" element={<Red
-             user={this.state.username}
-              loggedIn={this.state.loggedIn}/>} />
-
-            <Route path="/blue" element={<Blue />} />
+             <Route path="/demo" element={<Demo />} />
           </Route>
         </Routes>
       </div>
@@ -184,6 +178,9 @@ class Navbar extends Component{
             <h1>Together Cars</h1>
           </div>
           <div id="rightNavbar" className='navbarSection'>
+          <Link to="/demo" className='navbarLink'>
+                Tutorial
+              </Link>
             {this.props.loggedIn && (
               <div id="rightNavInnerWrap">
                 <h2>{this.props.username}</h2>
