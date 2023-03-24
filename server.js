@@ -53,7 +53,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(cors({origin: process.env.NODE_ENV === 'production' ?
-"http://3.132.211.26" :
+"http://3.132.211.26/" :
 "http://localhost:3000"
 }));
 
