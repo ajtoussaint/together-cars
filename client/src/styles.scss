@@ -84,22 +84,6 @@ body{
     #leftNavbar{
       display: flex;
       justify-content: space-around;
-      /*a{
-        text-decoration: none;
-        color:black;
-      }
-      .navbarLink{
-        height:100%;
-        width:40%;
-        text-align: center;
-        display:flex;
-        align-items: center;
-        justify-content: center;
-        font-size:1.2em;
-        &:hover{
-          background-color: rgba(56, 56, 56, 0.3);
-        }
-      }*/
     }
 
     #centerNavbar{
@@ -641,12 +625,8 @@ body{
   }
 }
 
-
-
-.redContainer{
-  background-color: crimson;
-}
-  
-.blueContainer{
-  background-color:dodgerblue;
+#demoWrapper{
+  color:$off_white;
+  width:70%;
+  justify-self: center;
 }

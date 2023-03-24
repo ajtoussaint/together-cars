@@ -179,7 +179,7 @@ class Navbar extends Component{
           </div>
           <div id="rightNavbar" className='navbarSection'>
           <Link to="/demo" className='navbarLink'>
-                How to use
+                Tutorial
               </Link>
             {this.props.loggedIn && (
               <div id="rightNavInnerWrap">
