@@ -2,8 +2,6 @@ import './App.css';
 import React, { Component } from 'react';
 import { Routes, Route, Link, Outlet, redirect} from "react-router-dom";
 import axiosInstance from "./modules/axiosInstance";
-import Red from "./components/red-test.component";
-import Blue from './components/blue-test.component';
 import Home from "./components/home.component";
 import CreateTrip from './components/create-trip.component';
 import Trip from './components/trip.component';
@@ -132,13 +130,6 @@ export default class App extends Component {
              text={this.state.error.text}
              link={this.state.error.link}
              setError={(errorObj)=>this.setError(errorObj)}/>}/>
-
-
-            <Route path="/red" element={<Red
-             user={this.state.username}
-              loggedIn={this.state.loggedIn}/>} />
-
-            <Route path="/blue" element={<Blue />} />
           </Route>
         </Routes>
       </div>
