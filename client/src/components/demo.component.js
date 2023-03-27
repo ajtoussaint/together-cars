@@ -11,9 +11,12 @@ import img10 from "../images/Tutorial10.PNG"
 import img11 from "../images/Tutorial11.PNG"
 import img12 from "../images/Tutorial12.PNG"
 
+import { Link } from "react-router-dom";
+
 export default function Demo(){
     return(
         <div id="demoWrapper">
+            <Link to="/"><h2>Return Home</h2></Link>
             <h1>1.Sign in or Create an Account</h1>
             <p>If you havent done so already you will need to create an account to use Together Cars. 
                 Doing so is easy, just enter a unique username and a password containing uppercase and lowercase letters, numbers, and a special character: !@#$%^&*().
@@ -72,9 +75,10 @@ export default function Demo(){
                 Any passengers you may have will automatically be unassigned from your car.
             </p>
             <img src={img12} alt="Driver form"></img>
-            <h1>Thank you for using Together Cars</h1>
+            <h1 id="thanksHeader">Thank you for using Together Cars!</h1>
             <br></br>
             <br></br>
+            <Link to="/"><h2>Return Home</h2></Link>
             <br></br>
             <br></br>
         </div>

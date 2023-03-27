@@ -629,6 +629,19 @@ body{
   h1{
     margin-bottom:0;
   }
+  #thanksHeader{
+    margin-top: 2em;
+    align-self: center;
+  }
+  a{
+    align-self: center;
+    color:$off_white;
+    text-decoration: underline;
+    &:hover{
+      cursor: pointer;
+      color:goldenrod;
+    }
+  }
   color:$off_white;
   width:70%;
   justify-self: center;

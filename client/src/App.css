@@ -612,6 +612,19 @@ body {
 #demoWrapper h1 {
   margin-bottom: 0;
 }
+#demoWrapper #thanksHeader {
+  margin-top: 2em;
+  align-self: center;
+}
+#demoWrapper a {
+  align-self: center;
+  color: rgb(235, 235, 235);
+  text-decoration: underline;
+}
+#demoWrapper a:hover {
+  cursor: pointer;
+  color: goldenrod;
+}
 #demoWrapper img {
   height: auto;
   max-width: 50%;
