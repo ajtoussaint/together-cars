@@ -125,7 +125,7 @@ tripRoutes(app, ensureAuthenticated);
 
 //testing paths
 
-app.get('/red', (req,res) => {
+app.get('/api/red', (req,res) => {
     console.log("red requested");
     res.json(["Griff", "Simmons", "Sarge"]);
 });
