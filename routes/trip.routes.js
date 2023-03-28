@@ -4,7 +4,7 @@ const Driver= require("../models/Driver.model");
 
 module.exports = function(app,ensureAuthenticated){
     //get the data for a specific trip
- app.get('/trip/:id', ensureAuthenticated, (req,res) => {
+ app.get('/api/trip/:id', ensureAuthenticated, (req,res) => {
     Trip.findById(req.params.id, (err,data) =>{
         if(err){
             console.log(err);
@@ -19,7 +19,7 @@ module.exports = function(app,ensureAuthenticated){
 
 
  //Get the trip participants for the Participants component in trip.component.js
- app.get('/participants/:tripId', ensureAuthenticated, (req, res) => {
+ app.get('/api/participants/:tripId', ensureAuthenticated, (req, res) => {
     console.log("gettin' participants for trip ID:" + req.params.tripId);
     Participant.find({tripId:req.params.tripId}, (err,data) =>{
         if(err){
@@ -34,7 +34,7 @@ module.exports = function(app,ensureAuthenticated){
  })
 
  //Add a new driver to a trip
- app.post('/driver', ensureAuthenticated, (req,res) => {
+ app.post('/api/driver', ensureAuthenticated, (req,res) => {
     //!!Ensure a user cannot drive twice or drive and be a passenger in the same trip
     console.log("creating new driver ", req.body.name, "for trip ", req.body.trip);
     //reduce the passenger array to an object to preserve order
@@ -83,7 +83,7 @@ module.exports = function(app,ensureAuthenticated){
  })
 
  //get all the drivers for a trip
- app.get('/driver/:tripId', ensureAuthenticated, (req,res) => {
+ app.get('/api/driver/:tripId', ensureAuthenticated, (req,res) => {
     console.log("getting drivers for trip: ", req.params.tripId);
     Driver.find({tripId:req.params.tripId}, (err,data) =>{
         if(err){
@@ -97,7 +97,7 @@ module.exports = function(app,ensureAuthenticated){
  })
 
  //add a new passenger to a driver
- app.post('/passenger/:driverId', ensureAuthenticated, (req,res) => {
+ app.post('/api/passenger/:driverId', ensureAuthenticated, (req,res) => {
     console.log("checking passenger status");
     const { tripId, passengerIndex } = req.body;
     const driverId = req.params.driverId;
@@ -169,7 +169,7 @@ module.exports = function(app,ensureAuthenticated){
  })
 
  //remove a passenger from a driver
- app.post('/removePassenger/:driverId', ensureAuthenticated, (req,res) => {
+ app.post('/api/removePassenger/:driverId', ensureAuthenticated, (req,res) => {
     console.log("removing passenger...");
     const driverId = req.params.driverId;
     const {tripId, passengerIndex} = req.body;
@@ -216,7 +216,7 @@ module.exports = function(app,ensureAuthenticated){
  })
 
  //remove a driver from a trip
-  app.post("/removeDriver/:driverId", ensureAuthenticated, (req,res) => {
+  app.post("/api/removeDriver/:driverId", ensureAuthenticated, (req,res) => {
     const driverId = req.params.driverId
     console.log("Removing a driver: ", driverId);
     Driver.findById(driverId, (err,driverData) => {
@@ -256,7 +256,7 @@ module.exports = function(app,ensureAuthenticated){
   })
 
   //add a participant to the trip
-  app.post("/addParticipant/:tripId", ensureAuthenticated, (req, res) => {
+  app.post("/api/addParticipant/:tripId", ensureAuthenticated, (req, res) => {
     const tripId = req.params.tripId;
     const participantName = req.body.name;
 
@@ -287,7 +287,7 @@ module.exports = function(app,ensureAuthenticated){
   })
 
   //remove a participant from a trip
-  app.post("/removeParticipant/:tripId", ensureAuthenticated, (req, res) => {
+  app.post("/api/removeParticipant/:tripId", ensureAuthenticated, (req, res) => {
     const tripId = req.params.tripId;
     const participantName = req.body.name;
 
@@ -385,7 +385,7 @@ module.exports = function(app,ensureAuthenticated){
   })
 
   //remove a trip
-  app.post("/deleteTrip/:tripId", ensureAuthenticated, (req, res) =>{
+  app.post("/api/deleteTrip/:tripId", ensureAuthenticated, (req, res) =>{
     const tripId = req.params.tripId
     console.log("deleting trip: " + tripId);
     //delete the trip (ensures only organizer can delete)

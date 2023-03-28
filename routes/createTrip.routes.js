@@ -5,7 +5,7 @@ const Participant= require("../models/Participant.model");
 module.exports = function(app, ensureAuthenticated){
     
  //creating a trip
- app.post("/createTrip", ensureAuthenticated, (req, res) => {
+ app.post("/api/createTrip", ensureAuthenticated, (req, res) => {
     console.log("Server is creating a trip");
     //!!participants should be validated as valid usernames by the form
     //participants come in as an array ob objects {name:username, status:(null/driver/passenger)}
@@ -59,7 +59,7 @@ module.exports = function(app, ensureAuthenticated){
     })
  })
 
- app.post('/validateUsername', ensureAuthenticated, (req,res) => {
+ app.post('/api/validateUsername', ensureAuthenticated, (req,res) => {
     console.log("validating username...", req.body.username);
     User.findOne({username:req.body.username}, (err, data) => {
         if(err){

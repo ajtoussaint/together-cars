@@ -78,7 +78,7 @@ tripRoutes(app, ensureAuthenticated);
 //!!polish remember to ensure authenticated on all private routes
 
  //get the trips a user is organizing
- app.get('/trips/:username', ensureAuthenticated, (req,res) => {
+ app.get('/api/trips/:username', ensureAuthenticated, (req,res) => {
     console.log("get trips recieved for user: " + req.params.username);
     Trip.find({organizer:req.params.username}, (err,data) => {
         if(err){
@@ -94,7 +94,7 @@ tripRoutes(app, ensureAuthenticated);
 
  //get the trips the user is a participant in
 
- app.get('/participantTrips', ensureAuthenticated, (req,res) => {
+ app.get('/api/participantTrips', ensureAuthenticated, (req,res) => {
     console.log("recieved request for participant trips", req.user.username);
     Participant.find({name:req.user.username}, (err,data) => {
         if(err){
@@ -130,7 +130,7 @@ app.get('/api/red', (req,res) => {
     res.json(["Griff", "Simmons", "Sarge"]);
 });
 
-app.get('/blue', (req,res) => {
+app.get('/api/blue', (req,res) => {
     console.log("blue requested");
     res.json(["Tucker", "Church", "Caboose"]);
 });

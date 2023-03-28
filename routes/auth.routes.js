@@ -51,7 +51,7 @@ module.exports = function(app){
   ));
 
   //rotue accessed by passport from auth.js
-  app.post("/login",
+  app.post("/api/login",
   passport.authenticate('local'),
   (req, res) =>{
       console.log("logged in: " + req.user);
@@ -62,7 +62,7 @@ module.exports = function(app){
 
   //route to check the user for the session
 
-  app.get("/user",
+  app.get("/api/user",
   (req,res) => {
       console.log("In GET /user route");
       console.log("req.user:", req.user);
@@ -77,7 +77,7 @@ module.exports = function(app){
   }
   )
 
-  app.post("/register", 
+  app.post("/api/register", 
   (req,res,next) => {
       console.log("Attempting to register new user");
       if(!req.body.username || req.body.username.length <3){
@@ -125,7 +125,7 @@ module.exports = function(app){
   )
 
   //logout path
-  app.get("/logout", (req, res) => {
+  app.get("/api/logout", (req, res) => {
       req.logout( err => {
           if(err){
               console.log(err);
