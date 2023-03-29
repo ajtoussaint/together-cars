@@ -375,7 +375,7 @@ function Drivers(props){
     const removeDriver = (driverId) =>{
         console.log("Removing Driver: ", driverId);
         setLoading(true);
-        axios.post('/removeDriver/' + driverId)
+        axiosInstance.post('/removeDriver/' + driverId)
          .then( res => {
             console.log("Driver removed");
             //update participants
