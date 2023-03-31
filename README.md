@@ -46,3 +46,9 @@
 
 <h2>Other Projects:</h2>
 <p>See the links for more examples of my work:</p>
+<br>
+<a href="https://github.com/ajtoussaint/note-taking-app">Bekenstein Limit</a>
+<br>
+<a href="https://play.google.com/store/apps/details?id=com.Saint2.MMR">Arithmagic</a>
+<br>
+<a href="https://github.com/ajtoussaint/personal-website">Personal Portfolio Website</a>
